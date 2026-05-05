@@ -1,1 +1,425 @@
-{"fileName":"[ana-camargo]-compra-aprovada-lojista-4em1-sheets-EjQVPpt3FMPOZsHp.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2026-03-24T11:52:33.768Z",
+  "createdAt": "2025-03-28T19:52:00.969Z",
+  "id": "EjQVPpt3FMPOZsHp",
+  "name": "[Ana Camargo] compra aprovada lojista 4em1 sheets",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "15c2f82b-e9da-410d-af76-7b0dc2547ffc",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body['contact[first_name]'] }} {{ $('Webhook').item.json.body['contact[last_name]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "44461815-49cc-4e7c-a71c-72a887d03249",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "328aff28-052c-4de1-8dd3-74c5ab41bd12",
+              "name": "E-mail",
+              "value": "={{ $('Webhook').item.json.body['contact[email]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "12c927cf-4f2f-4f21-a47c-07c6266d7e52",
+              "name": "Sobrenome",
+              "value": "={{ $('Webhook').item.json.body['contact[last_name]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "631c939f-e105-4e43-af69-b788de198920",
+              "name": "Data",
+              "value": "={{ \n  new Date().getDate().toString().padStart(2, '0') + '/' +\n  (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +\n  new Date().getFullYear() + ' ' +\n  new Date().getHours().toString().padStart(2, '0') + ':' +\n  new Date().getMinutes().toString().padStart(2, '0')\n}}",
+              "type": "string"
+            },
+            {
+              "id": "55b79a6a-762d-472d-9e86-49b476a5f74c",
+              "name": "Status",
+              "value": "=Aprovado",
+              "type": "string"
+            },
+            {
+              "id": "9a4a0079-feab-4412-ab4c-bd728ae728fc",
+              "name": "Documento",
+              "value": "={{ $('Webhook').item.json.body['contact[fields][cpf]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "db4ff22d-c6fa-48fe-a6a2-d33dd0782fde",
+              "name": "Tipo de Pagamento",
+              "value": "={{ $('Webhook').item.json.body['contact[fields][tipo_de_pagamento]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "504fa6a4-24c7-4f75-be92-d046e9dbcd8f",
+              "name": "Mentoria",
+              "value": "Lojista 4 em 1",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "76ef7dff-3fc7-4473-98d8-f7d72e8e7397",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const webhookData = $('Webhook').all();\n\n// Log dos dados completos para análise\nconsole.log(\"Dados completos do Webhook:\", JSON.stringify(webhookData, null, 2));\n\n// Função para formatar o telefone no formato 55DDDTelefone\nfunction formatarTelefone(numeroTelefone) {\n  console.log(\"Número de telefone recebido para formatação:\", numeroTelefone);\n\n  if (!numeroTelefone) {\n    console.log(\"Número de telefone é inválido ou não encontrado.\");\n    return '';\n  }\n\n  // Remove tudo que não for número\n  let telefoneLimpo = numeroTelefone.replace(/\\D/g, '');\n  console.log(\"Número de telefone limpo:\", telefoneLimpo);\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11); // Pega os últimos 11 dígitos\n  }\n\n  console.log(\"Número de telefone após ajuste do código do país:\", telefoneLimpo);\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  console.log(\"DDD:\", ddd);\n  console.log(\"Número sem DDD:\", numero);\n\n  // Adição do nono dígito se necessário (para regiões onde isso ainda faz sentido)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito se for inválido para fixo (ex: números com 9 e DDDs acima de 30)\n  if (parseInt(ddd) >= 30 && numero.length === 9 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  // Retorno final no formato 55DDDTelefone (sem espaços)\n  const telefoneFormatado = `55${ddd}${numero}`;\n  console.log(\"Número de telefone formatado final:\", telefoneFormatado);\n\n  return telefoneFormatado;\n}\n\n// Extrai o telefone do webhook\nconst telefone = webhookData[0]?.json?.body?.['contact[phone]'];\nconsole.log(\"Número de telefone extraído:\", telefone);\n\nconst telefoneFormatado = formatarTelefone(telefone);\n\n// Retorna apenas o número formatado\nreturn [\n  {\n    json: {\n      phone: telefoneFormatado\n    }\n  }\n];"
+      },
+      "id": "6dfdbd89-3e41-4b78-a9f0-92bfccc817d8",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ana-l41-compra-aprovada",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        60,
+        0
+      ],
+      "id": "d19430a4-3774-4da9-87ef-cc50b1ba5f53",
+      "name": "Webhook",
+      "webhookId": "7dfdce96-aa10-4ef7-ae55-2830e567c3cf"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1e4ZhIG9124C9b361RqvP8fgT6qMbVdE6NXA0JJkF5OM/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hotmart",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e4ZhIG9124C9b361RqvP8fgT6qMbVdE6NXA0JJkF5OM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data de Venda": "={{ $json.Data }}",
+            "Data de Confirmação": "={{ $json.Data }}",
+            "Status": "={{ $json.Status }}",
+            "Documento": "={{ $json.Documento }}",
+            "Mentoria ": "={{ $json.Mentoria }}",
+            "Nome": "={{ $json.Nome }}",
+            "Email": "={{ $json['E-mail'] }}",
+            "Telefone": "={{ $json.Telefone }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "n° de alunas",
+              "displayName": "n° de alunas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data de Venda",
+              "displayName": "Data de Venda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data de Confirmação",
+              "displayName": "Data de Confirmação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Documento",
+              "displayName": "Documento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mentoria ",
+              "displayName": "Mentoria ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ctt",
+              "displayName": "Ctt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "grupos",
+              "displayName": "grupos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Gira estoque",
+              "displayName": "Gira estoque",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ddd",
+              "displayName": "ddd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Insta",
+              "displayName": "Insta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "avisos ",
+              "displayName": "avisos ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        820,
+        0
+      ],
+      "id": "f3276c10-0eb1-4cd5-a574-40b141102c9e",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "e5ec27e0-791c-4119-a27c-80a8825c8d1f",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "GuzzleHttp/6.5.5 curl/8.3.0 PHP/8.1.29",
+            "content-length": "1022",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "3.220.243.205",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "3.220.243.205",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact[id]": "36442",
+            "contact[email]": "robertabastosrebelo@gmail.com",
+            "contact[first_name]": "Roberta",
+            "contact[last_name]": "Rebelo",
+            "contact[phone]": "31992750209",
+            "contact[orgname]": "",
+            "contact[customer_acct_name]": "",
+            "contact[tags]": "[LJ4em1] [EVI0125] Compra aprovada, [LJ4em1] [EVI0125] Abandono de carrinho, [EVI0325_LEAD], [EVI0325_LEAD_PAGO], [EVI0325_LEAD_PAGO_FB], [EVI0325_LEAD_PAGO_FB_QUENTE], [EVI0325_LEAD_V1], [ALUNA][T21]Lojista 4 em 1, [LJ4em1] [EVI0325] Compra aprovada",
+            "contact[ip4]": "127.0.0.1",
+            "contact[fields][utmcampaignevi0325]": "[EVI0325] [LEAD] [TESTE] [IG] [M] [25-55] [Q] TESTE VD - 90D",
+            "contact[fields][utmsourceevi0325]": "MetaAds",
+            "contact[fields][utmmediumevi0325]": "00 [TESTE] [MIX 90D] AD_016_VD",
+            "contact[fields][utmcontentevi0325]": "AD_016_VD_EVI0325",
+            "contact[fields][utmtermevi0325]": "Others",
+            "contact[fields][data_lead_evi0325]": "2025-03-06",
+            "seriesid": "36"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-l41-compra-aprovada",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "79968b0f-1fcb-41f0-be73-ff376418baad",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-28T19:52:00.969Z",
+      "createdAt": "2025-03-28T19:52:00.969Z",
+      "role": "workflow:owner",
+      "workflowId": "EjQVPpt3FMPOZsHp",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
