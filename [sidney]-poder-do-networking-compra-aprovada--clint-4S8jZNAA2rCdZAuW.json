@@ -1,0 +1,472 @@
+{
+  "updatedAt": "2026-04-16T11:56:42.718Z",
+  "createdAt": "2025-04-30T12:49:12.274Z",
+  "id": "4S8jZNAA2rCdZAuW",
+  "name": "[Sidney] Poder do networking  compra aprovada -Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-poder-aprovada",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        0
+      ],
+      "id": "a955bad9-8c10-4e63-80ba-72aeaaddabd1",
+      "name": "Webhook",
+      "webhookId": "a1ce48c6-43a6-4dfa-9e79-ae72accb8fd3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6530475f-7203-427b-aea3-7fab9a4b8055",
+              "name": "Nome",
+              "value": "={{ $json.body.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "3b04e02b-cd3a-476c-8f87-ab7f554355ab",
+              "name": "Telefone",
+              "value": "={{ $json.body.ddd }}{{ $json.body.telefone.replace(/[();\\-\\s]/g, '') }}",
+              "type": "string"
+            },
+            {
+              "id": "427d452b-7d70-49ad-b25a-8e5a3ecd9ee5",
+              "name": "Valor",
+              "value": "={{ $json.body[\"valor do produto\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "09bdbef9-748b-4d44-8ef4-e643e5fc6bf4",
+              "name": "Email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "4afe5f17-e8fb-408d-a0ac-264ce7619e94",
+              "name": "Produto",
+              "value": "={{ $json.body.produto }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        140,
+        0
+      ],
+      "id": "6fb5c193-0f98-4458-8948-94066f5497f0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8257e07a-6ebc-4e1d-8ae1-b57b517822b5",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "197,00",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c3c84b21-7546-4f26-9942-9dbd06363e2b",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "MEMBRO",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        -160
+      ],
+      "id": "557c1f9f-6c92-4f46-a5da-0c2ba8384abd",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/c567d190-5fa2-41c1-a36d-cd7fe4f2fae4",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "E-mail",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $json.Valor }}"
+            },
+            {
+              "name": "Polo_tag",
+              "value": "Poder do Networking Duplo - Pago"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1220,
+        -220
+      ],
+      "id": "13e4dfef-82bb-4f53-84be-89dd5d2199c9",
+      "name": "Duplo"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        20
+      ],
+      "id": "b7560027-f538-4c5d-a428-a3ae56fb53f3",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/7dd4a45f-072f-4419-8eef-b6f962e57c9b",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "E-mail",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $json.Valor }}"
+            },
+            {
+              "name": "Polo_tag",
+              "value": "Poder do Networking - Pago"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1220,
+        -60
+      ],
+      "id": "6fbe716d-4911-4412-9c2a-1e85591a75e2",
+      "name": "Simples"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5b87629c-6c5a-49f2-8061-0695c6d6052d",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "O PODER DO NETWORK",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        0
+      ],
+      "id": "9c8b0d75-3272-435b-8615-f56720e22426",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b38fd34e-fa8d-4c38-8837-39d0f7e6f420",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "(MEMBROS R$ 57,00)",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        620,
+        -300
+      ],
+      "id": "d2a479ca-4728-43f7-878a-cc872cf30aff",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/616246dc-c286-4b39-bb2a-813dce7d37a1",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "E-mail",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $json.Valor }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1080,
+        -400
+      ],
+      "id": "458bc673-e7ed-4881-95d8-ef0ca69f4ffa",
+      "name": "Duplo1"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Duplo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Simples",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplo": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simples": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Duplo1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplo1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "HeroSpark/1.0",
+            "content-length": "148",
+            "content-type": "application/json",
+            "hs-request-id": "7282085",
+            "x-forwarded-for": "201.23.20.167",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "201.23.20.167",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "nome": "Letícia Piazzetta",
+            "email": "leticia@faondigital.com.br",
+            "produto": "O PODER DO NETWORKING (MEMBROS R$ 57,00)",
+            "telefone": "(54) 99163-5474"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-poder-aprovada",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "3f730586-d688-44ba-97d8-2b635f349239",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-04-30T12:49:12.274Z",
+      "createdAt": "2025-04-30T12:49:12.274Z",
+      "role": "workflow:owner",
+      "workflowId": "4S8jZNAA2rCdZAuW",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
