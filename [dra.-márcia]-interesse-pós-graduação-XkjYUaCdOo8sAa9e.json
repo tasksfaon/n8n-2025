@@ -1,0 +1,75 @@
+{
+  "updatedAt": "2025-12-11T18:29:21.211Z",
+  "createdAt": "2025-12-09T21:48:05.058Z",
+  "id": "XkjYUaCdOo8sAa9e",
+  "name": "[Dra. Márcia] Interesse pós graduação",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lp-lista-de-interesse-pos121313",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f063a1d0-b653-4721-b98e-5adee5bd2983",
+      "name": "Webhook",
+      "webhookId": "25330d3c-21a0-4f1f-9211-d293d1dfde69"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "093661cc-eff5-4498-bac9-d46c91e0f2b1",
+  "activeVersionId": "093661cc-eff5-4498-bac9-d46c91e0f2b1",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-09T21:48:05.058Z",
+      "createdAt": "2025-12-09T21:48:05.058Z",
+      "role": "workflow:owner",
+      "workflowId": "XkjYUaCdOo8sAa9e",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-11T18:29:21.216Z",
+    "createdAt": "2025-12-11T18:29:21.216Z",
+    "versionId": "093661cc-eff5-4498-bac9-d46c91e0f2b1",
+    "workflowId": "XkjYUaCdOo8sAa9e",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "lp-lista-de-interesse-pos121313",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "f063a1d0-b653-4721-b98e-5adee5bd2983",
+        "name": "Webhook",
+        "webhookId": "25330d3c-21a0-4f1f-9211-d293d1dfde69"
+      }
+    ],
+    "connections": {},
+    "authors": "Letícia Piazzetta",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
