@@ -1,0 +1,232 @@
+{
+  "updatedAt": "2026-04-16T11:52:26.191Z",
+  "createdAt": "2025-09-03T14:24:29.650Z",
+  "id": "QmEWKcoMJ3CNnOIc",
+  "name": "[Sidnei] Embaixadores - Contato Criado - Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-embaixadores-type",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f8a1aa57-d375-472c-8aaf-b87c0039998a",
+      "name": "Webhook",
+      "webhookId": "a21e0d17-8b51-46cd-a00b-5c2f67f2ad07"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o telefone da entrada e transforma em string\nconst rawPhone = String($input.first().json.body.contact_phone || '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        0
+      ],
+      "id": "e7395821-9379-404d-a87b-4322e8b06851",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7e5c7a5c-fc8c-4818-b4b8-2ddfa542ecec",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "05f96f17-1786-4c71-8437-6ec659a73411",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "17160782-5223-4301-81e6-65626e0f6b25",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "93aa89bc-707a-4fda-b7f4-f06b116985b3",
+              "name": "Dono",
+              "value": "=heloizaciocheti15@gmail.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        0
+      ],
+      "id": "67d68802-d0f0-44dd-bd26-ffd06c0feb2f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        840,
+        0
+      ],
+      "id": "a6d2294f-b7dd-45b4-9532-97d55ea32a70",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/90c3591e-3245-48ed-9ab1-a55cafb709fc",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Dono",
+              "value": "={{ $json.Dono }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        0
+      ],
+      "id": "8de95a16-73d2-4d25-a48a-f1b04391f0ad",
+      "name": "HTTP Clint"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.9.0",
+            "content-length": "429",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "traceparent": "00-68891c2a00000000526c1835f59f07ba-099fe398cc95b3b8-00",
+            "tracestate": "dd=t.tid:68891c2a00000000;t.dm:-3;s:-1;p:099fe398cc95b3b8",
+            "x-datadog-parent-id": "693523113045242808",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=68891c2a00000000",
+            "x-datadog-trace-id": "5939148628628015034",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Isabella Teste",
+            "contact_email": "bellasimaia@gmail.con",
+            "contact_phone": "+5531984617540",
+            "deal_stage": "FECHADO",
+            "deal_user": "consultorcaeclub@gmail.com",
+            "deal_status": "OPEN",
+            "deal_user_name": "Consultor Externo",
+            "organization_segment": "",
+            "deal_value": 80,
+            "contact_polo": "CAE CLUB - Polo Lapa",
+            "contact_utm_source": "",
+            "contact_utm_medium": "",
+            "contact_utm_content": "",
+            "contact_utm_campaign": "",
+            "contact_utm_term": ""
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-cae-aberto",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "99849ccf-b00f-4e3a-9c5d-a40895dad275",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-09-03T14:24:29.650Z",
+      "createdAt": "2025-09-03T14:24:29.650Z",
+      "role": "workflow:owner",
+      "workflowId": "QmEWKcoMJ3CNnOIc",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
