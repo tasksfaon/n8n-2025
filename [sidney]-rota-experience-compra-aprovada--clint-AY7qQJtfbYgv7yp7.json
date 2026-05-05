@@ -1,0 +1,239 @@
+{
+  "updatedAt": "2026-04-16T11:48:42.005Z",
+  "createdAt": "2025-10-08T16:23:51.212Z",
+  "id": "AY7qQJtfbYgv7yp7",
+  "name": "[Sidney] Rota Experience  compra aprovada -Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-re-ca",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        0
+      ],
+      "id": "3f48e8e7-aa81-4996-b8fe-86c8f251e637",
+      "name": "Webhook",
+      "webhookId": "5b199179-2daf-4b38-acba-03569b1eed4d"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6530475f-7203-427b-aea3-7fab9a4b8055",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.buyer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "3b04e02b-cd3a-476c-8f87-ab7f554355ab",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "427d452b-7d70-49ad-b25a-8e5a3ecd9ee5",
+              "name": "Valor",
+              "value": "={{ $('Webhook').item.json.body.valor}}",
+              "type": "string"
+            },
+            {
+              "id": "09bdbef9-748b-4d44-8ef4-e643e5fc6bf4",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.buyer_email }}",
+              "type": "string"
+            },
+            {
+              "id": "4afe5f17-e8fb-408d-a0ac-264ce7619e94",
+              "name": "Produto",
+              "value": "=",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        0
+      ],
+      "id": "152be685-9b41-4678-9889-a32c49a99b14",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        656,
+        0
+      ],
+      "id": "f371ce90-e004-4745-ad7e-915d865873a4",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\n// Captura o telefone da entrada\nconst rawPhone = String( $input.first().json.body.buyer_phone|| '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\nlet ddd = null;\n\n// Se começa com 11 dígitos e DDD válido, adiciona 55\nif (/^\\d{10,11}$/.test(cleaned)) {\n  cleaned = '55' + cleaned;\n}\n\n// Corrige DDI duplicado se houver (ex: 5555...)\nif (cleaned.startsWith('5555')) {\n  cleaned = '55' + cleaned.slice(4);\n}\n\n// Se começa com \"55\" e tem 10 ou 11 dígitos depois, é BR válido\nif (/^55\\d{10,11}$/.test(cleaned)) {\n  ddd = cleaned.slice(2, 4); // Extrai os dois dígitos após 55\n} else {\n  // Caso contrário, valida como número internacional (E.164: máx 15 dígitos)\n  if (!/^\\d{8,15}$/.test(cleaned)) {\n    cleaned = '';\n  }\n}\n\n// Retorna\nreturn [{\n  json: {\n    telefoneOriginal: rawPhone,\n    telefoneFormatado: cleaned,\n    ddd: ddd\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "e0531509-6aa7-4f78-8db7-438ab4148aef",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/0ee5e164-0784-45de-bc10-402d754b5c6b",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "E-mail",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $json.Valor }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        0
+      ],
+      "id": "e09accdf-237b-406b-b01f-8eaf38bd2fe0",
+      "name": "HTTP Clint"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "HeroSpark/1.0",
+            "content-length": "268",
+            "baggage": "sentry-trace_id=22082fcecae7457f8e455f8189091793,sentry-environment=production,sentry-public_key=b722173edaec94334323db1280f8af27",
+            "content-type": "application/json",
+            "hs-request-id": "8354677",
+            "sentry-trace": "22082fcecae7457f8e455f8189091793-678e6db7233c40d6",
+            "x-forwarded-for": "201.23.25.33",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "201.23.25.33",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "utm_term": "pring_discount",
+            "buyer_name": "John Doe",
+            "utm_medium": "social",
+            "utm_source": "facebook",
+            "buyer_email": "email@exemplo.com",
+            "buyer_phone": "(41) 99999-9999",
+            "utm_content": "header_banner_a",
+            "utm_campaign": "spring_sale_2024",
+            "buyer_document_id": "111.111.111-11"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-re-ca",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "1c09fc5c-eb44-4775-820d-f27689eb48db",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-10-08T16:23:51.212Z",
+      "createdAt": "2025-10-08T16:23:51.212Z",
+      "role": "workflow:owner",
+      "workflowId": "AY7qQJtfbYgv7yp7",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
