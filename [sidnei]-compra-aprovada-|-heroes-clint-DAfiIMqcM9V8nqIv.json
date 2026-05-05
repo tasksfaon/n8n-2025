@@ -1,1 +1,1198 @@
-{"fileName":"[sidnei]-compra-aprovada-|-heroes-clint-DAfiIMqcM9V8nqIv.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2026-04-16T11:46:11.749Z",
+  "createdAt": "2025-03-14T15:42:04.035Z",
+  "id": "DAfiIMqcM9V8nqIv",
+  "name": "[Sidnei] compra aprovada | Heroes Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "compra-aprovada-sidney",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        -16
+      ],
+      "id": "25692d83-79b4-455b-8d24-39c5b32a9ab9",
+      "name": "Webhook",
+      "webhookId": "0e918a90-a54f-49f2-9179-b5efdc553799"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6530475f-7203-427b-aea3-7fab9a4b8055",
+              "name": "Nome",
+              "value": "={{ $json.body.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "3b04e02b-cd3a-476c-8f87-ab7f554355ab",
+              "name": "Telefone",
+              "value": "={{ $json.body.ddd }}{{ $json.body.telefone.replace(/[();\\-\\s]/g, '') }}",
+              "type": "string"
+            },
+            {
+              "id": "427d452b-7d70-49ad-b25a-8e5a3ecd9ee5",
+              "name": "Valor",
+              "value": "={{ $json.body[\"valor do produto\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "09bdbef9-748b-4d44-8ef4-e643e5fc6bf4",
+              "name": "Email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "4afe5f17-e8fb-408d-a0ac-264ce7619e94",
+              "name": "Produto",
+              "value": "={{ $json.body.produto }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        -16
+      ],
+      "id": "c8daa3dd-e650-4134-950d-c5aff1ea6f3c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8257e07a-6ebc-4e1d-8ae1-b57b517822b5",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Duplo",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        240
+      ],
+      "id": "ed7d1b7e-611d-4d8d-965e-809279a35604",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/d7dc7bcd-aeaa-4ef4-a711-0cc69400937d",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "E-mail",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $json.Valor }}"
+            },
+            {
+              "name": "Status",
+              "value": "Coquetel Duplo - Pago"
+            },
+            {
+              "name": "Polo_tag",
+              "value": "Coquetel Duplo - Pago"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        768,
+        -48
+      ],
+      "id": "4baf3227-6cea-4a26-b901-8c8b243a2129",
+      "name": "Duplo"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dab82021-5db6-4091-bb43-124c1a1e1d8a",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Fraternidade",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        128
+      ],
+      "id": "7fb6c486-5073-4a53-9fe0-f5f20de2822f",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/ddc65e65-e7c0-4b6a-9687-869fc7f1ac28",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "E-mail",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "2770"
+            },
+            {
+              "name": "Status",
+              "value": "Fraternidade - Pago"
+            },
+            {
+              "name": "Tag",
+              "value": "Fraternidade - Pago"
+            },
+            {
+              "name": "Status",
+              "value": "Fraternidade - Pago"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        928,
+        112
+      ],
+      "id": "0eb6b742-7806-4182-9eb7-1de90787753a",
+      "name": "Fraternidade"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "77a7de06-30f1-4304-8349-98e3d5f25ff2",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Coquetel",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "480dc565-702d-403c-ae65-6e31421dd90d",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "POLO",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        400
+      ],
+      "id": "c54bcb00-43ec-48f2-8a35-c5cb37bef6d6",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/0dbf7393-bd80-4446-b2ae-617e9177fdff",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "E-mail",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $json.Valor }}"
+            },
+            {
+              "name": "Status",
+              "value": "Fraternidade - Pago"
+            },
+            {
+              "name": "Tag",
+              "value": "Coquetel - Pago"
+            },
+            {
+              "name": "Status",
+              "value": "Coquetel - Pago"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1376,
+        384
+      ],
+      "id": "59cdd853-73eb-4997-a2fb-824e2ff8042f",
+      "name": "Coquetel"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        16
+      ],
+      "id": "56019d0f-b7fb-4dd6-a796-14d15707963e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "77a7de06-30f1-4304-8349-98e3d5f25ff2",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Indicação",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        288
+      ],
+      "id": "3b7f7dba-ea87-41ff-af8c-06abb5add289",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/f0b3d208-50c5-467b-984c-5ff0bd28f6df",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $json.Valor }}"
+            },
+            {
+              "name": "Status",
+              "value": "Coquetel Pago - Indicação Membro - Pago"
+            },
+            {
+              "name": "Tag",
+              "value": "={{ $('Webhook').item.json.body.produto.split(' - ').pop() }}"
+            },
+            {
+              "name": "Vendedor",
+              "value": "jonathanandrepires@gmail.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1088,
+        272
+      ],
+      "id": "b836964b-e96c-4a71-b970-855ee0cf58a5",
+      "name": "Indicação"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 650737286,
+          "mode": "list",
+          "cachedResultName": "Lista Geral Membros Fraternidade",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=650737286"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "cpf": "=",
+            "Nome": "={{ $('Edit Fields').item.json.Nome }}",
+            "Email": "={{ $('Edit Fields').item.json.Email }}",
+            "Telefone": "={{ $('Edit Fields').item.json.Telefone }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cpf",
+              "displayName": "cpf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1744,
+        384
+      ],
+      "id": "3242c51a-76e8-4554-833f-eb0b6db81606",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/761fefb9-e79a-4994-88fc-ca3beef28e59",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('If3').item.json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('If3').item.json.Telefone }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('If3').item.json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $('If3').item.json.Valor }}"
+            },
+            {
+              "name": "Status",
+              "value": "Coquetel Pago - Indicação Membro - Pago"
+            },
+            {
+              "name": "Tag",
+              "value": "={{ $('Webhook').item.json.body.produto.split(' - ').pop() }}"
+            },
+            {
+              "name": "Vendedor",
+              "value": "jonathanandrepires@gmail.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1264,
+        272
+      ],
+      "id": "d3a0f99d-53ad-4bcf-8320-b155f85c7d9e",
+      "name": "Indicação Membro",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/761fefb9-e79a-4994-88fc-ca3beef28e59",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('If1').item.json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('If1').item.json.Telefone }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('If1').item.json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $('If1').item.json.Valor }}"
+            },
+            {
+              "name": "Status",
+              "value": "Fraternidade - Pago"
+            },
+            {
+              "name": "Tag",
+              "value": "Fraternidade - Pago"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1104,
+        112
+      ],
+      "id": "d839fa82-eab2-4fb7-a166-135af6ddee70",
+      "name": "Fraternidade Membro"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/761fefb9-e79a-4994-88fc-ca3beef28e59",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('If').item.json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('If').item.json.Telefone }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('If').item.json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $('If').item.json.Valor }}"
+            },
+            {
+              "name": "Status",
+              "value": "Coquetel Duplo - Pago"
+            },
+            {
+              "name": "Tag",
+              "value": "Coquetel Duplo - Pago"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -48
+      ],
+      "id": "041477c7-ef50-4948-9797-c95847bf27e5",
+      "name": "Duplo Membro",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/761fefb9-e79a-4994-88fc-ca3beef28e59",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('If2').item.json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('If2').item.json.Telefone }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('If2').item.json.Email }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $('If2').item.json.Valor }}"
+            },
+            {
+              "name": "Status",
+              "value": "Coquetel - Pago"
+            },
+            {
+              "name": "Tag",
+              "value": "Coquetel - Pago"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1568,
+        384
+      ],
+      "id": "6adef3a3-a5e8-45fb-870a-0d38199b2931",
+      "name": "Coquetel Membro"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1999077494,
+          "mode": "list",
+          "cachedResultName": "BACKLOG",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit#gid=1999077494"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "EMAIL": "={{ $json.Email }}",
+            "Data": "={{ new Date().toLocaleString('pt-BR', {    timeZone: 'America/Sao_Paulo',   hour12: false,   year: 'numeric',   month: '2-digit',   day: '2-digit',   hour: '2-digit',   minute: '2-digit' }).replace(',', '') }}",
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "Observação": "={{ $json.Produto }}"
+          },
+          "matchingColumns": [
+            "EMAIL"
+          ],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Polo",
+              "displayName": "Polo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        -192
+      ],
+      "id": "ff2a49e0-6453-46ac-9dd7-c54e8387efcc",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4cd34e39-07ba-4894-ba5c-561821105e1c",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Membro",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        192,
+        -176
+      ],
+      "id": "7de99080-7a4b-452b-b880-eb854b19d794",
+      "name": "If4"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Duplo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Fraternidade",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Coquetel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coquetel": {
+      "main": [
+        [
+          {
+            "node": "Coquetel Membro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fraternidade": {
+      "main": [
+        [
+          {
+            "node": "Fraternidade Membro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplo": {
+      "main": [
+        [
+          {
+            "node": "Duplo Membro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Indicação",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Indicação": {
+      "main": [
+        [
+          {
+            "node": "Indicação Membro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Indicação Membro": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fraternidade Membro": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplo Membro": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coquetel Membro": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "content-length": "252",
+            "baggage": "sentry-trace_id=e64d4dce46864007ae8dad01c2189dea,sentry-environment=production,sentry-public_key=b722173edaec94334323db1280f8af27",
+            "content-type": "application/json",
+            "sentry-trace": "e64d4dce46864007ae8dad01c2189dea-d6eb85982c8f4fa3",
+            "x-forwarded-for": "201.23.25.33",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "201.23.25.33",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "ddd": "55",
+            "nome": "Andreza Benatti Cassettari",
+            "email": "andreza.benatti@improova.com.br",
+            "produto": "Coquetel Indicação de Membros - Polo Santo Amaro",
+            "telefone": "(11) 99187-2999",
+            "data da compra": "2026-03-10T19:01:04.434Z",
+            "valor do produto": "67.0"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/compra-aprovada-sidney",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "6d73d957-b6a6-4f53-a738-35a76fda0a5f",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-14T15:42:04.035Z",
+      "createdAt": "2025-03-14T15:42:04.035Z",
+      "role": "workflow:owner",
+      "workflowId": "DAfiIMqcM9V8nqIv",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
