@@ -1,0 +1,1028 @@
+{
+  "updatedAt": "2025-09-10T20:20:06.806Z",
+  "createdAt": "2025-09-10T20:16:45.646Z",
+  "id": "yrjwtt9VzgtgCr7o",
+  "name": "[Márcia] Lançamento 07/10 - Grupos",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "marcia-l0710-entrou",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        -140
+      ],
+      "id": "341b5c15-8ca2-4666-b47b-b354f7cbee95",
+      "name": "Webhook",
+      "webhookId": "9eed2e50-4faf-4164-96a4-04530dbd7582"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "marcia-l0710",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        60
+      ],
+      "id": "7aedb040-fd3f-4e6b-9290-762e10c47741",
+      "name": "Webhook1",
+      "webhookId": "ff94ca9c-06ad-459f-80ae-ef2ac5b600fe"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone = item.json.body.data?.[\"number\"] || \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 10 dígitos começando com 10)\n  if (parseInt(ddd) >= 30 && numero.length === 10 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        -140
+      ],
+      "id": "0c005cd1-052b-4fe2-a25c-61ca0e148940",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64b6720a-4018-425c-98c2-5d44a2e045eb",
+              "name": "Data",
+              "value": "={{ \n  new Date().getDate().toString().padStart(2, '0') + '/' +\n  (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +\n  new Date().getFullYear() + ' ' +\n  new Date().getHours().toString().padStart(2, '0') + ':' +\n  new Date().getMinutes().toString().padStart(2, '0')\n}}",
+              "type": "string"
+            },
+            {
+              "id": "08f1d58e-8c4e-4bf3-8ee1-a8e42ef9819f",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "0ecfc49f-9f1c-4a0b-b9dc-3d970db8fe1a",
+              "name": "Campanha",
+              "value": "={{ $('Webhook').item.json.body.data.campaignName }}",
+              "type": "string"
+            },
+            {
+              "id": "153e18e6-89e6-4e06-b122-3b2b99b51fc8",
+              "name": "Grupo",
+              "value": "={{ $('Webhook').item.json.body.data.groupName }}",
+              "type": "string"
+            },
+            {
+              "id": "aa84edc5-7962-4bcd-8aa0-0cebcdf9455a",
+              "name": "No Grupo",
+              "value": "=Sim",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        -140
+      ],
+      "id": "dcf7d424-152f-4823-a179-28be92e37dd1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit?gid=126319851#gid=126319851",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1340147515,
+          "mode": "list",
+          "cachedResultName": "Grupos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit#gid=1340147515"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Telefone": "={{ $json.Telefone }}",
+            "Data e Hora": "={{ $json.Data }}",
+            "Campanha": "={{ $json.Campanha }}",
+            "Grupo": "={{ $json.Grupo }}",
+            "No Grupo": "={{ $json['No Grupo'] }}"
+          },
+          "matchingColumns": [
+            "Telefone"
+          ],
+          "schema": [
+            {
+              "id": "Data e Hora",
+              "displayName": "Data e Hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Campanha",
+              "displayName": "Campanha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Grupo",
+              "displayName": "Grupo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "No Grupo",
+              "displayName": "No Grupo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        640,
+        -140
+      ],
+      "id": "ac18dff7-fa4d-42d8-96b4-7f034541fd4e",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        860,
+        -140
+      ],
+      "id": "453d430a-e13a-4961-b465-dc150f37d984",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        860,
+        60
+      ],
+      "id": "472a985e-e4ad-4833-8870-378a8058afda",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone = item.json.body.data?.[\"number\"] || \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 9 dígitos começando com 9)\n  if (parseInt(ddd) >= 30 && numero.length === 9 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        60
+      ],
+      "id": "fbfe95a9-16e3-47b0-bf12-2c61c1133aa1",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64b6720a-4018-425c-98c2-5d44a2e045eb",
+              "name": "Data",
+              "value": "={{ \n  new Date().getDate().toString().padStart(2, '0') + '/' +\n  (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +\n  new Date().getFullYear() + ' ' +\n  new Date().getHours().toString().padStart(2, '0') + ':' +\n  new Date().getMinutes().toString().padStart(2, '0')\n}}",
+              "type": "string"
+            },
+            {
+              "id": "08f1d58e-8c4e-4bf3-8ee1-a8e42ef9819f",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "0ecfc49f-9f1c-4a0b-b9dc-3d970db8fe1a",
+              "name": "Campanha",
+              "value": "={{ $('Webhook1').item.json.body.data.campaignName }}",
+              "type": "string"
+            },
+            {
+              "id": "153e18e6-89e6-4e06-b122-3b2b99b51fc8",
+              "name": "Grupo",
+              "value": "={{ $('Webhook1').item.json.body.data.groupName }}",
+              "type": "string"
+            },
+            {
+              "id": "aa84edc5-7962-4bcd-8aa0-0cebcdf9455a",
+              "name": "No Grupo",
+              "value": "=Não",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        60
+      ],
+      "id": "a430b809-0f0c-4da6-af8b-3b7fd0dea60f",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit?gid=1340147515#gid=1340147515",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1340147515,
+          "mode": "list",
+          "cachedResultName": "Grupos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit#gid=1340147515"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Telefone": "={{ $json.Telefone }}",
+            "Data e Hora": "={{ $json.Data }}",
+            "Campanha": "={{ $json.Campanha }}",
+            "Grupo": "={{ $json.Grupo }}",
+            "No Grupo": "={{ $json['No Grupo'] }}"
+          },
+          "matchingColumns": [
+            "Telefone"
+          ],
+          "schema": [
+            {
+              "id": "Data e Hora",
+              "displayName": "Data e Hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Campanha",
+              "displayName": "Campanha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Grupo",
+              "displayName": "Grupo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "No Grupo",
+              "displayName": "No Grupo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        640,
+        60
+      ],
+      "id": "b1173c24-b29d-43de-a3e0-3621834a79e3",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.7.7",
+            "content-length": "273",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "sendtok": "5DB47742869B5066BFBAA77C0ED3CC0C3456FE8C4E",
+            "x-forwarded-for": "168.138.150.10",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "168.138.150.10"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "Av8ABSnzPTQE5OHAtEJM",
+            "event": "group.updated.members.added",
+            "data": {
+              "campaignName": "Instagram vendedor - Pago",
+              "groupName": "Instagram vendedor #10",
+              "campaignId": "4t68jDctEg4ws3ASI6nO",
+              "number": "558596474276",
+              "createdAt": "2025-04-11T01:07:56.264Z"
+            },
+            "version": "1.0.0"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-EVI0325-gr-entrou",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.7.7",
+            "content-length": "275",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "sendtok": "5DB47742869B5066BFBAA77C0ED3CC0C3456FE8C4E",
+            "x-forwarded-for": "150.230.69.75",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "150.230.69.75"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "IOxrI8CE90GnapVB0E5L",
+            "event": "group.updated.members.removed",
+            "data": {
+              "campaignName": "Instagram vendedor - Pago",
+              "groupName": "Instagram vendedor #10",
+              "campaignId": "4t68jDctEg4ws3ASI6nO",
+              "number": "553184617540",
+              "createdAt": "2025-04-04T15:13:06.064Z"
+            },
+            "version": "1.0.0"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-EVI0325-gr-saiu",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "ed06f34c-bd54-4f8e-b337-0ec1ee1ee7d5",
+  "activeVersionId": "ed06f34c-bd54-4f8e-b337-0ec1ee1ee7d5",
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2025-09-10T20:16:45.646Z",
+      "createdAt": "2025-09-10T20:16:45.646Z",
+      "role": "workflow:owner",
+      "workflowId": "yrjwtt9VzgtgCr7o",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "ed06f34c-bd54-4f8e-b337-0ec1ee1ee7d5",
+    "workflowId": "yrjwtt9VzgtgCr7o",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "marcia-l0710-entrou",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -20,
+          -140
+        ],
+        "id": "341b5c15-8ca2-4666-b47b-b354f7cbee95",
+        "name": "Webhook",
+        "webhookId": "9eed2e50-4faf-4164-96a4-04530dbd7582"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "marcia-l0710",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -20,
+          60
+        ],
+        "id": "7aedb040-fd3f-4e6b-9290-762e10c47741",
+        "name": "Webhook1",
+        "webhookId": "ff94ca9c-06ad-459f-80ae-ef2ac5b600fe"
+      },
+      {
+        "parameters": {
+          "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone = item.json.body.data?.[\"number\"] || \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 10 dígitos começando com 10)\n  if (parseInt(ddd) >= 30 && numero.length === 10 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          200,
+          -140
+        ],
+        "id": "0c005cd1-052b-4fe2-a25c-61ca0e148940",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "64b6720a-4018-425c-98c2-5d44a2e045eb",
+                "name": "Data",
+                "value": "={{ \n  new Date().getDate().toString().padStart(2, '0') + '/' +\n  (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +\n  new Date().getFullYear() + ' ' +\n  new Date().getHours().toString().padStart(2, '0') + ':' +\n  new Date().getMinutes().toString().padStart(2, '0')\n}}",
+                "type": "string"
+              },
+              {
+                "id": "08f1d58e-8c4e-4bf3-8ee1-a8e42ef9819f",
+                "name": "Telefone",
+                "value": "={{ $json.phone }}",
+                "type": "string"
+              },
+              {
+                "id": "0ecfc49f-9f1c-4a0b-b9dc-3d970db8fe1a",
+                "name": "Campanha",
+                "value": "={{ $('Webhook').item.json.body.data.campaignName }}",
+                "type": "string"
+              },
+              {
+                "id": "153e18e6-89e6-4e06-b122-3b2b99b51fc8",
+                "name": "Grupo",
+                "value": "={{ $('Webhook').item.json.body.data.groupName }}",
+                "type": "string"
+              },
+              {
+                "id": "aa84edc5-7962-4bcd-8aa0-0cebcdf9455a",
+                "name": "No Grupo",
+                "value": "=Sim",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          420,
+          -140
+        ],
+        "id": "dcf7d424-152f-4823-a179-28be92e37dd1",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit?gid=126319851#gid=126319851",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1340147515,
+            "mode": "list",
+            "cachedResultName": "Grupos",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit#gid=1340147515"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Telefone": "={{ $json.Telefone }}",
+              "Data e Hora": "={{ $json.Data }}",
+              "Campanha": "={{ $json.Campanha }}",
+              "Grupo": "={{ $json.Grupo }}",
+              "No Grupo": "={{ $json['No Grupo'] }}"
+            },
+            "matchingColumns": [
+              "Telefone"
+            ],
+            "schema": [
+              {
+                "id": "Data e Hora",
+                "displayName": "Data e Hora",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Campanha",
+                "displayName": "Campanha",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Grupo",
+                "displayName": "Grupo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone",
+                "displayName": "Telefone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "No Grupo",
+                "displayName": "No Grupo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          640,
+          -140
+        ],
+        "id": "ac18dff7-fa4d-42d8-96b4-7f034541fd4e",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          860,
+          -140
+        ],
+        "id": "453d430a-e13a-4961-b465-dc150f37d984",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          860,
+          60
+        ],
+        "id": "472a985e-e4ad-4833-8870-378a8058afda",
+        "name": "No Operation, do nothing1"
+      },
+      {
+        "parameters": {
+          "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone = item.json.body.data?.[\"number\"] || \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 9 dígitos começando com 9)\n  if (parseInt(ddd) >= 30 && numero.length === 9 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          200,
+          60
+        ],
+        "id": "fbfe95a9-16e3-47b0-bf12-2c61c1133aa1",
+        "name": "Code1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "64b6720a-4018-425c-98c2-5d44a2e045eb",
+                "name": "Data",
+                "value": "={{ \n  new Date().getDate().toString().padStart(2, '0') + '/' +\n  (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +\n  new Date().getFullYear() + ' ' +\n  new Date().getHours().toString().padStart(2, '0') + ':' +\n  new Date().getMinutes().toString().padStart(2, '0')\n}}",
+                "type": "string"
+              },
+              {
+                "id": "08f1d58e-8c4e-4bf3-8ee1-a8e42ef9819f",
+                "name": "Telefone",
+                "value": "={{ $json.phone }}",
+                "type": "string"
+              },
+              {
+                "id": "0ecfc49f-9f1c-4a0b-b9dc-3d970db8fe1a",
+                "name": "Campanha",
+                "value": "={{ $('Webhook1').item.json.body.data.campaignName }}",
+                "type": "string"
+              },
+              {
+                "id": "153e18e6-89e6-4e06-b122-3b2b99b51fc8",
+                "name": "Grupo",
+                "value": "={{ $('Webhook1').item.json.body.data.groupName }}",
+                "type": "string"
+              },
+              {
+                "id": "aa84edc5-7962-4bcd-8aa0-0cebcdf9455a",
+                "name": "No Grupo",
+                "value": "=Não",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          420,
+          60
+        ],
+        "id": "a430b809-0f0c-4da6-af8b-3b7fd0dea60f",
+        "name": "Edit Fields1"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit?gid=1340147515#gid=1340147515",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1340147515,
+            "mode": "list",
+            "cachedResultName": "Grupos",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit#gid=1340147515"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Telefone": "={{ $json.Telefone }}",
+              "Data e Hora": "={{ $json.Data }}",
+              "Campanha": "={{ $json.Campanha }}",
+              "Grupo": "={{ $json.Grupo }}",
+              "No Grupo": "={{ $json['No Grupo'] }}"
+            },
+            "matchingColumns": [
+              "Telefone"
+            ],
+            "schema": [
+              {
+                "id": "Data e Hora",
+                "displayName": "Data e Hora",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Campanha",
+                "displayName": "Campanha",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Grupo",
+                "displayName": "Grupo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone",
+                "displayName": "Telefone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "No Grupo",
+                "displayName": "No Grupo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          640,
+          60
+        ],
+        "id": "b1173c24-b29d-43de-a3e0-3621834a79e3",
+        "name": "Google Sheets1",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook1": {
+        "main": [
+          [
+            {
+              "node": "Code1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code1": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets1": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
