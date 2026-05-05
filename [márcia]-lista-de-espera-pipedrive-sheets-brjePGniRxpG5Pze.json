@@ -1,0 +1,4629 @@
+{
+  "updatedAt": "2025-12-16T16:22:17.816Z",
+  "createdAt": "2025-07-29T14:18:46.499Z",
+  "id": "brjePGniRxpG5Pze",
+  "name": "[Márcia] Lista de Espera Pipedrive Sheets",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.pipedriveTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -288,
+        1376
+      ],
+      "id": "d6313058-b2d7-4c34-8173-4f022a1f39fb",
+      "name": "Pipedrive Trigger",
+      "webhookId": "365f16d3-410c-4302-89dc-0a1fdff21372",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o telefone da entrada e transforma em string\nconst rawPhone = String( $input.first().json.phone[0].value|| '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        1376
+      ],
+      "id": "f031ae54-73bb-430e-b6e4-2ea7a303acb7",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+              "name": "Data",
+              "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+              "name": "Nome",
+              "value": "={{ $('Pipedrive').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+              "name": "Email",
+              "value": "={{ $('Pipedrive').item.json.email[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "3f0c133f-ff82-4cef-9951-4db0b6ac9391",
+              "name": "CRM",
+              "value": "={{ $('Pipedrive').item.json['487088fb302d80a85669079afe41a91a21fd45ff'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        256,
+        1376
+      ],
+      "id": "652d3557-f214-4d41-b4b9-ff3d52bf115f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "person",
+        "operation": "get",
+        "personId": "={{ $json.previous.person_id }}"
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        1376
+      ],
+      "id": "e4c2cf3b-f821-430f-a1c8-2058f1fb5d56",
+      "name": "Pipedrive",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 63700338,
+          "mode": "list",
+          "cachedResultName": "Pós Graduação/ESPECIALIZAÇÃO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=63700338"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        -144
+      ],
+      "id": "0e884fcc-46a5-4f2b-bb66-39b80992b0e3",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 183,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "21e4d18f-2f36-422c-b71d-b47261882c3d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ESPECIALIZAÇÃO 2025"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d6bc2a60-a7aa-40e6-81b4-10e132b02f01",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 196,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ESPECIALIZAÇÃO 2026"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "30c3c822-0097-4ea5-919a-b4cd6463fcb0",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 209,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PA SYA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1c2b83ee-4b79-4463-8b61-f099c64b0e5b",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 197,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PA SYA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d26859a8-aacf-4d38-a3c1-0166cbbaba82",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 195,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TEAC 2025"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8d1171a4-dd9b-4d33-a036-3a050a4be4e4",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 206,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TEAC 2026"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "452c1434-458a-4567-93c1-393c4f4e4959",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 200,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PEDIATRA 2025"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f1a34efe-f864-4feb-bbf4-4e55e500fd25",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 202,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "QI MENTAL 2025"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "125812d1-a8b4-4640-b08a-94e7203124f5",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 208,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SYA 2025"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1bd56c4b-34fc-47fb-9ef6-6bad087d8d13",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 203,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ESTETICA 2025"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "37a253f7-75b5-4a79-acdb-049198edf697",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 201,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Fitoterapia 2025"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3a708415-d69b-4a65-a578-d21e296c2f01",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 140,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Capacitação 2025"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2ee98b88-ee26-4c21-8924-2ade8643fc5e",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 137,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Eletroacupuntura 2025"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "84fd74d9-46af-4eae-b6d1-1982c95c3d25",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 205,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Simposio Onco 2025"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "59664fde-7b54-48a2-9596-3283c64f0c74",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 117,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Introdutório"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bbd6853c-3153-455b-a9c8-056cdfd9f5d9",
+                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "rightValue": 178,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Como eu Trato"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        496,
+        1152
+      ],
+      "id": "81e09a6b-22f3-40f6-a0de-4225c29db9f7",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1627127392,
+          "mode": "list",
+          "cachedResultName": "PA SYA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1627127392"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        192
+      ],
+      "id": "ffe98535-ce2d-46cc-9e58-ba91aca07004",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1627127392,
+          "mode": "list",
+          "cachedResultName": "PA SYA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1627127392"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        352
+      ],
+      "id": "d16c1bfd-4e15-43da-bf83-2d22440c1ac9",
+      "name": "Google Sheets3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1780036567,
+          "mode": "list",
+          "cachedResultName": "TEAC",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1780036567"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        512
+      ],
+      "id": "990aa3eb-586f-48d0-834e-b629b8398037",
+      "name": "Google Sheets4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1780036567,
+          "mode": "list",
+          "cachedResultName": "TEAC",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1780036567"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        672
+      ],
+      "id": "adfa7a5c-6068-4037-9369-bfdc994634f3",
+      "name": "Google Sheets5",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pediatria",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        832
+      ],
+      "id": "b7dde7fd-7b06-42fb-aec7-e452d311ae1b",
+      "name": "Google Sheets6",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1063296869,
+          "mode": "list",
+          "cachedResultName": "QI MENTAL 2025",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1063296869"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        992
+      ],
+      "id": "d3c433a5-dad6-4ba0-b854-990c2f4a051d",
+      "name": "Google Sheets7",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1627127392,
+          "mode": "list",
+          "cachedResultName": "PA SYA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1627127392"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        1152
+      ],
+      "id": "bf4a88b7-5c48-4b52-a3a8-2d10dcbee5ab",
+      "name": "Google Sheets8",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 697405814,
+          "mode": "list",
+          "cachedResultName": "Estética",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=697405814"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        1328
+      ],
+      "id": "3e85333f-c2a1-4958-97ed-edf0a06442e2",
+      "name": "Google Sheets9",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1951270178,
+          "mode": "list",
+          "cachedResultName": "Fitoterapia",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1951270178"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        1488
+      ],
+      "id": "d2b194ac-1f05-49eb-a82d-4753fb2e92e6",
+      "name": "Google Sheets10",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 865975642,
+          "mode": "list",
+          "cachedResultName": "Capacitação",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=865975642"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        1648
+      ],
+      "id": "387ec517-e635-4062-92c1-3612a228ec8a",
+      "name": "Google Sheets11",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 486789143,
+          "mode": "list",
+          "cachedResultName": "Eletroacupuntura ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=486789143"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        1808
+      ],
+      "id": "ba12c936-499d-431c-9202-4b53a70a0949",
+      "name": "Google Sheets12",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 180185991,
+          "mode": "list",
+          "cachedResultName": "Simposio Onco",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=180185991"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        1968
+      ],
+      "id": "84b66c5c-af9a-4e64-9de5-84c19fe8b6a4",
+      "name": "Google Sheets13",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2040189017,
+          "mode": "list",
+          "cachedResultName": "Introdutório ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=2040189017"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        2144
+      ],
+      "id": "a69e0507-8115-4022-8a00-379f23b24518",
+      "name": "Google Sheets14",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1843922887,
+          "mode": "list",
+          "cachedResultName": "COMO EU TRATO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1843922887"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        944,
+        2320
+      ],
+      "id": "5fdb6f06-174e-4e4b-9342-95d7043c5e86",
+      "name": "Google Sheets15",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1856,
+        1216
+      ],
+      "id": "50a1c0a9-af0e-45c8-b078-bb7bfd56de1a",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Pipedrive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Pipedrive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pipedrive": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets11",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets12",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets13",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets14",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets4": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets5": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets6": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets7": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets8": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets9": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets10": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets11": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets12": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets13": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets14": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets15": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Pipedrive Trigger": {
+      "webhookId": 2150431
+    },
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    },
+    "node:Pipedrive Trigger1": {}
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Pipedrive Trigger": [
+      {
+        "json": {
+          "data": null,
+          "previous": {
+            "add_time": "2025-12-15T12:29:22Z",
+            "channel": null,
+            "channel_id": null,
+            "close_time": null,
+            "creator_user_id": 3559832,
+            "currency": "BRL",
+            "custom_fields": {
+              "31ae0f90cc1b3ee3da765f9c9decf2321022a7cf": null
+            },
+            "expected_close_date": null,
+            "first_won_time": null,
+            "id": 66139,
+            "label_ids": [],
+            "lost_reason": null,
+            "lost_time": null,
+            "org_id": null,
+            "origin": "API",
+            "origin_id": null,
+            "owner_id": 3559832,
+            "person_id": 73914,
+            "pipeline_id": 196,
+            "probability": null,
+            "stage_change_time": null,
+            "stage_id": 1496,
+            "status": "open",
+            "title": "INTERESSE ESPECIALIZAÇÃO 2026 - Letícia Piazzetta",
+            "update_time": "2025-12-15T12:29:22Z",
+            "value": 0,
+            "visible_to": "3",
+            "won_time": null,
+            "is_archived": false,
+            "archive_time": null
+          },
+          "meta": {
+            "action": "delete",
+            "company_id": "2396659",
+            "correlation_id": "bc941b63-d3f1-49f2-8ec3-9814e47a16cf",
+            "entity_id": "66139",
+            "entity": "deal",
+            "id": "8a1f3d5c-e990-4a21-a2e3-5758d69735cc",
+            "is_bulk_edit": false,
+            "timestamp": "2025-12-16T16:13:36.745Z",
+            "type": "general",
+            "user_id": "3559832",
+            "version": "2.0",
+            "webhook_id": "2115250",
+            "webhook_owner_id": "3559832",
+            "change_source": "app",
+            "permitted_user_ids": [
+              "3559832",
+              "3559867"
+            ],
+            "attempt": 1,
+            "host": "center-ao.pipedrive.com"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "e1342bc6-932a-47be-abab-b9abd51e9e3d",
+  "activeVersionId": "e1342bc6-932a-47be-abab-b9abd51e9e3d",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-07-29T14:18:46.499Z",
+      "createdAt": "2025-07-29T14:18:46.499Z",
+      "role": "workflow:owner",
+      "workflowId": "brjePGniRxpG5Pze",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-16T16:22:17.819Z",
+    "createdAt": "2025-12-16T16:22:17.819Z",
+    "versionId": "e1342bc6-932a-47be-abab-b9abd51e9e3d",
+    "workflowId": "brjePGniRxpG5Pze",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.pipedriveTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -288,
+          1376
+        ],
+        "id": "d6313058-b2d7-4c34-8173-4f022a1f39fb",
+        "name": "Pipedrive Trigger",
+        "webhookId": "365f16d3-410c-4302-89dc-0a1fdff21372",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Pega o telefone da entrada e transforma em string\nconst rawPhone = String( $input.first().json.phone[0].value|| '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          96,
+          1376
+        ],
+        "id": "f031ae54-73bb-430e-b6e4-2ea7a303acb7",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+                "name": "Data",
+                "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+                "type": "string"
+              },
+              {
+                "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+                "name": "Nome",
+                "value": "={{ $('Pipedrive').item.json.name }}",
+                "type": "string"
+              },
+              {
+                "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+                "name": "Telefone",
+                "value": "={{ $json.telefoneFormatado }}",
+                "type": "string"
+              },
+              {
+                "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+                "name": "Email",
+                "value": "={{ $('Pipedrive').item.json.email[0].value }}",
+                "type": "string"
+              },
+              {
+                "id": "3f0c133f-ff82-4cef-9951-4db0b6ac9391",
+                "name": "CRM",
+                "value": "={{ $('Pipedrive').item.json['487088fb302d80a85669079afe41a91a21fd45ff'] }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          256,
+          1376
+        ],
+        "id": "652d3557-f214-4d41-b4b9-ff3d52bf115f",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "resource": "person",
+          "operation": "get",
+          "personId": "={{ $json.previous.person_id }}"
+        },
+        "type": "n8n-nodes-base.pipedrive",
+        "typeVersion": 1,
+        "position": [
+          -80,
+          1376
+        ],
+        "id": "e4c2cf3b-f821-430f-a1c8-2058f1fb5d56",
+        "name": "Pipedrive",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 63700338,
+            "mode": "list",
+            "cachedResultName": "Pós Graduação/ESPECIALIZAÇÃO",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=63700338"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          -144
+        ],
+        "id": "0e884fcc-46a5-4f2b-bb66-39b80992b0e3",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 183,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      },
+                      "id": "21e4d18f-2f36-422c-b71d-b47261882c3d"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "ESPECIALIZAÇÃO 2025"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "d6bc2a60-a7aa-40e6-81b4-10e132b02f01",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 196,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "ESPECIALIZAÇÃO 2026"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "30c3c822-0097-4ea5-919a-b4cd6463fcb0",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 209,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PA SYA"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "1c2b83ee-4b79-4463-8b61-f099c64b0e5b",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 197,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PA SYA"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "d26859a8-aacf-4d38-a3c1-0166cbbaba82",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 195,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "TEAC 2025"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "8d1171a4-dd9b-4d33-a036-3a050a4be4e4",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 206,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "TEAC 2026"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "452c1434-458a-4567-93c1-393c4f4e4959",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 200,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PEDIATRA 2025"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "f1a34efe-f864-4feb-bbf4-4e55e500fd25",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 202,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "QI MENTAL 2025"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "125812d1-a8b4-4640-b08a-94e7203124f5",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 208,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "SYA 2025"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "1bd56c4b-34fc-47fb-9ef6-6bad087d8d13",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 203,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "ESTETICA 2025"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "37a253f7-75b5-4a79-acdb-049198edf697",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 201,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Fitoterapia 2025"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "3a708415-d69b-4a65-a578-d21e296c2f01",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 140,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Capacitação 2025"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "2ee98b88-ee26-4c21-8924-2ade8643fc5e",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 137,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Eletroacupuntura 2025"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "84fd74d9-46af-4eae-b6d1-1982c95c3d25",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 205,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Simposio Onco 2025"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "59664fde-7b54-48a2-9596-3283c64f0c74",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 117,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Introdutório"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "bbd6853c-3153-455b-a9c8-056cdfd9f5d9",
+                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "rightValue": 178,
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Como eu Trato"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          496,
+          1152
+        ],
+        "id": "81e09a6b-22f3-40f6-a0de-4225c29db9f7",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1627127392,
+            "mode": "list",
+            "cachedResultName": "PA SYA",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1627127392"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          192
+        ],
+        "id": "ffe98535-ce2d-46cc-9e58-ba91aca07004",
+        "name": "Google Sheets2",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1627127392,
+            "mode": "list",
+            "cachedResultName": "PA SYA",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1627127392"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          352
+        ],
+        "id": "d16c1bfd-4e15-43da-bf83-2d22440c1ac9",
+        "name": "Google Sheets3",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1780036567,
+            "mode": "list",
+            "cachedResultName": "TEAC",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1780036567"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          512
+        ],
+        "id": "990aa3eb-586f-48d0-834e-b629b8398037",
+        "name": "Google Sheets4",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1780036567,
+            "mode": "list",
+            "cachedResultName": "TEAC",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1780036567"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          672
+        ],
+        "id": "adfa7a5c-6068-4037-9369-bfdc994634f3",
+        "name": "Google Sheets5",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Pediatria",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          832
+        ],
+        "id": "b7dde7fd-7b06-42fb-aec7-e452d311ae1b",
+        "name": "Google Sheets6",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1063296869,
+            "mode": "list",
+            "cachedResultName": "QI MENTAL 2025",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1063296869"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          992
+        ],
+        "id": "d3c433a5-dad6-4ba0-b854-990c2f4a051d",
+        "name": "Google Sheets7",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1627127392,
+            "mode": "list",
+            "cachedResultName": "PA SYA",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1627127392"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          1152
+        ],
+        "id": "bf4a88b7-5c48-4b52-a3a8-2d10dcbee5ab",
+        "name": "Google Sheets8",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 697405814,
+            "mode": "list",
+            "cachedResultName": "Estética",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=697405814"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          1328
+        ],
+        "id": "3e85333f-c2a1-4958-97ed-edf0a06442e2",
+        "name": "Google Sheets9",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1951270178,
+            "mode": "list",
+            "cachedResultName": "Fitoterapia",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1951270178"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          1488
+        ],
+        "id": "d2b194ac-1f05-49eb-a82d-4753fb2e92e6",
+        "name": "Google Sheets10",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 865975642,
+            "mode": "list",
+            "cachedResultName": "Capacitação",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=865975642"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          1648
+        ],
+        "id": "387ec517-e635-4062-92c1-3612a228ec8a",
+        "name": "Google Sheets11",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 486789143,
+            "mode": "list",
+            "cachedResultName": "Eletroacupuntura ",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=486789143"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          1808
+        ],
+        "id": "ba12c936-499d-431c-9202-4b53a70a0949",
+        "name": "Google Sheets12",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 180185991,
+            "mode": "list",
+            "cachedResultName": "Simposio Onco",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=180185991"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          1968
+        ],
+        "id": "84b66c5c-af9a-4e64-9de5-84c19fe8b6a4",
+        "name": "Google Sheets13",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 2040189017,
+            "mode": "list",
+            "cachedResultName": "Introdutório ",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=2040189017"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          2144
+        ],
+        "id": "a69e0507-8115-4022-8a00-379f23b24518",
+        "name": "Google Sheets14",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1843922887,
+            "mode": "list",
+            "cachedResultName": "COMO EU TRATO",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1843922887"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          944,
+          2320
+        ],
+        "id": "5fdb6f06-174e-4e4b-9342-95d7043c5e86",
+        "name": "Google Sheets15",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1856,
+          1216
+        ],
+        "id": "50a1c0a9-af0e-45c8-b078-bb7bfd56de1a",
+        "name": "No Operation, do nothing"
+      }
+    ],
+    "connections": {
+      "Pipedrive Trigger": {
+        "main": [
+          [
+            {
+              "node": "Pipedrive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pipedrive": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [],
+          [
+            {
+              "node": "Google Sheets2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets4",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets5",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets6",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets7",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets8",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets9",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets10",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets11",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets12",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets13",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets14",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Google Sheets15",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets2": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets3": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets4": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets5": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets6": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets7": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets8": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets9": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets10": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets11": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets12": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets13": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets14": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets15": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
