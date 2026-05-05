@@ -1,0 +1,607 @@
+{
+  "updatedAt": "2026-03-24T11:51:46.242Z",
+  "createdAt": "2025-09-24T12:52:31.888Z",
+  "id": "kwy4Fs9C0pFbTgFy",
+  "name": "[Ana Camargo] [IMER1025] Compradores Venda de Ingressos Sheets",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ana-imer1025-cli",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "730b866a-fbbf-4cd2-9942-65023c3f90c2",
+      "name": "Webhook",
+      "webhookId": "53149227-603f-482b-b31b-8d5e64ba84af"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const data = item.json.body.data;\n\n  // --- TELEFONE ---\n  const rawPhone = data.buyer?.checkout_phone || \"\";\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove DDI duplicado se necessário\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adiciona 9 se DDD < 30 e número com 8 dígitos\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remove 9 se DDD >= 30 e número com 10 dígitos começando com 9\n  if (parseInt(ddd) >= 30 && numero.length === 10 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  // --- NOME DO PRODUTO ---\n  const nomeProduto = data?.product?.name || \"\";\n  const nomeOrderBump = data?.purchase?.order_bump?.name || \"\";\n  const nomeFinal = \n    nomeProduto === \"O Código da Loja Infantil Vendedora\" ||\n    nomeOrderBump === \"O Código da Loja Infantil Vendedora\"\n      ? \"O Código da Loja Infantil Vendedora\"\n      : \"\";\n\n  return {\n    json: {\n      phone: telefoneFormatado,\n      produto: nomeFinal\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f163657b-65fe-45a1-a85d-36234ef97e4e",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50e85938-5f93-4e68-8023-d1e348cc59ea",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.name }}",
+              "type": "string"
+            },
+            {
+              "id": "683fdbc9-ad30-4919-8081-053bc1487df3",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.email }}",
+              "type": "string"
+            },
+            {
+              "id": "f8a97570-39fd-4e8f-9c40-53bc95ae9310",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "883f841d-62bc-4540-9c05-3a17bee936a0",
+              "name": "Data Lead",
+              "value": "={{    new Date().getDate().toString().padStart(2, '0') + '/' +   (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +   new Date().getFullYear() + ' ' +   new Date().getHours().toString().padStart(2, '0') + ':' +   new Date().getMinutes().toString().padStart(2, '0') }}",
+              "type": "string"
+            },
+            {
+              "id": "762b30c0-3941-4040-b834-1dce27c0759e",
+              "name": "sck",
+              "value": "={{ $('Webhook').item.json.body.data.purchase.origin.sck }}",
+              "type": "string"
+            },
+            {
+              "id": "83a31337-0334-47e5-8a1a-d6a4550058d2",
+              "name": "lote",
+              "value": "={{ $('Webhook').item.json.body.data.purchase.offer.code }}",
+              "type": "string"
+            },
+            {
+              "id": "d778c164-cc69-42b7-8d35-33aa9db570b4",
+              "name": "Valor",
+              "value": "={{ Number($('Webhook').item.json.body.data.purchase.price.value).toFixed(2).replace('.', ',') }}",
+              "type": "string"
+            },
+            {
+              "id": "c8bff989-27a9-46c7-8bba-8c29d7b0b7b7",
+              "name": "cpf",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.document }}",
+              "type": "string"
+            },
+            {
+              "id": "265a3601-f975-4ef1-b1d2-d07275dc145e",
+              "name": "ebook",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "415c5a1b-351f-4491-95ea-a96d71231d5e",
+              "name": "gravação",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "c319eb59-013a-4609-9959-f5cbe416f4ff",
+              "name": "sala vip",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "1ba59679-2e27-4db4-aa81-945327e310a0",
+              "name": "combo",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "49bf2a1e-700b-41e2-ae36-a7771bbc742f",
+              "name": "Forma de pagamento",
+              "value": "={{ $('Webhook').item.json.body.data.purchase.payment.type }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -16
+      ],
+      "id": "4d84414a-c98c-405b-a595-103fe59d9ba1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        -16
+      ],
+      "id": "95e5fd0b-5cd7-4833-affc-79ec970de0b5",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1PfD0KFUXvlL1TxuU4Z6BMWPxL03GWeofbalBM6Gdkck/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "vendas de ingressos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PfD0KFUXvlL1TxuU4Z6BMWPxL03GWeofbalBM6Gdkck/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data de Venda": "={{ $json['Data Lead'] }}",
+            "forma de pagamento": "={{ $json['Forma de pagamento'] }}",
+            "Status": "Aprovado",
+            "valor pago do ingresso": "={{ $json.Valor }}",
+            "Documento": "={{ $json.cpf }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "lote": "={{ $json.lote }}",
+            "SCK HOTMART": "={{ $json.sck }}",
+            "E-book": "={{ $json.ebook }}",
+            "gravação": "={{ $json['gravação'] }}",
+            "sala vip": "={{ $json['sala vip'] }}",
+            "combo": "={{ $json.combo }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "n° de alunas",
+              "displayName": "n° de alunas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Data de Venda",
+              "displayName": "Data de Venda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "forma de pagamento",
+              "displayName": "forma de pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "valor pago do ingresso",
+              "displayName": "valor pago do ingresso",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Documento",
+              "displayName": "Documento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TAGS",
+              "displayName": "TAGS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "lote",
+              "displayName": "lote",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SCK HOTMART",
+              "displayName": "SCK HOTMART",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "E-book",
+              "displayName": "E-book",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "gravação",
+              "displayName": "gravação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sala vip",
+              "displayName": "sala vip",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "combo",
+              "displayName": "combo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        832,
+        -16
+      ],
+      "id": "2e842fa7-d265-4937-b2fe-867cbffa0ae8",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c26ac146-b688-495c-9a8e-5a838d2f67d4",
+              "leftValue": "={{ $json.produto }}",
+              "rightValue": "O Código da Loja Infantil Vendedora",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        0
+      ],
+      "id": "8fc50882-22cc-4f18-9c6c-d966710eacb7",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Jodd HTTP",
+            "content-length": "2031",
+            "content-type": "application/json",
+            "x-forwarded-for": "44.200.68.221",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-hotmart-hottok": "9AReypNTcGMr9aPCPGSI80hQDonoKF1908707",
+            "x-real-ip": "44.200.68.221",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "data": {
+              "product": {
+                "support_email": "",
+                "has_co_production": false,
+                "name": "O Código da Loja Infantil Vendedora",
+                "warranty_date": "2025-10-06T00:00:00Z",
+                "is_physical_product": false,
+                "id": 6294340,
+                "ucode": "f5d8edb1-3491-46ea-a175-09c405427aed"
+              },
+              "commissions": [
+                {
+                  "currency_value": "BRL",
+                  "source": "MARKETPLACE",
+                  "value": 4.15
+                },
+                {
+                  "currency_value": "BRL",
+                  "source": "PRODUCER",
+                  "value": 35.75
+                }
+              ],
+              "purchase": {
+                "original_offer_price": {
+                  "currency_value": "BRL",
+                  "value": 39.9
+                },
+                "subscription_anticipation_purchase": false,
+                "checkout_country": {
+                  "iso": "BR",
+                  "name": "Brasil"
+                },
+                "origin": {
+                  "sck": "storieslu"
+                },
+                "order_bump": {
+                  "is_order_bump": false
+                },
+                "approved_date": 1759146266000,
+                "offer": {
+                  "code": "nkfx5ioa"
+                },
+                "is_funnel": false,
+                "order_date": 1759146197000,
+                "price": {
+                  "currency_value": "BRL",
+                  "value": 39.9
+                },
+                "payment": {
+                  "pix_qrcode": "https://live-us.adyen.com/hpp/generateQRCodeImage.shtml?url=00020101021226900014br.gov.bcb.pix2568pix.adyen.com%2Fpixqrcodelocation%2Fpixloc%2Fv1%2Floc%2FWkejqeWrS76kSCXJvqIA6g5204000053039865802BR5924LAUNCH+PAD+TECNOLOGIA+SE6009SAO+PAULO62070503***6304EFFF",
+                  "pix_expiration_date": 1759318997000,
+                  "installments_number": 1,
+                  "type": "PIX",
+                  "pix_code": "00020101021226900014br.gov.bcb.pix2568pix.adyen.com/pixqrcodelocation/pixloc/v1/loc/WkejqeWrS76kSCXJvqIA6g5204000053039865802BR5924LAUNCH PAD TECNOLOGIA SE6009SAO PAULO62070503***6304EFFF"
+                },
+                "full_price": {
+                  "currency_value": "BRL",
+                  "value": 39.9
+                },
+                "business_model": "I",
+                "invoice_by": "HOTMART",
+                "transaction": "HP0432032486",
+                "status": "APPROVED"
+              },
+              "affiliates": [
+                {
+                  "affiliate_code": "",
+                  "name": ""
+                }
+              ],
+              "producer": {
+                "legal_nature": "Pessoa Jurídica",
+                "document": "43704696000140",
+                "name": "Mvl digital ltda"
+              },
+              "buyer": {
+                "checkout_phone_code": "94",
+                "address": {
+                  "zipcode": "68356467",
+                  "country": "Brasil",
+                  "country_iso": "BR"
+                },
+                "document": "82561443604",
+                "name": "Rejaine Ramos Honório Mantoani ",
+                "last_name": "Mantoani",
+                "checkout_phone": "94992695495",
+                "first_name": "Rejaine",
+                "email": "mantoanih@gmail.com",
+                "document_type": "CPF"
+              }
+            },
+            "id": "69df89ad-3a31-4189-86e1-57122ca5490a",
+            "creation_date": 1759146276813,
+            "event": "PURCHASE_APPROVED",
+            "version": "2.0.0"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-imer1025-cli",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "82ddbec0-25d1-45d9-88f3-89ac0d102572",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-09-24T12:52:31.888Z",
+      "createdAt": "2025-09-24T12:52:31.888Z",
+      "role": "workflow:owner",
+      "workflowId": "kwy4Fs9C0pFbTgFy",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
