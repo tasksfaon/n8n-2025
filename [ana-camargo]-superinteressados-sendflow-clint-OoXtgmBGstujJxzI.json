@@ -1,0 +1,197 @@
+{
+  "updatedAt": "2026-03-24T11:51:30.378Z",
+  "createdAt": "2025-03-19T13:15:51.956Z",
+  "id": "OoXtgmBGstujJxzI",
+  "name": "[Ana Camargo] Superinteressados Sendflow Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ana-si",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "39f8a60f-e4d4-4947-a6d4-28d1076e1b0e",
+      "name": "Webhook",
+      "webhookId": "a4584c66-e355-46e9-bc11-f06f77a2579a"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "49c23a1d-9b6f-4904-a508-ac5f967563a4",
+              "name": "Telefone",
+              "value": "={{ $json.body.data.number }}",
+              "type": "string"
+            },
+            {
+              "id": "ca0748d7-fbab-4cd4-9f9f-c91b899b40bd",
+              "name": "Data",
+              "value": "={{ new Date().toLocaleDateString(\"pt-BR\") }}",
+              "type": "string"
+            },
+            {
+              "id": "5608e2d9-e928-42fb-8cd1-ffc75413a933",
+              "name": "Camapanha",
+              "value": "={{ $json.body.data.campaignName }}",
+              "type": "string"
+            },
+            {
+              "id": "2d997054-e482-4ad6-9ad8-d607cdb95b55",
+              "name": "Grupo",
+              "value": "={{ $json.body.data.groupName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "79c9e081-8910-45ab-8e51-e49064a1c7b6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/47d7d9c4-e089-4c91-959c-7e39495fa1f6",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "fa1ba512-0747-4514-be81-1bf8d58955c3",
+      "name": "HTTP Clint"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        660,
+        0
+      ],
+      "id": "f0bcf739-4073-449a-b4be-44d8dad7e6e0",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.7.7",
+            "content-length": "286",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "sendtok": "A5CD083B47DEAD4963883E09D441F5B050B3F356CF",
+            "x-forwarded-for": "168.138.146.104",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "168.138.146.104"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "o1VdG6T8gll0bbLM2Q0t",
+            "event": "group.updated.members.added",
+            "data": {
+              "campaignName": "Mar25 - Super interessados",
+              "groupName": "Pré matrículas Lojista 4 em 1 #1",
+              "campaignId": "k6h4pWKOsBJ1SbDXxroB",
+              "number": "553184617540",
+              "createdAt": "2025-03-19T13:17:56.780Z"
+            },
+            "version": "1.0.0"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-si",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "7ed09d57-8c0b-4537-b23e-2990073dc1d1",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-19T13:15:51.956Z",
+      "createdAt": "2025-03-19T13:15:51.956Z",
+      "role": "workflow:owner",
+      "workflowId": "OoXtgmBGstujJxzI",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
