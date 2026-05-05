@@ -1,0 +1,804 @@
+{
+  "updatedAt": "2026-03-24T11:49:55.700Z",
+  "createdAt": "2025-03-14T17:41:53.511Z",
+  "id": "j3FgFPf9jgqJ88g7",
+  "name": "[Fred] Perda Clint-botconversa",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fred-perda",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        48
+      ],
+      "id": "dcb6a974-3dcf-4883-95c2-694055469c8f",
+      "name": "Webhook",
+      "webhookId": "630d717e-7e0e-4ea7-b3c6-4d19a299e999"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cffffa45-9cb7-436d-b02b-104741e74ca4",
+              "name": "Nome",
+              "value": "={{ $json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "0fcf7389-3181-4991-ab4a-8174aa91a476",
+              "name": "Email",
+              "value": "={{ $json.body.deal_user }}",
+              "type": "string"
+            },
+            {
+              "id": "47c483ac-6dca-46d8-94d8-4dd783fd2150",
+              "name": "Telefone",
+              "value": "={{ $json.body.contact_phone }}",
+              "type": "string"
+            },
+            {
+              "id": "a6966c5f-55c6-4e1d-9bc0-79ff53da9610",
+              "name": "Motivo Perda",
+              "value": "={{ $json.body.deal_lost_status }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        48
+      ],
+      "id": "f6940bf1-6925-4426-8632-af5bb4711d7c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Motivo Perda'] }}",
+                    "rightValue": "Comprar depois",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2bdbbed8-6783-4c9a-9566-0f4a1b4fb766"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0f3f2898-8d32-492d-95ed-40f198963e6a",
+                    "leftValue": "={{ $json['Motivo Perda'] }}",
+                    "rightValue": "Múltiplas tentativas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9a2fb165-04e5-4512-98d2-16e6da88b740",
+                    "leftValue": "={{ $json['Motivo Perda'] }}",
+                    "rightValue": "Não respondeu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "13b739c3-6259-43aa-a626-d1704fb7f3eb",
+                    "leftValue": "={{ $json['Motivo Perda'] }}",
+                    "rightValue": "Sem dinheiro",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5cca631b-3bd9-4ba7-ae7d-c8f08cd0bf5c",
+                    "leftValue": "={{ $json['Motivo Perda'] }}",
+                    "rightValue": "Sem interesse",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "10d6217e-24c0-4d70-842e-472523828e07",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/42ec7841-667a-47a6-97f3-17f6bc277a1d",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Motivo Perda",
+              "value": "={{ $json['Motivo Perda'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        -320
+      ],
+      "id": "822b2b5b-d29d-492c-ac7a-9378b40b37ee",
+      "name": "HTTP Clint Comprar depois"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/ef6c648f-3668-4bf3-82fd-623c4234f77c",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Motivo Perda",
+              "value": "={{ $json['Motivo Perda'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        -144
+      ],
+      "id": "b7016d23-9a89-45c0-8eec-3f93da240e5f",
+      "name": "HTTP Clint Múltiplas tentativas"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/66e3c477-39d0-4e77-9fea-3cbe3f01d6fd",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Motivo Perda",
+              "value": "={{ $json['Motivo Perda'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        48
+      ],
+      "id": "7a59107e-8c2f-48ec-928b-13fab65f655c",
+      "name": "HTTP Clint Não respondeu"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/422f159c-cc60-4678-a161-b823c733b94b",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Motivo Perda",
+              "value": "={{ $json['Motivo Perda'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        272
+      ],
+      "id": "c8273380-2325-42a7-9c89-6a34e33f3a8b",
+      "name": "HTTP Clint Sem dinheiro"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/4bf33567-6b89-4bd8-b31f-8bdcc2836a56",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Motivo Perda",
+              "value": "={{ $json['Motivo Perda'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        464
+      ],
+      "id": "ce652e68-799b-4fe3-aa85-74b3c2d5362c",
+      "name": "HTTP Clint Sem interesse"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/154398/gR1PxR4GXsOs/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('Switch').item.json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('Switch').item.json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('Switch').item.json.Telefone }}"
+            },
+            {
+              "name": "Motivo Perda",
+              "value": "={{ $('Switch').item.json['Motivo Perda'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        -320
+      ],
+      "id": "28d4d448-779a-4bd8-b0ff-94dad61c37a2",
+      "name": "HTTP Botconversa Comprar"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/154398/gR1PxR4GXsOs/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('Switch').item.json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('Switch').item.json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('Switch').item.json.Telefone }}"
+            },
+            {
+              "name": "Motivo Perda",
+              "value": "={{ $('Switch').item.json['Motivo Perda'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        -144
+      ],
+      "id": "29fb8e19-b976-4bb0-a5a5-782e5689849f",
+      "name": "HTTP Botconversa Tentativas"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/154398/gR1PxR4GXsOs/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('Switch').item.json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('Switch').item.json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('Switch').item.json.Telefone }}"
+            },
+            {
+              "name": "Motivo Perda",
+              "value": "={{ $('Switch').item.json['Motivo Perda'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        48
+      ],
+      "id": "34f62ff6-a735-49fe-a2f0-8c44bf21fe86",
+      "name": "HTTP Botconversa N Respondeu"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/154398/gR1PxR4GXsOs/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('Switch').item.json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('Switch').item.json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('Switch').item.json.Telefone }}"
+            },
+            {
+              "name": "Motivo Perda",
+              "value": "={{ $('Switch').item.json['Motivo Perda'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        272
+      ],
+      "id": "93414b2a-1d40-48d2-a74b-330e71578d9b",
+      "name": "HTTP Botconversa Sem dinheiro"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/154398/gR1PxR4GXsOs/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('Switch').item.json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('Switch').item.json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('Switch').item.json.Telefone }}"
+            },
+            {
+              "name": "Motivo Perda",
+              "value": "={{ $('Switch').item.json['Motivo Perda'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        464
+      ],
+      "id": "7b8937c0-64aa-4543-89c9-89ae4a12e8f9",
+      "name": "HTTP Botconversa Sem interesse"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        112
+      ],
+      "id": "ded793d5-7afb-4cca-a440-7af1f3aee0c9",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint Comprar depois",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Clint Múltiplas tentativas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Clint Não respondeu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Clint Sem dinheiro",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Clint Sem interesse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Comprar depois": {
+      "main": [
+        [
+          {
+            "node": "HTTP Botconversa Comprar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Múltiplas tentativas": {
+      "main": [
+        [
+          {
+            "node": "HTTP Botconversa Tentativas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Não respondeu": {
+      "main": [
+        [
+          {
+            "node": "HTTP Botconversa N Respondeu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Sem dinheiro": {
+      "main": [
+        [
+          {
+            "node": "HTTP Botconversa Sem dinheiro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Sem interesse": {
+      "main": [
+        [
+          {
+            "node": "HTTP Botconversa Sem interesse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa Comprar": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa Tentativas": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa N Respondeu": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa Sem dinheiro": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa Sem interesse": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.7.9",
+            "content-length": "242",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "traceparent": "00-67d46afb00000000315f6d2da1eb8c3b-5782c77320c0f144-00",
+            "tracestate": "dd=t.tid:67d46afb00000000;t.dm:-3;s:-1;p:5782c77320c0f144",
+            "x-datadog-parent-id": "6305821725556797764",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=67d46afb00000000",
+            "x-datadog-trace-id": "3557682273403505723",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Isabella Teste",
+            "contact_email": "bellasimaia@gmail.com",
+            "contact_phone": "+5531984617540",
+            "deal_stage": "Base",
+            "deal_user": "contato@fredelboni.com.br",
+            "deal_status": "LOST",
+            "deal_lost_status": "Sem interesse"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/fred-perda",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "746a542c-dded-49c7-92b0-0ba3ba768909",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-14T17:41:53.511Z",
+      "createdAt": "2025-03-14T17:41:53.511Z",
+      "role": "workflow:owner",
+      "workflowId": "j3FgFPf9jgqJ88g7",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
