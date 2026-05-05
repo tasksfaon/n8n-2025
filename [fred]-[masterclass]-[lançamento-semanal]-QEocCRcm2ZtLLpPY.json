@@ -1,0 +1,246 @@
+{
+  "updatedAt": "2026-03-24T11:50:00.128Z",
+  "createdAt": "2025-05-29T16:18:24.151Z",
+  "id": "QEocCRcm2ZtLLpPY",
+  "name": "[Fred] [Masterclass] [Lançamento semanal]",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fred-masterclass-semanal",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c2b5ee56-be45-4245-9b69-217858385869",
+      "name": "Webhook",
+      "webhookId": "0cf921d4-3f65-4acc-83e2-776c7392d3cb"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Acessa o telefone do caminho correto\nlet telefoneRaw =  $input.first().json.body['contact[phone]']|| '';\n\n// Remove todos os caracteres que não são dígitos\nlet telefoneLimpo = telefoneRaw.replace(/\\D/g, '');\n\n// Remove código do país duplicado se já estiver presente\nif (telefoneLimpo.length > 11 && telefoneLimpo.startsWith('55')) {\n  telefoneLimpo = telefoneLimpo.slice(2);\n} else if (telefoneLimpo.length > 11) {\n  telefoneLimpo = telefoneLimpo.slice(-11);\n}\n\n// Extrai DDD e número\nconst ddd = telefoneLimpo.slice(0, 2);\nconst numero = telefoneLimpo.slice(2);\n\n// Retorna no formato 55DDDTelefone\nconst telefoneFormatado = `55${ddd}${numero}`;\n\n\n// Retorna o resultado\nreturn [\n  {\n    json: {\n      telefoneFormatado\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "82ddccc3-e8c3-4281-8d92-7fa0e00a2b27",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e56f0c6e-d3d0-4935-9db3-1f804972376a",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body['contact[first_name]'] }} {{ $('Webhook').item.json.body['contact[last_name]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "1318da81-8abe-4409-9a23-b16f41b670ce",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body['contact[email]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b7b7b254-75b0-445e-a21b-527f4530c7ee",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "2665f555-f045-429d-adf7-53819237d388",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "04230b8f-670b-4a54-932b-fa6ca38bc1dc",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/154398/Yw9JKaCpqY4N/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Emai",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "e0d24201-1441-4f08-b829-eb72714feb3a",
+      "name": "HTTP Botconversa"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Botconversa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "GuzzleHttp/6.5.5 curl/8.3.0 PHP/8.1.31",
+            "content-length": "1649",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "23.22.14.42",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "23.22.14.42",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact[id]": "36833",
+            "contact[email]": "isa_simaia@hotmail.com",
+            "contact[first_name]": "Isabella",
+            "contact[last_name]": "Maia",
+            "contact[phone]": "+5531984617540",
+            "contact[orgname]": "",
+            "contact[customer_acct_name]": "",
+            "contact[tags]": "[Masterclass] [Lançamento semanal]",
+            "contact[ip4]": "0.0.0.0",
+            "contact[fields][sol_na_escuridao_compra]": "",
+            "contact[fields][gente_sabe_compra]": "",
+            "contact[fields][olhos_nao_veem_compra]": "",
+            "contact[fields][sol_na_escuridao_utm_source]": "",
+            "contact[fields][sol_na_escuridao_utm_content]": "",
+            "contact[fields][sol_na_escuridao_utm_campaign]": "",
+            "contact[fields][sol_na_escuridao_utm_medium]": "",
+            "contact[fields][sol_na_escuridao_utm_term]": "",
+            "contact[fields][gente_sabe_utm_source]": "",
+            "contact[fields][gente_sabe_utm_content]": "",
+            "contact[fields][gente_sabe_utm_campaign]": "",
+            "contact[fields][gente_sabe_utm_medium]": "",
+            "contact[fields][gente_sabe_utm_term]": "",
+            "contact[fields][olhos_nao_veem_utm_source]": "",
+            "contact[fields][olhos_nao_veem_utm_content]": "",
+            "contact[fields][olhos_nao_veem_utm_campaign]": "",
+            "contact[fields][olhos_nao_veem_utm_medium]": "",
+            "contact[fields][olhos_nao_veem_utm_term]": "",
+            "contact[fields][sol_na_escuridao_link_pixboleto]": "",
+            "contact[fields][gente_sabe_link_pixboleto]": "",
+            "contact[fields][olhos_nao_veem_link_pixboleto]": "",
+            "contact[fields][interao]": "",
+            "contact[fields][carta_semanal]": "",
+            "contact[fields][mai25_teatro_sp_data_da_compra]": "",
+            "contact[fields][ddd]": "",
+            "contact[fields][cpf]": "",
+            "contact[fields][jun25_teatro_rj_data_da_compra]": "",
+            "seriesid": "27"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/fred-masterclass-semanal",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "9bac7ada-805e-474c-bbbd-cf89caa99210",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-05-29T16:18:24.151Z",
+      "createdAt": "2025-05-29T16:18:24.151Z",
+      "role": "workflow:owner",
+      "workflowId": "QEocCRcm2ZtLLpPY",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
