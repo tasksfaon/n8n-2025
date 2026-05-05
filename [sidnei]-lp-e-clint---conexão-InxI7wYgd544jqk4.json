@@ -1,0 +1,451 @@
+{
+  "updatedAt": "2026-04-16T19:22:49.426Z",
+  "createdAt": "2025-03-19T14:46:21.102Z",
+  "id": "InxI7wYgd544jqk4",
+  "name": "[Sidnei] Lp e clint - Conexão",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnwi-lp-conexao",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        0
+      ],
+      "id": "6a303661-9db9-44c4-b3c2-07aff81ffe24",
+      "name": "Webhook",
+      "webhookId": "69d160d3-3ec0-4dae-bc13-0d49b1425d42"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1c3e15b2-e0b7-4c75-81c7-d30cfe1e912b",
+              "name": "nome",
+              "value": "={{ $('Webhook').item.json.body.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "50433c3d-7299-4e46-8254-4cb9c34a7eb1",
+              "name": "telefone",
+              "value": "={{ $('Code').item.json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "8897d3a4-9025-447e-a763-9eeebe875b82",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "6991407d-aad5-4db2-a74e-b6efe3948193",
+              "name": "Data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "39f3915c-c574-4718-891f-289c529c45e8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Captura os dados do Webhook\nconst webhookData = $input.first().json.body[\"Tel\"];\nconsole.log(\"Dados completos do Webhook:\", JSON.stringify(webhookData, null, 2));\n\n// Função para formatar o telefone\nfunction formatarTelefone(numeroTelefone) {\n  console.log(\"Número de telefone recebido para formatação:\", numeroTelefone);\n\n  if (!numeroTelefone) {\n    console.log(\"Número de telefone é inválido ou não encontrado.\");\n    return '';\n  }\n\n  let telefoneLimpo = numeroTelefone.replace(/\\D/g, '');\n  console.log(\"Número de telefone limpo:\", telefoneLimpo);\n\n  let codigoPais = '55';\n\n  if (telefoneLimpo.length > 11 && telefoneLimpo.startsWith('55')) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(telefoneLimpo.length - 11);\n  }\n\n  console.log(\"Número de telefone após ajuste do código do país:\", telefoneLimpo);\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  console.log(\"DDD:\", ddd);\n  console.log(\"Número sem DDD:\", numero);\n\n  // Adição do nono dígito\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito\n  if (parseInt(ddd) >= 30 && numero.length === 9 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `${codigoPais} ${ddd} ${numero}`;\n  console.log(\"Número de telefone formatado:\", telefoneFormatado);\n\n  return telefoneFormatado;\n}\n\n// Formatar telefone\nconst telefoneFormatado = formatarTelefone(webhookData);\nconsole.log(\"Resultado final:\", { telefoneFormatado });\n\n// Retornar os dados formatados\nreturn [\n  {\n    json: {\n      telefoneFormatado\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "34930ab8-4ade-46f5-92e4-ab2ca676f053",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{Date ()}}",
+        "format": "custom",
+        "customFormat": "dd/MM/yyyy",
+        "outputFieldName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "1d47fde5-8ace-4e27-bf7f-e7582a8def95",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/bf541f4b-211e-4801-aa2f-ca5aca89d3a5",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "nome",
+              "value": "={{ $json.nome }}"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $json.telefone }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ $json.Email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        840,
+        0
+      ],
+      "id": "dbeef6bd-c269-4cea-97ef-c1059dbaa7ca",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        0
+      ],
+      "id": "1bc35784-4a70-486c-ae83-4a23a19d69cd",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.7.2; https://conexaoquantica.com.br",
+            "content-length": "121",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "177.154.191.146",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "177.154.191.146"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Name": "JOSE ANTONIO MARINHO DE FREITAS",
+            "Email": "jose.marinhof@hotmail.com",
+            "Tel": "11998455767",
+            "form_id": "0c0dc02",
+            "form_name": "New Form"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnwi-lp-conexao",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "56691250-ce28-482c-a367-27e238d49197",
+  "activeVersionId": "56691250-ce28-482c-a367-27e238d49197",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-19T14:46:21.102Z",
+      "createdAt": "2025-03-19T14:46:21.102Z",
+      "role": "workflow:owner",
+      "workflowId": "InxI7wYgd544jqk4",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-16T19:24:13.403Z",
+    "createdAt": "2026-04-16T19:22:49.430Z",
+    "versionId": "56691250-ce28-482c-a367-27e238d49197",
+    "workflowId": "InxI7wYgd544jqk4",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "sidnwi-lp-conexao",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -300,
+          0
+        ],
+        "id": "6a303661-9db9-44c4-b3c2-07aff81ffe24",
+        "name": "Webhook",
+        "webhookId": "69d160d3-3ec0-4dae-bc13-0d49b1425d42"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "1c3e15b2-e0b7-4c75-81c7-d30cfe1e912b",
+                "name": "nome",
+                "value": "={{ $('Webhook').item.json.body.Name }}",
+                "type": "string"
+              },
+              {
+                "id": "50433c3d-7299-4e46-8254-4cb9c34a7eb1",
+                "name": "telefone",
+                "value": "={{ $('Code').item.json.telefoneFormatado }}",
+                "type": "string"
+              },
+              {
+                "id": "8897d3a4-9025-447e-a763-9eeebe875b82",
+                "name": "Email",
+                "value": "={{ $('Webhook').item.json.body.Email }}",
+                "type": "string"
+              },
+              {
+                "id": "6991407d-aad5-4db2-a74e-b6efe3948193",
+                "name": "Data",
+                "value": "={{ $json.data }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          440,
+          0
+        ],
+        "id": "39f3915c-c574-4718-891f-289c529c45e8",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Captura os dados do Webhook\nconst webhookData = $input.first().json.body[\"Tel\"];\nconsole.log(\"Dados completos do Webhook:\", JSON.stringify(webhookData, null, 2));\n\n// Função para formatar o telefone\nfunction formatarTelefone(numeroTelefone) {\n  console.log(\"Número de telefone recebido para formatação:\", numeroTelefone);\n\n  if (!numeroTelefone) {\n    console.log(\"Número de telefone é inválido ou não encontrado.\");\n    return '';\n  }\n\n  let telefoneLimpo = numeroTelefone.replace(/\\D/g, '');\n  console.log(\"Número de telefone limpo:\", telefoneLimpo);\n\n  let codigoPais = '55';\n\n  if (telefoneLimpo.length > 11 && telefoneLimpo.startsWith('55')) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(telefoneLimpo.length - 11);\n  }\n\n  console.log(\"Número de telefone após ajuste do código do país:\", telefoneLimpo);\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  console.log(\"DDD:\", ddd);\n  console.log(\"Número sem DDD:\", numero);\n\n  // Adição do nono dígito\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito\n  if (parseInt(ddd) >= 30 && numero.length === 9 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `${codigoPais} ${ddd} ${numero}`;\n  console.log(\"Número de telefone formatado:\", telefoneFormatado);\n\n  return telefoneFormatado;\n}\n\n// Formatar telefone\nconst telefoneFormatado = formatarTelefone(webhookData);\nconsole.log(\"Resultado final:\", { telefoneFormatado });\n\n// Retornar os dados formatados\nreturn [\n  {\n    json: {\n      telefoneFormatado\n    }\n  }\n];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "34930ab8-4ade-46f5-92e4-ab2ca676f053",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "operation": "formatDate",
+          "date": "={{Date ()}}",
+          "format": "custom",
+          "customFormat": "dd/MM/yyyy",
+          "outputFieldName": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.dateTime",
+        "typeVersion": 2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "1d47fde5-8ace-4e27-bf7f-e7582a8def95",
+        "name": "Date & Time"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/bf541f4b-211e-4801-aa2f-ca5aca89d3a5",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "nome",
+                "value": "={{ $json.nome }}"
+              },
+              {
+                "name": "telefone",
+                "value": "={{ $json.telefone }}"
+              },
+              {
+                "name": "email",
+                "value": "={{ $json.Email }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          840,
+          0
+        ],
+        "id": "dbeef6bd-c269-4cea-97ef-c1059dbaa7ca",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1060,
+          0
+        ],
+        "id": "1bc35784-4a70-486c-ae83-4a23a19d69cd",
+        "name": "No Operation, do nothing"
+      }
+    ],
+    "connections": {
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Date & Time",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Date & Time": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": "Version 56691250",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
