@@ -1,0 +1,990 @@
+{
+  "updatedAt": "2025-04-14T12:54:34.441Z",
+  "createdAt": "2025-04-01T13:31:29.554Z",
+  "id": "Zx7DcBR5xKLS5SYO",
+  "name": "[Lucas Ahmad] Mai_25 Inscrição",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "events": [
+          "list_add",
+          "contact_tag_added"
+        ],
+        "sources": [
+          "public",
+          "admin",
+          "api",
+          "system"
+        ]
+      },
+      "type": "n8n-nodes-base.activeCampaignTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "78a2c924-77ae-4bc3-905f-49b60dd17b14",
+      "name": "ActiveCampaign Trigger",
+      "webhookId": "b1d483bd-5426-482e-bf00-c1186fd07fda",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "fhXCRGjbYZgqwnkr",
+          "name": "ActiveCampaign Lucas Ahmad"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c3a783f4-efe5-4158-94f1-fa8de9ee086e",
+              "leftValue": "={{ $json.tag }}",
+              "rightValue": "[Mai_25]Inscrição",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "80ee4a51-e083-499e-8602-53711227c0c7",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone = item.json?.[\"contact[phone]\"] || \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 9 dígitos começando com 9)\n  if (parseInt(ddd) >= 30 && numero.length === 9 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        -100
+      ],
+      "id": "f2807ed9-b17e-49b0-b291-65982f163138",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e61aab11-d451-4533-b2f6-04e12291eb6d",
+              "name": "Nome",
+              "value": "={{ $('If').item.json['contact[first_name]'] }} {{ $('If').item.json['contact[last_name]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7aee7694-808a-47d4-ae4d-bc43cbe76f8f",
+              "name": "Email",
+              "value": "={{ $('If').item.json['contact[email]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "01aa0ebe-6ddd-463b-b969-3495af7b58b2",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "ed630bec-2fe1-4b0a-836b-67578f790417",
+              "name": "utm source",
+              "value": "={{ $('If').item.json['contact[fields][1]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f054d892-8522-43b4-9f40-f5e5340f69db",
+              "name": "utm campaign",
+              "value": "={{ $('If').item.json['contact[fields][2]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e0135187-343c-456c-8e21-c49513855e4b",
+              "name": "utm medium",
+              "value": "={{ $('If').item.json['contact[fields][3]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "4dacd3dc-60a3-424b-a8a8-ba2c77f46d00",
+              "name": "utm content",
+              "value": "={{ $('If').item.json['contact[fields][4]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "fbc318d6-2298-4183-adf9-8edec82b7d06",
+              "name": "utm term",
+              "value": "={{ $('If').item.json['contact[fields][5]'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        -100
+      ],
+      "id": "b35ead93-4739-4e86-a009-61cbed60c9e5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "18VbprzYVBpomeZbDdB9pZ96ewASlxIT0c90KsGMFKqg",
+          "mode": "list",
+          "cachedResultName": "[Ahmad] [Mai_25]",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18VbprzYVBpomeZbDdB9pZ96ewASlxIT0c90KsGMFKqg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18VbprzYVBpomeZbDdB9pZ96ewASlxIT0c90KsGMFKqg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "Nome": "={{ $json.Nome }}",
+            "Utm Source": "={{ $json['utm source'] }}",
+            "Utm medium": "={{ $json['utm medium'] }}",
+            "Utm Campaign": "={{ $json['utm campaign'] }}",
+            "Utm content ": "={{ $json['utm content'] }}",
+            "Utm term": "={{ $json['utm term'] }}",
+            "Data": "={{ new Date().toLocaleDateString(\"pt-BR\") }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Source",
+              "displayName": "Utm Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm medium",
+              "displayName": "Utm medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Campaign",
+              "displayName": "Utm Campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm content ",
+              "displayName": "Utm content ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm term",
+              "displayName": "Utm term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        880,
+        -100
+      ],
+      "id": "712a2c4c-ec48-44a2-b90d-487ca57385d4",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/144098/ALNRPBnzPDff/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        -100
+      ],
+      "id": "19be3fde-990b-4d9a-b62c-6cbc4912e8d8",
+      "name": "HTTP Bot Conversa"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        0
+      ],
+      "id": "b1441630-3ba8-42ed-b279-981c99a06516",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/4c1aa5bd-d2f2-4eb3-bccf-7cd70c300245",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('Google Sheets').item.json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('Google Sheets').item.json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('Google Sheets').item.json.Telefone }}"
+            },
+            {
+              "name": "Utm Source",
+              "value": "={{ $('Google Sheets').item.json['Utm Source'] }}"
+            },
+            {
+              "name": "Utm Campaign",
+              "value": "={{ $('Google Sheets').item.json['Utm Campaign'] }}"
+            },
+            {
+              "name": "Utm Medium",
+              "value": "={{ $('Google Sheets').item.json['Utm medium'] }}"
+            },
+            {
+              "name": "Utm Content",
+              "value": "={{ $('Google Sheets').item.json['Utm content '] }}"
+            },
+            {
+              "name": "Utm Term",
+              "value": "={{ $('Google Sheets').item.json['Utm term'] }}"
+            },
+            {
+              "name": "=Data",
+              "value": "={{ $('Google Sheets').item.json.Data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        -100
+      ],
+      "id": "663a0769-54f1-449b-a54d-434de8cc6526",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "ActiveCampaign Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "HTTP Bot Conversa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Bot Conversa": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": {
+    "node:ActiveCampaign Trigger": {
+      "webhookId": "20"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "ActiveCampaign Trigger": [
+      {
+        "json": {
+          "type": "contact_tag_added",
+          "date_time": "2025-04-12T05:49:42-05:00",
+          "initiated_from": "api",
+          "initiated_by": "api",
+          "list": "0",
+          "contact[id]": "2882",
+          "contact[email]": "eduardojvme@gmail.com",
+          "contact[first_name]": "Eduardo José Vidigal",
+          "contact[last_name]": "",
+          "contact[phone]": "32984879666",
+          "contact[ip]": "0.0.0.0",
+          "contact[tags]": "[Mai_25]Inscrição",
+          "contact[fields][1]": "meta",
+          "contact[fields][2]": "virada_tributaria",
+          "contact[fields][3]": "trafego_pago",
+          "contact[fields][4]": "Capt_pgfn_prorrogou",
+          "contact[fields][5]": "pub_interno_ig_engaj_30",
+          "tag": "[Mai_25]Inscrição"
+        }
+      }
+    ]
+  },
+  "versionId": "a92e1739-8718-48a0-b825-521100a24f59",
+  "activeVersionId": "a92e1739-8718-48a0-b825-521100a24f59",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-04-01T13:31:29.554Z",
+      "createdAt": "2025-04-01T13:31:29.554Z",
+      "role": "workflow:owner",
+      "workflowId": "Zx7DcBR5xKLS5SYO",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "a92e1739-8718-48a0-b825-521100a24f59",
+    "workflowId": "Zx7DcBR5xKLS5SYO",
+    "nodes": [
+      {
+        "parameters": {
+          "events": [
+            "list_add",
+            "contact_tag_added"
+          ],
+          "sources": [
+            "public",
+            "admin",
+            "api",
+            "system"
+          ]
+        },
+        "type": "n8n-nodes-base.activeCampaignTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "78a2c924-77ae-4bc3-905f-49b60dd17b14",
+        "name": "ActiveCampaign Trigger",
+        "webhookId": "b1d483bd-5426-482e-bf00-c1186fd07fda",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "fhXCRGjbYZgqwnkr",
+            "name": "ActiveCampaign Lucas Ahmad"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c3a783f4-efe5-4158-94f1-fa8de9ee086e",
+                "leftValue": "={{ $json.tag }}",
+                "rightValue": "[Mai_25]Inscrição",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "80ee4a51-e083-499e-8602-53711227c0c7",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone = item.json?.[\"contact[phone]\"] || \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 9 dígitos começando com 9)\n  if (parseInt(ddd) >= 30 && numero.length === 9 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          440,
+          -100
+        ],
+        "id": "f2807ed9-b17e-49b0-b291-65982f163138",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e61aab11-d451-4533-b2f6-04e12291eb6d",
+                "name": "Nome",
+                "value": "={{ $('If').item.json['contact[first_name]'] }} {{ $('If').item.json['contact[last_name]'] }}",
+                "type": "string"
+              },
+              {
+                "id": "7aee7694-808a-47d4-ae4d-bc43cbe76f8f",
+                "name": "Email",
+                "value": "={{ $('If').item.json['contact[email]'] }}",
+                "type": "string"
+              },
+              {
+                "id": "01aa0ebe-6ddd-463b-b969-3495af7b58b2",
+                "name": "Telefone",
+                "value": "={{ $json.phone }}",
+                "type": "string"
+              },
+              {
+                "id": "ed630bec-2fe1-4b0a-836b-67578f790417",
+                "name": "utm source",
+                "value": "={{ $('If').item.json['contact[fields][1]'] }}",
+                "type": "string"
+              },
+              {
+                "id": "f054d892-8522-43b4-9f40-f5e5340f69db",
+                "name": "utm campaign",
+                "value": "={{ $('If').item.json['contact[fields][2]'] }}",
+                "type": "string"
+              },
+              {
+                "id": "e0135187-343c-456c-8e21-c49513855e4b",
+                "name": "utm medium",
+                "value": "={{ $('If').item.json['contact[fields][3]'] }}",
+                "type": "string"
+              },
+              {
+                "id": "4dacd3dc-60a3-424b-a8a8-ba2c77f46d00",
+                "name": "utm content",
+                "value": "={{ $('If').item.json['contact[fields][4]'] }}",
+                "type": "string"
+              },
+              {
+                "id": "fbc318d6-2298-4183-adf9-8edec82b7d06",
+                "name": "utm term",
+                "value": "={{ $('If').item.json['contact[fields][5]'] }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          660,
+          -100
+        ],
+        "id": "b35ead93-4739-4e86-a009-61cbed60c9e5",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "18VbprzYVBpomeZbDdB9pZ96ewASlxIT0c90KsGMFKqg",
+            "mode": "list",
+            "cachedResultName": "[Ahmad] [Mai_25]",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18VbprzYVBpomeZbDdB9pZ96ewASlxIT0c90KsGMFKqg/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Leads",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18VbprzYVBpomeZbDdB9pZ96ewASlxIT0c90KsGMFKqg/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Telefone": "={{ $json.Telefone }}",
+              "Nome": "={{ $json.Nome }}",
+              "Utm Source": "={{ $json['utm source'] }}",
+              "Utm medium": "={{ $json['utm medium'] }}",
+              "Utm Campaign": "={{ $json['utm campaign'] }}",
+              "Utm content ": "={{ $json['utm content'] }}",
+              "Utm term": "={{ $json['utm term'] }}",
+              "Data": "={{ new Date().toLocaleDateString(\"pt-BR\") }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Telefone",
+                "displayName": "Telefone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm Source",
+                "displayName": "Utm Source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm medium",
+                "displayName": "Utm medium",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm Campaign",
+                "displayName": "Utm Campaign",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm content ",
+                "displayName": "Utm content ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm term",
+                "displayName": "Utm term",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          880,
+          -100
+        ],
+        "id": "712a2c4c-ec48-44a2-b90d-487ca57385d4",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/144098/ALNRPBnzPDff/",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "Nome",
+                "value": "={{ $json.Nome }}"
+              },
+              {
+                "name": "Telefone",
+                "value": "={{ $json.Telefone }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1100,
+          -100
+        ],
+        "id": "19be3fde-990b-4d9a-b62c-6cbc4912e8d8",
+        "name": "HTTP Bot Conversa"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1620,
+          0
+        ],
+        "id": "b1441630-3ba8-42ed-b279-981c99a06516",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/4c1aa5bd-d2f2-4eb3-bccf-7cd70c300245",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "Nome",
+                "value": "={{ $('Google Sheets').item.json.Nome }}"
+              },
+              {
+                "name": "Email",
+                "value": "={{ $('Google Sheets').item.json.Email }}"
+              },
+              {
+                "name": "Telefone",
+                "value": "={{ $('Google Sheets').item.json.Telefone }}"
+              },
+              {
+                "name": "Utm Source",
+                "value": "={{ $('Google Sheets').item.json['Utm Source'] }}"
+              },
+              {
+                "name": "Utm Campaign",
+                "value": "={{ $('Google Sheets').item.json['Utm Campaign'] }}"
+              },
+              {
+                "name": "Utm Medium",
+                "value": "={{ $('Google Sheets').item.json['Utm medium'] }}"
+              },
+              {
+                "name": "Utm Content",
+                "value": "={{ $('Google Sheets').item.json['Utm content '] }}"
+              },
+              {
+                "name": "Utm Term",
+                "value": "={{ $('Google Sheets').item.json['Utm term'] }}"
+              },
+              {
+                "name": "=Data",
+                "value": "={{ $('Google Sheets').item.json.Data }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1320,
+          -100
+        ],
+        "id": "663a0769-54f1-449b-a54d-434de8cc6526",
+        "name": "HTTP Request"
+      }
+    ],
+    "connections": {
+      "ActiveCampaign Trigger": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "HTTP Bot Conversa",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Bot Conversa": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
