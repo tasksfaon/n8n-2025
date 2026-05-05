@@ -1,0 +1,411 @@
+{
+  "updatedAt": "2025-05-13T15:02:55.191Z",
+  "createdAt": "2025-03-20T14:06:09.915Z",
+  "id": "MaYvhkyaIFToTiun",
+  "name": "[NCIC]  Nutrologia -  Leads Lista de Espera Active",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ncic-np-espera-pi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c7cefe64-ebe3-430e-a015-ceb5fd77453d",
+      "name": "Webhook",
+      "webhookId": "8828df93-e085-4c2f-aae2-19ee66d72f43"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém os dados do nó webhook\nconst items = $input.all();\n\nreturn items.map(item => {\n    let phone = item.json.body?.[\"contact[phone]\"] || \"\";\n\n    // Verifica se já está no formato 55DDDTelefone\n    const regex = /^55\\d{2}\\d{8,9}$/;\n    if (!regex.test(phone)) {\n        // Remove caracteres não numéricos\n        const phoneClean = phone.replace(/\\D/g, \"\");\n\n        // Se tiver 10 ou 11 dígitos (DDD + telefone), adiciona 55\n        if (phoneClean.length === 10 || phoneClean.length === 11) {\n            phone = \"55\" + phoneClean;\n        }\n    }\n\n    // Retorna apenas o telefone formatado\n    return { json: { phone } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "f99dc7d9-ff2e-4683-9a67-ba4c2d657312",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b563c496-5646-4123-ac4a-b33ac2cad2fd",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body['contact[first_name]'] }} {{ $('Webhook').item.json.body['contact[last_name]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "1fc159a0-6a6e-431c-951e-a9f456c4a519",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body['contact[email]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ef593ff3-538a-4f24-8d30-7dba96d9b2cc",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "d86cfce0-4a55-470e-87dc-3d96e73e1b19",
+              "name": "Data de Compra",
+              "value": "={{ new Date().toLocaleDateString(\"pt-BR\") }}",
+              "type": "string"
+            },
+            {
+              "id": "45e92b86-ea97-4228-a2f4-e9477ce8d8f1",
+              "name": "utm source",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "0d2aa346-4f09-4045-a7c3-4fea17ef29f3",
+              "name": "utm campaign",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "02281f70-6efe-444d-8693-90f3bb1c78b5",
+              "name": "utm term",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "d1e31ec4-5705-40ac-ae77-5d5d168e95ed",
+              "name": "utm content",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "f823c2c2-25af-482a-98cb-e372523c4de8",
+              "name": "utm medium",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "1b201748-b23c-48f1-98c7-74594fca6cc4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        0
+      ],
+      "id": "ca740bb8-9245-4fed-9c3f-3cf1ce84ae2b",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "listId": 25,
+        "contactId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        840,
+        0
+      ],
+      "id": "781db188-1311-4de1-9fcf-8ca8498a42e9",
+      "name": "ActiveCampaign",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "z3wh4ORGbKkrDB46",
+          "name": "ActiveCampaign account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "tag",
+        "name": " [NP3]LEAD",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "85fdced6-423d-4a8d-a964-46acdf0882b5",
+      "name": "ActiveCampaign1",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "z3wh4ORGbKkrDB46",
+          "name": "ActiveCampaign account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.Email }}",
+        "updateIfExists": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        660,
+        0
+      ],
+      "id": "2d0eb085-1273-4af5-8ccb-54e3005cc559",
+      "name": "ActiveCampaign2",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "z3wh4ORGbKkrDB46",
+          "name": "ActiveCampaign account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign2": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "GuzzleHttp/6.5.5 curl/8.3.0 PHP/8.1.29",
+            "content-length": "5205",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "52.2.43.221",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.2.43.221",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact[id]": "6940",
+            "contact[email]": "bellasimaia@gmail.com",
+            "contact[first_name]": "Isabella Siqueira",
+            "contact[last_name]": "",
+            "contact[phone]": "31984617540",
+            "contact[orgname]": "",
+            "contact[customer_acct_name]": "",
+            "contact[tags]": "[PI3] LEAD, [LAMINAS] Carrinho Abandonado, [LAMINAS] Cartão Recusado, [CME1] COMPRA APROVADA, [CME1] CARRINHO ABANDONADO, [CME1] CARTÃO RECUSADO, [NC]Nova-Pediatria-workshop, [PI3] Captação Leads",
+            "contact[ip4]": "0.0.0.0",
+            "contact[fields][especializao]": "",
+            "contact[fields][como_ficou_sabendo_do_curso]": "",
+            "contact[fields][gostaramos_de_saber_o_que_voc_espera_aprender_com_esse_curso_nos_conte_de_forma_resumida]": "",
+            "contact[fields][situao]": "",
+            "contact[fields][utmsourcepe2]": "",
+            "contact[fields][utmmediumpe2]": "",
+            "contact[fields][utmcampaignpe2]": "",
+            "contact[fields][utmcontentpe2]": "",
+            "contact[fields][datainscricaopi2]": "",
+            "contact[fields][qrcode]": "",
+            "contact[fields][imgqrcode]": "",
+            "contact[fields][datamatricula]": "",
+            "contact[fields][utmcontentpi2matricula]": "",
+            "contact[fields][utmsourcepi2matricula]": "",
+            "contact[fields][utmmediumpi2matricula]": "",
+            "contact[fields][utmcampaignpi2matricula]": "",
+            "contact[fields][utmcontentsp22024]": "",
+            "contact[fields][utmcampaignsp22024]": "",
+            "contact[fields][utmsourcesp22024]": "manychat-sup",
+            "contact[fields][utmmediumsp22024]": "",
+            "contact[fields][datainscricaosp22024]": "",
+            "contact[fields][boletourl]": "",
+            "contact[fields][boletobarcode]": "",
+            "contact[fields][utmsourcenpi]": "",
+            "contact[fields][utm_mediumnpi]": "",
+            "contact[fields][utm_contentnpi]": "",
+            "contact[fields][utmcampaignnpi]": "",
+            "contact[fields][datainscricaonpi]": "",
+            "contact[fields][utmsourcencicomunidade]": "",
+            "contact[fields][utmmediumncicomunidade]": "",
+            "contact[fields][utmcampaignncicomunidade]": "",
+            "contact[fields][utmcontentncicomunidade]": "",
+            "contact[fields][datacomprancicomunidade]": "",
+            "contact[fields][datarenovaoncicomunidade]": "",
+            "contact[fields][utmcontentpi3]": "",
+            "contact[fields][utmsourcepi3]": "manychat-ped3-obesidade",
+            "contact[fields][utmmediumpi3]": "",
+            "contact[fields][utmcampaignpi3]": "POS PED3",
+            "contact[fields][datainscricaopi3]": "2024-11-26",
+            "contact[fields][utmssourcesup3]": "",
+            "contact[fields][utmsmediumsup3]": "",
+            "contact[fields][utmscampaignsup3]": "",
+            "contact[fields][utmscontentsup3]": "",
+            "contact[fields][utmstermsup3]": "",
+            "contact[fields][utmsource]": "",
+            "contact[fields][utmmedium]": "",
+            "contact[fields][utmcontent]": "",
+            "contact[fields][utmcampaign]": "",
+            "contact[fields][utmterm]": "",
+            "contact[fields][crmcrn]": "",
+            "contact[fields][sup3respondiinstagram]": "",
+            "contact[fields][sup3respondiidade]": "",
+            "contact[fields][sup3respondicidadeestado]": "",
+            "contact[fields][sup3respondigenero]": "",
+            "contact[fields][sup3respondimediconutricionista]": "",
+            "contact[fields][sup3respondiespecialidade]": "",
+            "contact[fields][sup3respondifoco]": "",
+            "contact[fields][sup3responditempoformacao]": "",
+            "contact[fields][sup3respondiatendimento]": "",
+            "contact[fields][sup3respondiatuasup]": "",
+            "contact[fields][sup3responditempoatua]": "",
+            "contact[fields][sup3respondialunonc]": "",
+            "contact[fields][sup3respondialunonccurso]": "",
+            "contact[fields][sup3responditempoconhece]": "",
+            "contact[fields][sup3respondiconheceu]": "",
+            "contact[fields][sup3respondidesafio]": "",
+            "contact[fields][sup3respondimudarcarreira]": "",
+            "contact[fields][sup3respondiexpectativa]": "",
+            "contact[fields][sup3respondirelevantecarreira]": "",
+            "contact[fields][sup3respondisonho]": "",
+            "contact[fields][sup3respondimedo]": "",
+            "contact[fields][sup3respondirenda]": "",
+            "contact[fields][sup3respondiperguntanath]": "",
+            "contact[fields][novaidade]": "Entre 25 e 30 anos",
+            "contact[fields][novacidade]": "Teste",
+            "contact[fields][novapediatra]": "",
+            "contact[fields][novaoutraespecialidade]": "Teste",
+            "contact[fields][novagenero]": "Feminino",
+            "contact[fields][novatempoformado]": "Entre 1 e 3 anos",
+            "contact[fields][novaatendimento]": "Atendo convênio e particular",
+            "contact[fields][novavalorconsulta]": "Teste",
+            "contact[fields][novanpacientes]": "Entre 10 e 20",
+            "contact[fields][novarendamensal]": "Entre R$20.000 e R$30.000",
+            "contact[fields][novamotivoinscricao]": "",
+            "contact[fields][novacomoconheceu]": "Outros",
+            "contact[fields][novaoutroconheceu]": "",
+            "contact[fields][novaaprenderworkshop]": "tESTE",
+            "contact[fields][novaouviufalarpediatria]": "",
+            "contact[fields][novautilizapraticas]": "Não utilizo, mas quero começar",
+            "contact[fields][novareceio]": "",
+            "contact[fields][novadesafioimplementar]": "",
+            "contact[fields][novaduvida]": "TESTE",
+            "contact[fields][novaresultado]": "",
+            "contact[fields][novadesafiopratica]": "",
+            "contact[fields][novamudarcarreira]": "TESTE",
+            "contact[fields][novatempoconhecenath]": "Menos de 6 meses",
+            "contact[fields][novasonho]": "TESTE",
+            "contact[fields][novamedo]": "TESTE",
+            "contact[fields][novadatainscricao]": "2025-01-21",
+            "seriesid": "33"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ncic-sup3-compra-aprovada",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "cb8d3ee6-7d45-4267-806f-cc1ccfef901a",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-20T14:06:09.915Z",
+      "createdAt": "2025-03-20T14:06:09.915Z",
+      "role": "workflow:owner",
+      "workflowId": "MaYvhkyaIFToTiun",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
