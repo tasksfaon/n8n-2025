@@ -1,0 +1,1081 @@
+{
+  "updatedAt": "2026-03-17T17:14:18.754Z",
+  "createdAt": "2025-11-25T16:46:19.126Z",
+  "id": "Pjxn65VFV06I238M",
+  "name": "[Márcia] Lista de Espera 2026 Pipedrive Sheets",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "person",
+        "operation": "getAll",
+        "returnAll": true,
+        "additionalFields": {
+          "filterId": 270
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        144
+      ],
+      "id": "533852cd-0016-4b05-bb8d-32098da164df",
+      "name": "Get many people",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -496,
+        144
+      ],
+      "id": "3e340d08-3cf1-4a9d-9dcb-1d543aa4cdf4",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -96,
+        144
+      ],
+      "id": "ea36754f-a3e7-47ed-87a8-d3fcd9c2a870",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -80
+      ],
+      "id": "930a0718-774b-42d9-a6cd-76ab07f105b8"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1764680190,
+          "mode": "list",
+          "cachedResultName": "Pós Graduação/ESPECIALIZAÇÃO 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1764680190"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Uf",
+              "displayName": "Uf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Profissão",
+              "displayName": "Profissão",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Outro curso de interesse",
+              "displayName": "Outro curso de interesse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        688,
+        144
+      ],
+      "id": "82ee1c28-9095-4efa-bc41-650ce6dedf46",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o telefone da entrada e transforma em string\nconst rawPhone = String( $input.first().json.phone[0].value|| '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        144
+      ],
+      "id": "5534906b-526a-4f97-a192-bd498d51880e",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+              "name": "Data",
+              "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+              "name": "Nome",
+              "value": "={{ $('If').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+              "name": "Email",
+              "value": "={{ $('If').item.json.email[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "3f0c133f-ff82-4cef-9951-4db0b6ac9391",
+              "name": "CRM",
+              "value": "={{ $('If').item.json['487088fb302d80a85669079afe41a91a21fd45ff'] }}",
+              "type": "string"
+            },
+            {
+              "id": "8d3ad391-c382-4a3d-8f65-1eebe28c0452",
+              "name": "Profissão",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "0c406310-507a-44df-a250-3cb4ddcc89c1",
+              "name": "UF",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        144
+      ],
+      "id": "9e76c949-7624-4181-bfd2-1154eb9383d8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4d016c64-0e13-4134-8884-8102f4f25a27",
+              "leftValue": "={{ new Date($json.update_time) >= new Date(new Date().setDate(new Date().getDate() - 1)) }}",
+              "rightValue": "={{ new Date($json.update_time) >= new Date(new Date().setDate(new Date().getDate() - 1)) }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        160
+      ],
+      "id": "8bf8f07c-0480-4e0b-82f7-d17dc682a4e5",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.Email }}",
+        "updateIfExists": true,
+        "additionalFields": {
+          "fieldValues": {
+            "property": [
+              {
+                "field": "3",
+                "value": "={{ $json.Crm }}"
+              }
+            ]
+          },
+          "firstName": "={{ $json.Nome.split(' ')[0] }}",
+          "lastName": "={{ $json.Nome.split(' ').slice(1).join(' ') }}",
+          "phone": "={{ $json['Telefone '] }}"
+        }
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        896,
+        144
+      ],
+      "id": "78255900-e585-4a22-aaf4-17ae37c4da5c",
+      "name": "ActiveCampaign",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactTag",
+        "tagId": "13",
+        "contactId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        144
+      ],
+      "id": "c021826b-c184-4e75-af09-a71610f97993",
+      "name": "ActiveCampaign1",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "listId": 7,
+        "contactId": "={{ $json.contact }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        144
+      ],
+      "id": "0095902f-be62-48af-8e42-e3f5c60ff0d4",
+      "name": "ActiveCampaign2",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Get many people": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many people",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign1": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-03-17T05:00:28.008-04:00",
+          "Readable date": "March 17th 2026, 5:00:28 am",
+          "Readable time": "5:00:28 am",
+          "Day of week": "Tuesday",
+          "Year": "2026",
+          "Month": "March",
+          "Day of month": "17",
+          "Hour": "05",
+          "Minute": "00",
+          "Second": "28",
+          "Timezone": "America/New_York (UTC-04:00)"
+        }
+      }
+    ]
+  },
+  "versionId": "b3d6c7f9-0a95-43fe-a1ef-bfbc87122c2e",
+  "activeVersionId": "b3d6c7f9-0a95-43fe-a1ef-bfbc87122c2e",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-11-25T16:46:19.126Z",
+      "createdAt": "2025-11-25T16:46:19.126Z",
+      "role": "workflow:owner",
+      "workflowId": "Pjxn65VFV06I238M",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-13T21:11:57.343Z",
+    "createdAt": "2026-01-13T21:11:57.343Z",
+    "versionId": "b3d6c7f9-0a95-43fe-a1ef-bfbc87122c2e",
+    "workflowId": "Pjxn65VFV06I238M",
+    "nodes": [
+      {
+        "parameters": {
+          "resource": "person",
+          "operation": "getAll",
+          "returnAll": true,
+          "additionalFields": {
+            "filterId": 270
+          }
+        },
+        "type": "n8n-nodes-base.pipedrive",
+        "typeVersion": 1,
+        "position": [
+          -304,
+          144
+        ],
+        "id": "533852cd-0016-4b05-bb8d-32098da164df",
+        "name": "Get many people",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 5
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -496,
+          144
+        ],
+        "id": "3e340d08-3cf1-4a9d-9dcb-1d543aa4cdf4",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -96,
+          144
+        ],
+        "id": "ea36754f-a3e7-47ed-87a8-d3fcd9c2a870",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me",
+        "typeVersion": 1,
+        "position": [
+          448,
+          -80
+        ],
+        "id": "930a0718-774b-42d9-a6cd-76ab07f105b8"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1764680190,
+            "mode": "list",
+            "cachedResultName": "Pós Graduação/ESPECIALIZAÇÃO 2026",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=1764680190"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Uf",
+                "displayName": "Uf",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Profissão",
+                "displayName": "Profissão",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Outro curso de interesse",
+                "displayName": "Outro curso de interesse",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          688,
+          144
+        ],
+        "id": "82ee1c28-9095-4efa-bc41-650ce6dedf46",
+        "name": "Google Sheets1",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Pega o telefone da entrada e transforma em string\nconst rawPhone = String( $input.first().json.phone[0].value|| '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          336,
+          144
+        ],
+        "id": "5534906b-526a-4f97-a192-bd498d51880e",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+                "name": "Data",
+                "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+                "type": "string"
+              },
+              {
+                "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+                "name": "Nome",
+                "value": "={{ $('If').item.json.name }}",
+                "type": "string"
+              },
+              {
+                "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+                "name": "Telefone",
+                "value": "={{ $json.telefoneFormatado }}",
+                "type": "string"
+              },
+              {
+                "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+                "name": "Email",
+                "value": "={{ $('If').item.json.email[0].value }}",
+                "type": "string"
+              },
+              {
+                "id": "3f0c133f-ff82-4cef-9951-4db0b6ac9391",
+                "name": "CRM",
+                "value": "={{ $('If').item.json['487088fb302d80a85669079afe41a91a21fd45ff'] }}",
+                "type": "string"
+              },
+              {
+                "id": "8d3ad391-c382-4a3d-8f65-1eebe28c0452",
+                "name": "Profissão",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "0c406310-507a-44df-a250-3cb4ddcc89c1",
+                "name": "UF",
+                "value": "",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          528,
+          144
+        ],
+        "id": "9e76c949-7624-4181-bfd2-1154eb9383d8",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "4d016c64-0e13-4134-8884-8102f4f25a27",
+                "leftValue": "={{ new Date($json.update_time) >= new Date(new Date().setDate(new Date().getDate() - 1)) }}",
+                "rightValue": "={{ new Date($json.update_time) >= new Date(new Date().setDate(new Date().getDate() - 1)) }}",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          144,
+          160
+        ],
+        "id": "8bf8f07c-0480-4e0b-82f7-d17dc682a4e5",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "email": "={{ $json.Email }}",
+          "updateIfExists": true,
+          "additionalFields": {
+            "fieldValues": {
+              "property": [
+                {
+                  "field": "3",
+                  "value": "={{ $json.Crm }}"
+                }
+              ]
+            },
+            "firstName": "={{ $json.Nome.split(' ')[0] }}",
+            "lastName": "={{ $json.Nome.split(' ').slice(1).join(' ') }}",
+            "phone": "={{ $json['Telefone '] }}"
+          }
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          896,
+          144
+        ],
+        "id": "78255900-e585-4a22-aaf4-17ae37c4da5c",
+        "name": "ActiveCampaign",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "contactTag",
+          "tagId": "13",
+          "contactId": "={{ $json.id }}"
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          144
+        ],
+        "id": "c021826b-c184-4e75-af09-a71610f97993",
+        "name": "ActiveCampaign1",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "contactList",
+          "listId": 7,
+          "contactId": "={{ $json.contact }}"
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          1296,
+          144
+        ],
+        "id": "0095902f-be62-48af-8e42-e3f5c60ff0d4",
+        "name": "ActiveCampaign2",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Get many people": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get many people",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets1": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign1": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
