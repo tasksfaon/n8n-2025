@@ -1,0 +1,250 @@
+{
+  "updatedAt": "2025-05-20T18:18:48.477Z",
+  "createdAt": "2025-04-11T12:45:24.257Z",
+  "id": "xMCC1cEjybhGx0WT",
+  "name": "[Lila] disparo em massa 1x1",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "30d8dbde-ea3f-4ae9-84eb-1b33156bdea6",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "71c0d924-3b17-44c0-af94-237bfce4f109",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1060,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 35
+      },
+      "id": "1739a2cb-5fc8-4633-bfe5-bfb22217d489",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        220
+      ],
+      "webhookId": "3810693b-9e75-443a-88a1-265779e8f3aa",
+      "alwaysOutputData": true,
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4bb0184a-0b97-44fd-9a34-05b820927bc5",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -280,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1uCqijDvgZELFoxQfEPVGu1QZCVH4B-_h1OXzidzratU/edit?gid=1059951314#gid=1059951314",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1059951314,
+          "mode": "list",
+          "cachedResultName": "D2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uCqijDvgZELFoxQfEPVGu1QZCVH4B-_h1OXzidzratU/edit#gid=1059951314"
+        },
+        "options": {}
+      },
+      "id": "9ec5eba1-b83e-4166-8b94-fe1d919d60b4",
+      "name": "Google Sheets2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        -820,
+        160
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "666981bf-5d7d-44a2-ac4f-05b3d435ffff",
+              "name": "Nome",
+              "value": "={{ $json.Cliente.trim().split(' ')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "de165208-950b-432f-ab37-006f9dbb8ce0",
+              "name": "Email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "ba6c4ff8-c782-4cf6-becf-7fa85bf8a1c6",
+              "name": "código",
+              "value": "={{ $json.DDD }}",
+              "type": "string"
+            },
+            {
+              "id": "a620a738-5c24-43ec-a3b1-096a276d847a",
+              "name": "telefone",
+              "value": "={{ $json.Telefone }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8c06bbbb-5491-4b5d-9210-ffadd8201077",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -560,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/KAS51g4fzxZkPk8Cruvg",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"14501e33-69c1-4c43-a014-739c6549dbcf\",\n  \"phoneNumber\": \"{{ $json.telefone }}\",\n  \"name\": \"{{ $json.Nome }}\",\n  \"email\": \"{{ $json.Email }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        120,
+        180
+      ],
+      "id": "95dc2687-f63d-45a6-80b8-184b31e417fe",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "117d95cc-8d1c-4171-b553-470352a3fe89",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-04-11T12:45:24.257Z",
+      "createdAt": "2025-04-11T12:45:24.257Z",
+      "role": "workflow:owner",
+      "workflowId": "xMCC1cEjybhGx0WT",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
