@@ -1,0 +1,1133 @@
+{
+  "updatedAt": "2026-04-16T11:48:04.262Z",
+  "createdAt": "2025-03-18T16:56:29.579Z",
+  "id": "Cp7UEglwbIyPPzCx",
+  "name": "[Sidnei] Ganho Clint Omie Entrada Pagamento Fraternidade",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Obtém os dados do nó webhook\nconst items = $input.all();\n\nreturn items.map(item => {\n    // ===============================\n    // 1) TELEFONE (buyer_phone)\n    // ===============================\n    let phone = item.json.body?.buyer_phone || \"\";\n\n    // Remove caracteres especiais, mantendo apenas números\n    phone = String(phone).replace(/[^\\d]/g, \"\");\n\n    // Verifica se já está no formato 55DDDTelefone\n    const regex = /^55\\d{2}\\d{8,9}$/;\n\n    if (!regex.test(phone)) {\n        // Se tiver 10 ou 11 dígitos (DDD + telefone), adiciona 55\n        if (phone.length === 10 || phone.length === 11) {\n            phone = \"55\" + phone;\n        }\n    }\n\n    // ===============================\n    // 2) LOCAL (product_name)\n    // ===============================\n    const productName = item.json.body?.product_name || \"\";\n    let local = \"\";\n\n    if (productName.includes(\"->\")) {\n        local = productName.split(\"->\")[1].trim();\n    } else if (productName.includes(\"-\")) {\n        local = productName.split(\"-\").pop().trim();\n    }\n\n    // ===============================\n    // 3) RETORNO\n    // ===============================\n    return {\n        json: {\n            phone,\n            local\n        }\n    };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "714eacaf-9e4b-4df9-862e-0c1baee79dee",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "765811b9-6f3c-4e17-83b3-1fcc5cc9ccf6",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.buyer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "3120a028-822d-4959-b490-ad0c9cfe092f",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.buyer_email }}",
+              "type": "string"
+            },
+            {
+              "id": "c0001ae3-ce11-4b73-9f3b-1d6f87718ebd",
+              "name": "Telefone",
+              "value": "={{ $('Webhook').item.json.body.buyer_phone }}",
+              "type": "string"
+            },
+            {
+              "id": "1ec312b0-5070-4bc1-a828-ddd4a54ca23b",
+              "name": "cpf",
+              "value": "={{ $('Webhook').item.json.body.buyer_document_id }}",
+              "type": "string"
+            },
+            {
+              "id": "f4745062-9a72-48e8-b8be-09757f756b1b",
+              "name": "Polo",
+              "value": "={{ $('Code').item.json.local }}",
+              "type": "string"
+            },
+            {
+              "id": "73159fde-4ff1-42a7-8f79-302d873177ff",
+              "name": "Plataforma de Pagamento",
+              "value": "={{ $('Webhook').item.json.body.contact_plataforma_pagamento }}",
+              "type": "string"
+            },
+            {
+              "id": "c9ded3dd-1af8-4eb6-b553-f93528041efd",
+              "name": "Data",
+              "value": "={{ new Date().toLocaleDateString(\"pt-BR\") }}",
+              "type": "string"
+            },
+            {
+              "id": "ddaa83cd-1574-4678-b0ab-86181475ec53",
+              "name": "Cliente",
+              "value": "={{ $json.Numero+ 1}}",
+              "type": "number"
+            },
+            {
+              "id": "9538a9f5-8f2c-4ccd-9f2a-2bf8d4b786e0",
+              "name": "Valor",
+              "value": "=200",
+              "type": "string"
+            },
+            {
+              "id": "eaf27093-c48c-4842-872c-c2efc8ed4d56",
+              "name": "Data Recebimento pix e boleto",
+              "value": "={{ \n  (d => \n    d.getDate().toString().padStart(2, '0') + '/' +\n    (d.getMonth() + 1).toString().padStart(2, '0') + '/' +\n    d.getFullYear()\n  )(new Date(new Date().setDate(new Date().getDate() + 2)))\n}}",
+              "type": "string"
+            },
+            {
+              "id": "c6663f44-5b36-411d-aec1-34b596cb97ca",
+              "name": "Data Pagamento",
+              "value": "={{ new Date().toLocaleDateString('pt-BR') }}",
+              "type": "string"
+            },
+            {
+              "id": "fa512f97-1428-428e-9025-e1e71e8bfe3f",
+              "name": "Método de pagamento",
+              "value": "={{ $('Webhook').item.json.body.payment_method }}",
+              "type": "string"
+            },
+            {
+              "id": "b6872f76-5a14-45fb-a80e-f0c928164fa5",
+              "name": "Data Recebimento Cartão",
+              "value": "={{    (d =>      d.getDate().toString().padStart(2, '0') + '/' +     (d.getMonth() + 1).toString().padStart(2, '0') + '/' +     d.getFullYear()   )(new Date(new Date().setDate(new Date().getDate() + 30))) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        0
+      ],
+      "id": "c3ccd27a-5069-49bd-b733-fddb6c383ef6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/146Sg2Fl1BRWl-vfUfYtmKnGPlt3lr7C1Yzs63sHZP0I/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/146Sg2Fl1BRWl-vfUfYtmKnGPlt3lr7C1Yzs63sHZP0I/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        400,
+        0
+      ],
+      "id": "b45fcc7d-0d4e-48c0-94bf-a56d67f3a66c",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/geral/clientes/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"call\": \"IncluirCliente\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n  \"param\": [\n    {\n      \"codigo_cliente_integracao\": \"{{ $('Edit Fields').item.json.Cliente }}\",\n      \"email\": \"{{ $('Edit Fields').item.json.Email }}\",\n      \"razao_social\": \"{{ $('Edit Fields').item.json.Nome }}\",\n      \"nome_fantasia\": \"{{ $('Edit Fields').item.json.Nome }}\",\n   \"cnpj_cpf\": \"{{ $('Edit Fields').item.json.cpf }}\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2256,
+        0
+      ],
+      "id": "e54ba522-2906-4c5f-b4ba-929257870e67",
+      "name": "HTTP Criar cliente Omie",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/geral/categorias/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"call\": \"ListarCategorias\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n  \"param\": [\n{\n  \"pagina\": 1,\n  \"registros_por_pagina\": 160\n}\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        0
+      ],
+      "id": "f82aadc3-f99f-461c-9371-913b20977eb0",
+      "name": "HTTP Listar Categorias"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/geral/contacorrente/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"call\": \"ListarContasCorrentes\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n  \"param\": [\n    {\n      \"pagina\": 1,\n      \"registros_por_pagina\": 50\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1856,
+        0
+      ],
+      "id": "6013cf1a-087f-416f-bb9c-8d227859c0da",
+      "name": "HTTP Conta Corrente"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Função auxiliar para normalizar texto\nfunction normalizar(str) {\n  return str?.toString()\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, '') // remove acentos\n    .replace(/[^a-z0-9]/gi, ' ')     // remove caracteres especiais\n    .replace(/\\s+/g, ' ')\n    .trim()\n    .toLowerCase();\n}\n\n// Dados do Edit Fields\nconst plataforma = normalizar($('Edit Fields').item.json['Plataforma de Pagamento']);\nconst polo = normalizar($('Edit Fields').item.json['Polo']);\nconst dono = normalizar($('Edit Fields').item.json['Dono']);\n\n// Dados dos nós HTTP\nconst contas = $('HTTP Conta Corrente').item.json.ListarContasCorrentes || [];\nconst categorias = $('HTTP Listar Categorias').item.json.categoria_cadastro || [];\nconst projetos = $('HTTP Listar Projeto').item.json.cadastro || [];\nconst vendedores = $('HTTP Listar Vendedor').item.json.cadastros || [];\n\n// Debug: logs úteis para entender o que está sendo comparado\nconsole.log('📌 Plataforma:', plataforma);\nconsole.log('📌 Polo:', polo);\nconsole.log('📌 Dono:', dono);\n\nconsole.log('🗂️ Projetos disponíveis:');\nprojetos.forEach(p => console.log('-', p.nome));\n\nconsole.log('🧑‍💼 Vendedores disponíveis:');\nvendedores.forEach(v => console.log('-', v.cNome));\n\n// 🔍 Conta corrente pela plataforma\nconst contaMatch = contas.find(conta =>\n  normalizar(conta.descricao).includes(plataforma)\n);\n\n// 🔍 Categoria pela palavra-chave \"Adesão Fraternidade\"\nconst categoriaMatch = categorias.find(cat =>\n  normalizar(cat.descricao).includes(\"adesao fraternidade\")\n);\n\n// 🔍 Projeto: compara se alguma palavra do polo está no nome do projeto\nconst projetoMatch = projetos.find(p => {\n  const nomeProjeto = normalizar(p.nome);\n  return polo.split(' ').some(palavra => nomeProjeto.includes(palavra));\n});\n\n\n// Retorno\nreturn [{\n  json: {\n    id_conta_corrente: contaMatch?.nCodCC || null,\n    codigo_categoria: categoriaMatch?.codigo || null,\n    codigo_projeto: projetoMatch?.codigo || null,\n    nome_projeto_encontrado: projetoMatch?.nome || null\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2048,
+        0
+      ],
+      "id": "8503f002-e1c0-4322-ab87-9cfab0a7c374",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/geral/projetos/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"call\": \"ListarProjetos\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n \"param\": [\n    {\n      \"pagina\": 1,\n      \"registros_por_pagina\": 50\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1168,
+        0
+      ],
+      "id": "f9a86d97-a0c7-47a0-8f03-1402763b7a91",
+      "name": "HTTP Listar Projeto"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/crm/usuarios/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"call\": \"ListarUsuarios\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n  \"param\": [\n{\n  \"pagina\": 1,\n  \"registros_por_pagina\": 160\n}\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1472,
+        0
+      ],
+      "id": "cfe6273d-f53a-4306-965b-c8b8117e593b",
+      "name": "HTTP Listar Vendedor"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3744,
+        176
+      ],
+      "id": "5f9ef280-cb6a-4877-9595-a451c016274b",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/financas/contareceber/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"call\": \"IncluirContaReceber\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n \"param\": [\n    {\n      \"codigo_lancamento_integracao\": \"{{ $('Edit Fields').item.json.Cliente }}\",\n      \"codigo_cliente_fornecedor\": {{ $json.codigo_cliente_omie }},\n      \"data_vencimento\": \"{{ $('Edit Fields').item.json.Data }}\",\n      \"valor_documento\": \"{{ $('Edit Fields').item.json.Valor }}\",\n      \"codigo_categoria\": \"{{ $('Code1').item.json.codigo_categoria }}\",\n      \"data_previsao\": \"{{ $('Edit Fields').item.json['Data Recebimento pix e boleto'] }}\",\n      \"id_conta_corrente\": \"{{ $('Code1').item.json.id_conta_corrente }}\",\n      \"codigo_projeto\": \"{{ $('Code1').item.json.codigo_projeto }}\",\n      \"codigo_vendedor\": \"\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3152,
+        -432
+      ],
+      "id": "20e98b71-8922-430c-b6b8-338b7de1bad3",
+      "name": "HTTP Criar conta Cliente Novo"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.payment_method }}",
+                    "rightValue": "pix",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "479388c3-fe7c-4390-be2b-f914c8690d3a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pix"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "12b96686-afc2-4999-97a1-8081e4511b7a",
+                    "leftValue": "={{ $('Webhook').item.json.body.payment_method }}",
+                    "rightValue": "credit",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cartão"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e56065f3-4298-4383-8746-75b1aff1b4e5",
+                    "leftValue": "={{ $('Webhook').item.json.body.payment_method }}",
+                    "rightValue": "billet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Boleto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        2528,
+        160
+      ],
+      "id": "ea31cb64-902a-4046-9cb1-79499e5bd52a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/financas/contareceber/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"call\": \"IncluirContaReceber\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n  \"param\": [\n    {\n      \"codigo_lancamento_integracao\": \"={{ $('Edit Fields').item.json.Cliente }}\",\n      \"codigo_cliente_fornecedor\": \"={{ $json.codigo_cliente_omie }}\",\n      \"data_vencimento\": \"={{ $('Edit Fields').item.json.Data }}\",\n      \"valor_documento\": \"={{ $('Edit Fields').item.json.Valor }}\",\n      \"codigo_categoria\": \"={{ $('Code1').item.json.codigo_categoria }}\",\n      \"data_previsao\": \"={{ $('Edit Fields').item.json['Data Recebimento pix e boleto'] }}\",\n      \"id_conta_corrente\": \"={{ $('Code1').item.json.id_conta_corrente }}\",\n      \"codigo_projeto\": \"={{ $('Code1').item.json.codigo_projeto }}\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3296,
+        112
+      ],
+      "id": "9f2bbe2f-2b07-454f-b99a-81bf8c1c7db9",
+      "name": "HTTP Criar conta Cliente Antigo1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4e04929-03fc-4228-8204-ce8aadd38bad",
+              "name": "codigo_cliente_omie",
+              "value": "={{ $json[\"error\"][\"message\"].match(/Id \\[(\\d+)\\]/)?.[1] || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2800,
+        112
+      ],
+      "id": "09b3a0ad-b45e-4bfa-b578-598a6a4a140b",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/financas/contareceber/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"call\": \"IncluirContaReceber\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n  \"param\": [\n    {\n      \"codigo_lancamento_integracao\": \"{{ $('Edit Fields').item.json.Cliente }}\",\n      \"codigo_cliente_fornecedor\": {{ $json.codigo_cliente_omie }},\n      \"data_vencimento\": \"{{ $('Edit Fields').item.json.Data }}\",\n      \"valor_documento\": \"{{ $('Edit Fields').item.json.Valor }}\",\n      \"codigo_categoria\": \"{{ $('Code1').item.json.codigo_categoria }}\",\n      \"data_previsao\": \"{{ $('Edit Fields').item.json['Data Recebimento Cartão'] }}\",\n      \"id_conta_corrente\": \"{{ $('Code1').item.json.id_conta_corrente }}\",\n      \"codigo_projeto\": \"{{ $('Code1').item.json.codigo_projeto }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3280,
+        320
+      ],
+      "id": "c12652f3-1012-4fc0-9d9f-b71f411f024e",
+      "name": "HTTP Criar conta Cliente Antigo"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4e04929-03fc-4228-8204-ce8aadd38bad",
+              "name": "codigo_cliente_omie",
+              "value": "={{ $json[\"error\"][\"message\"].match(/Id \\[(\\d+)\\]/)?.[1] || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2800,
+        288
+      ],
+      "id": "b7098c33-5294-43ae-aa51-38d44ff80acc",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/financas/contareceber/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"call\": \"IncluirContaReceber\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n  \"param\": [\n    {\n      \"codigo_lancamento_integracao\": \"{{ $('Edit Fields').item.json.Cliente }}\",\n      \"codigo_cliente_fornecedor\": {{ $json.codigo_cliente_omie }},\n      \"data_vencimento\": \"{{ $('Edit Fields').item.json.Data }}\",\n      \"valor_documento\": \"{{ $('Edit Fields').item.json.Valor }}\",\n      \"codigo_categoria\": \"{{ $('Code1').item.json.codigo_categoria }}\",\n      \"data_previsao\": \"{{ $('Edit Fields').item.json['Data Recebimento pix e boleto'] }}\",\n      \"id_conta_corrente\": \"{{ $('Code1').item.json.id_conta_corrente }}\",\n      \"codigo_projeto\": \"{{ $('Code1').item.json.codigo_projeto }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3264,
+        544
+      ],
+      "id": "03dfed13-74ec-4d63-a4b7-3410c4fe3f49",
+      "name": "HTTP Criar conta Cliente Antigo2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4e04929-03fc-4228-8204-ce8aadd38bad",
+              "name": "codigo_cliente_omie",
+              "value": "={{ $json[\"error\"][\"message\"].match(/Id \\[(\\d+)\\]/)?.[1] || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2768,
+        544
+      ],
+      "id": "aece454c-6995-4010-9115-fb401c18c44a",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4e04929-03fc-4228-8204-ce8aadd38bad",
+              "name": "codigo_cliente_omie",
+              "value": "={{ $json[\"error\"][\"message\"].match(/Id \\[(\\d+)\\]/)?.[1] || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2848,
+        -432
+      ],
+      "id": "63f8181f-5f12-494c-b185-04df0881a7ef",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4e04929-03fc-4228-8204-ce8aadd38bad",
+              "name": "codigo_cliente_omie",
+              "value": "={{ $json[\"error\"][\"message\"].match(/Id \\[(\\d+)\\]/)?.[1] || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2848,
+        -256
+      ],
+      "id": "53fd8d48-3d00-49dc-89a9-2e750b6f9996",
+      "name": "Edit Fields7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4e04929-03fc-4228-8204-ce8aadd38bad",
+              "name": "codigo_cliente_omie",
+              "value": "={{ $json[\"error\"][\"message\"].match(/Id \\[(\\d+)\\]/)?.[1] || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2848,
+        -96
+      ],
+      "id": "4f5e79bb-a2a1-4920-804b-25492a36ba45",
+      "name": "Edit Fields8"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.payment_method }}",
+                    "rightValue": "pix",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "479388c3-fe7c-4390-be2b-f914c8690d3a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pix"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "12b96686-afc2-4999-97a1-8081e4511b7a",
+                    "leftValue": "={{ $('Webhook').item.json.body.payment_method }}",
+                    "rightValue": "credit",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cartão"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e56065f3-4298-4383-8746-75b1aff1b4e5",
+                    "leftValue": "={{ $('Webhook').item.json.body.payment_method }}",
+                    "rightValue": "billet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Boleto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        2560,
+        -224
+      ],
+      "id": "87f7e2b5-2b29-4fd9-ab05-c4cf12be7ffe",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/financas/contareceber/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"call\": \"IncluirContaReceber\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n \"param\": [\n    {\n      \"codigo_lancamento_integracao\": \"{{ $('Edit Fields').item.json.Cliente }}\",\n      \"codigo_cliente_fornecedor\": {{ $json.codigo_cliente_omie }},\n      \"data_vencimento\": \"{{ $('Edit Fields').item.json.Data }}\",\n      \"valor_documento\": \"{{ $('Edit Fields').item.json.Valor }}\",\n      \"codigo_categoria\": \"{{ $('Code1').item.json.codigo_categoria }}\",\n      \"data_previsao\": \"{{ $('Edit Fields').item.json['Data Recebimento Cartão'] }}\",\n      \"id_conta_corrente\": \"{{ $('Code1').item.json.id_conta_corrente }}\",\n      \"codigo_projeto\": \"{{ $('Code1').item.json.codigo_projeto }}\",\n      \"codigo_vendedor\": \"\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3152,
+        -240
+      ],
+      "id": "150d11c0-70dc-40ef-8005-d6c8c2a1882f",
+      "name": "HTTP Criar conta Cliente Novo1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.omie.com.br/api/v1/financas/contareceber/",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"call\": \"IncluirContaReceber\",\n  \"app_key\": \"4712664620664\",\n  \"app_secret\": \"480d91ea67d601c5c261c014442fc810\",\n \"param\": [\n    {\n      \"codigo_lancamento_integracao\": \"{{ $('Edit Fields').item.json.Cliente }}\",\n      \"codigo_cliente_fornecedor\": {{ $json.codigo_cliente_omie }},\n      \"data_vencimento\": \"{{ $('Edit Fields').item.json.Data }}\",\n      \"valor_documento\": \"{{ $('Edit Fields').item.json.Valor }}\",\n      \"codigo_categoria\": \"{{ $('Code1').item.json.codigo_categoria }}\",\n      \"data_previsao\": {{ $('Edit Fields').item.json['Data Recebimento pix e boleto'] }}\",\n      \"id_conta_corrente\": \"{{ $('Code1').item.json.id_conta_corrente }}\",\n      \"codigo_projeto\": \"{{ $('Code1').item.json.codigo_projeto }}\",\n      \"codigo_vendedor\": \"\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3152,
+        -80
+      ],
+      "id": "3a864eac-6549-4126-b375-0aad5fa94ef6",
+      "name": "HTTP Criar conta Cliente Novo2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a0fe0bce-f077-4b01-8297-dc64049137dd",
+              "leftValue": "={{ $('Webhook').item.json.body.product_name }}",
+              "rightValue": "Coquetel",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "25ee579b-5fc7-42cd-be05-cfcfe0058746",
+              "leftValue": "={{ $('Webhook').item.json.body.product_name }}",
+              "rightValue": "COQUETEL",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        0
+      ],
+      "id": "24b62ade-d6b6-4283-a82f-df577bcfcb1f",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        96
+      ],
+      "id": "b8399cc5-f286-4601-9835-7f7155306093",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b76e00f4-6802-4e07-ae5a-6f74e4c37685",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5718a60c-f6ca-4d1d-bf77-cea0e5238cda",
+      "name": "Webhook",
+      "webhookId": "b76e00f4-6802-4e07-ae5a-6f74e4c37685"
+    }
+  ],
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Criar cliente Omie": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Listar Categorias": {
+      "main": [
+        [
+          {
+            "node": "HTTP Conta Corrente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Conta Corrente": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Criar cliente Omie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Listar Projeto": {
+      "main": [
+        [
+          {
+            "node": "HTTP Listar Vendedor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Listar Vendedor": {
+      "main": [
+        [
+          {
+            "node": "HTTP Listar Categorias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Criar conta Cliente Novo": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Criar conta Cliente Antigo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Criar conta Cliente Antigo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "HTTP Criar conta Cliente Antigo2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "HTTP Criar conta Cliente Novo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields8": {
+      "main": [
+        [
+          {
+            "node": "HTTP Criar conta Cliente Novo2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Criar conta Cliente Novo2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Criar conta Cliente Antigo1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Criar conta Cliente Antigo": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Criar conta Cliente Antigo2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Criar conta Cliente Novo1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields7": {
+      "main": [
+        [
+          {
+            "node": "HTTP Criar conta Cliente Novo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Listar Projeto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "HeroSpark/1.0",
+            "content-length": "344",
+            "baggage": "sentry-trace_id=7788c7af4efe4849aab86faf8bbd16a3,sentry-environment=production,sentry-public_key=b722173edaec94334323db1280f8af27",
+            "content-type": "application/json",
+            "hs-request-id": "9684331",
+            "sentry-trace": "7788c7af4efe4849aab86faf8bbd16a3-49810a1883fc4d6e",
+            "x-forwarded-for": "201.23.25.33",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "201.23.25.33",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "buyer_name": "Bruno Duarte",
+            "payment_id": 1885982,
+            "buyer_email": "brunoduartemelo@gmail.com",
+            "buyer_phone": "(13) 97425-3661",
+            "payment_date": "2026-01-21T22:37:32.463Z",
+            "product_name": "COQUETEL MEMBRO CAE CLUB",
+            "payment_method": "credit_card",
+            "buyer_document_id": "435.250.938-88",
+            "buyer_document_type": "cpf",
+            "offer_price | divided_by: 100.00": 39
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/b76e00f4-6802-4e07-ae5a-6f74e4c37685",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "38908419-5c8d-41c6-b7e0-e96c213a2191",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-18T16:56:29.579Z",
+      "createdAt": "2025-03-18T16:56:29.579Z",
+      "role": "workflow:owner",
+      "workflowId": "Cp7UEglwbIyPPzCx",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
