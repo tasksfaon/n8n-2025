@@ -1,0 +1,564 @@
+{
+  "updatedAt": "2026-04-16T11:46:21.357Z",
+  "createdAt": "2025-08-20T17:50:48.481Z",
+  "id": "qf5ITKq6AUixOhU2",
+  "name": "[Sidnei] Rotina CAE CLUB FRATERNIDADE - Clint Sheets",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-fraternidade-rotina",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7504ac86-9549-4e0e-a516-9e03dae929d6",
+      "name": "Webhook",
+      "webhookId": "0e940677-02e8-40e8-a99c-e8fa78c98960",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o telefone da entrada e transforma em string\nconst rawPhone = String($input.first().json.body.contact_phone || '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        0
+      ],
+      "id": "c72ae259-a758-4e2e-8153-2c0029a7f655",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "814012e9-d3fd-4dff-be24-14079154334a",
+              "name": "DIA",
+              "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "7e5c7a5c-fc8c-4818-b4b8-2ddfa542ecec",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "05f96f17-1786-4c71-8437-6ec659a73411",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "17160782-5223-4301-81e6-65626e0f6b25",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "93aa89bc-707a-4fda-b7f4-f06b116985b3",
+              "name": "Dono",
+              "value": "={{ $('Webhook').item.json.body.deal_user_name }}",
+              "type": "string"
+            },
+            {
+              "id": "17daf2a0-1ad6-4fe8-8955-9739ed9e3163",
+              "name": "Segmento",
+              "value": "={{ $('Webhook').item.json.body.organization_segment }}",
+              "type": "string"
+            },
+            {
+              "id": "4d46c05a-2168-4605-a49b-b8f82511ac35",
+              "name": "Base",
+              "value": "Sim",
+              "type": "string"
+            },
+            {
+              "id": "ca0a0db9-799b-4d57-aa81-c7178547857f",
+              "name": "Status",
+              "value": "Aberto",
+              "type": "string"
+            },
+            {
+              "id": "e12327f5-1537-434b-811d-ffcb596bfb99",
+              "name": "Valor",
+              "value": "={{ $('Webhook').item.json.body.deal_value }}",
+              "type": "string"
+            },
+            {
+              "id": "c220e2cc-da62-4d20-b263-a55b3c28c560",
+              "name": "Polo",
+              "value": "={{ $('Webhook').item.json.body.contact_polo }}",
+              "type": "string"
+            },
+            {
+              "id": "5ff8de68-b01e-4ad6-ac82-07767bf4680a",
+              "name": "utm source",
+              "value": "={{ $('Webhook').item.json.body.contact_utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "94793252-3f83-4490-b315-23413846f93a",
+              "name": "utm medium",
+              "value": "={{ $('Webhook').item.json.body.contact_utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "90650cb9-43a0-4ebe-84b7-b186d123939c",
+              "name": "utm content",
+              "value": "={{ $('Webhook').item.json.body.contact_utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "01b1a81a-75f1-4603-990c-5ed8343d7957",
+              "name": "utm campaign",
+              "value": "={{ $('Webhook').item.json.body.contact_utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "bbce9b90-ad5e-4185-b146-b0b56fd7b013",
+              "name": "utm term",
+              "value": "={{ $('Webhook').item.json.body.contact_utm_term }}",
+              "type": "string"
+            },
+            {
+              "id": "b68d9c61-88d7-4057-9a7d-81e28f16c5df",
+              "name": "ID",
+              "value": "={{ $('Webhook').item.json.body.deal_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        0
+      ],
+      "id": "1676ef75-ab46-47dc-a7f8-66a684876b09",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1A7oJMMIBWwK7iiXaonKZNC8P6NC-C0xFu-mqbeCLMTU/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1A7oJMMIBWwK7iiXaonKZNC8P6NC-C0xFu-mqbeCLMTU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "DIA": "={{ $json.DIA }}",
+            "TELEFONE": "={{ $json.Telefone }}",
+            "EMAIL": "={{ $json.Email }}",
+            "NOME": "={{ $json.Nome }}",
+            "DONO": "={{ $json.Dono }}",
+            "SEGMENTO": "={{ $json.Segmento }}",
+            "STATUS": "={{ $json.Status }}",
+            "VALOR": "={{ $json.Valor }}",
+            "POLO": "={{ $json.Polo }}",
+            "UTM SOURCE": "={{ $json['utm source'] }}",
+            "UTM MEDIUM": "={{ $json['utm medium'] }}",
+            "UTM CONTENT": "={{ $json['utm content'] }}",
+            "UTM CAMPAIGN": "={{ $json['utm campaign'] }}",
+            "UTM TERM": "={{ $json['utm term'] }}",
+            "ID": "={{ $json.ID }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "DIA",
+              "displayName": "DIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TELEFONE",
+              "displayName": "TELEFONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "NOME",
+              "displayName": "NOME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DONO",
+              "displayName": "DONO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SEGMENTO",
+              "displayName": "SEGMENTO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "VALOR",
+              "displayName": "VALOR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "POLO",
+              "displayName": "POLO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ENTRADA",
+              "displayName": "ENTRADA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "EM CONTATO: ALINHAMENTO BOAS VINDAS",
+              "displayName": "EM CONTATO: ALINHAMENTO BOAS VINDAS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PAGAMENTO E CONTRATO",
+              "displayName": "PAGAMENTO E CONTRATO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PROCESSANDO PAGAMENTO PIX E C. CRÉDITO",
+              "displayName": "PROCESSANDO PAGAMENTO PIX E C. CRÉDITO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PROCESSANDO PAGAMENTO BOLETO BANCÁRIO",
+              "displayName": "PROCESSANDO PAGAMENTO BOLETO BANCÁRIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FINANCEIRO/VENDA CONCLUÍDA",
+              "displayName": "FINANCEIRO/VENDA CONCLUÍDA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "MOTIVO DA PERDA",
+              "displayName": "MOTIVO DA PERDA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "STATUS",
+              "displayName": "STATUS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DATA DO ENCERRAMENTO",
+              "displayName": "DATA DO ENCERRAMENTO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "UTM SOURCE",
+              "displayName": "UTM SOURCE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "UTM MEDIUM",
+              "displayName": "UTM MEDIUM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "UTM CONTENT",
+              "displayName": "UTM CONTENT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "UTM CAMPAIGN",
+              "displayName": "UTM CAMPAIGN",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "UTM TERM",
+              "displayName": "UTM TERM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        624,
+        0
+      ],
+      "id": "4ea6805d-d51b-4427-8592-24b1260d1dc5",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        848,
+        0
+      ],
+      "id": "b9a39191-40c9-4fe8-b4a1-92c660b03795",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.10.0",
+            "content-length": "472",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "traceparent": "00-68934a5b00000000508b17e57250e2d2-741930e6fb68d968-00",
+            "tracestate": "dd=t.tid:68934a5b00000000;t.dm:-3;s:-1;p:741930e6fb68d968",
+            "x-datadog-parent-id": "8365771551435970920",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=68934a5b00000000",
+            "x-datadog-trace-id": "5803758819029869266",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Isabella Teste",
+            "contact_email": "bellasimaia@gmail.con",
+            "contact_phone": "+5531984617540",
+            "deal_stage": "BASE",
+            "deal_user": "maria.victoria@caeclub.com.br",
+            "deal_status": "OPEN",
+            "deal_user_name": "Erika  ADM ",
+            "organization_segment": "",
+            "deal_value": 80,
+            "contact_polo": "CAE CLUB - Polo Lapa",
+            "contact_utm_source": "",
+            "contact_utm_medium": "",
+            "contact_utm_content": "",
+            "contact_utm_campaign": "",
+            "contact_utm_term": "",
+            "deal_id": "bbbb0bea-381c-414c-b100-e8c33727d6eb"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-cae-evento",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "57a6174e-ccf8-4abb-93fe-68a15adfd212",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-08-20T17:50:48.481Z",
+      "createdAt": "2025-08-20T17:50:48.481Z",
+      "role": "workflow:owner",
+      "workflowId": "qf5ITKq6AUixOhU2",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
