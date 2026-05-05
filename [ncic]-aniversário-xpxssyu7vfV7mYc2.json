@@ -1,0 +1,650 @@
+{
+  "updatedAt": "2025-05-13T15:02:55.020Z",
+  "createdAt": "2025-03-26T13:30:11.714Z",
+  "id": "xpxssyu7vfV7mYc2",
+  "name": "[NCIC] Aniversário",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "7366989c-2cce-4637-b2f0-fcd0b4ec99ff",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1lFmxJg5rhy0HrWB3TLaze0S2hRgrkM48NX7ndonXP4E",
+          "mode": "list",
+          "cachedResultName": "Aniversário",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lFmxJg5rhy0HrWB3TLaze0S2hRgrkM48NX7ndonXP4E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Alunos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lFmxJg5rhy0HrWB3TLaze0S2hRgrkM48NX7ndonXP4E/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        340,
+        -120
+      ],
+      "id": "62da785b-ea14-4bdc-b1f3-1fd14a7e984a",
+      "name": "Google Sheets Alunos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1lFmxJg5rhy0HrWB3TLaze0S2hRgrkM48NX7ndonXP4E",
+          "mode": "list",
+          "cachedResultName": "Aniversário",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lFmxJg5rhy0HrWB3TLaze0S2hRgrkM48NX7ndonXP4E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 665140639,
+          "mode": "list",
+          "cachedResultName": "Professores e Monitores",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lFmxJg5rhy0HrWB3TLaze0S2hRgrkM48NX7ndonXP4E/edit#gid=665140639"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        340,
+        80
+      ],
+      "id": "ebfc6cf2-c729-40d8-bcd1-716dfa32ae34",
+      "name": "Google Sheets Professores",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1lFmxJg5rhy0HrWB3TLaze0S2hRgrkM48NX7ndonXP4E",
+          "mode": "list",
+          "cachedResultName": "Aniversário",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lFmxJg5rhy0HrWB3TLaze0S2hRgrkM48NX7ndonXP4E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 274925713,
+          "mode": "list",
+          "cachedResultName": "Colaboradores",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lFmxJg5rhy0HrWB3TLaze0S2hRgrkM48NX7ndonXP4E/edit#gid=274925713"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        340,
+        300
+      ],
+      "id": "f104081d-5781-465b-846a-2bd79f04e96d",
+      "name": "Google Sheets Colaboradores",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fd9a44cd-360c-4904-896a-2887ba47f451",
+              "name": "Data de hoje",
+              "value": "={{ \n  new Date().getDate().toString().padStart(2, '0') + '/' + \n  (new Date().getMonth() + 1).toString().padStart(2, '0') \n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        60,
+        0
+      ],
+      "id": "d3f2723c-648b-449c-8fe3-44e0e2d6dfe8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6cfef265-e2a2-4b6d-ae6f-20e8abda8285",
+              "leftValue": "={{ $('Edit Fields').item.json['Data de hoje'] }}",
+              "rightValue": "={{ $json.ANIVERSARIO }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        300
+      ],
+      "id": "b625c59a-707e-4dab-bde1-36510ea08342",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        780,
+        280
+      ],
+      "id": "3cebf783-6716-4739-a0fe-22cea3868cee",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        1380,
+        360
+      ],
+      "id": "3be1e104-e18a-4713-8049-d2c1f1f8b9f1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6cfef265-e2a2-4b6d-ae6f-20e8abda8285",
+              "leftValue": "={{ $('Edit Fields').item.json['Data de hoje'] }}",
+              "rightValue": "={{ $json.ANIVERSARIO }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        540,
+        80
+      ],
+      "id": "f4e1a401-1687-44df-8b2e-0622f7954083",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        760,
+        60
+      ],
+      "id": "f439a2d5-6fd4-43db-bd14-ce54a1e39dbc",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/130652/KIkwJkusYwhL/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('If1').item.json.NOME }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('If1').item.json.CONTATO }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1080,
+        80
+      ],
+      "id": "42317474-1e99-4862-8d53-8e2edf801399",
+      "name": "HTTP Botconversa Prof"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "a7e84e1a-7e21-42df-8a33-c62d801d9ab8"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6cfef265-e2a2-4b6d-ae6f-20e8abda8285",
+              "leftValue": "={{ $('Edit Fields').item.json['Data de hoje'] }}",
+              "rightValue": "={{ $json.ANIVERSARIO }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        -140
+      ],
+      "id": "774a3450-831e-4649-86e9-2a52da9cfd98",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        780,
+        -160
+      ],
+      "id": "d4f8633c-77c7-47ee-8aad-5f0697e93227",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me2",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        -240
+      ],
+      "id": "bcf414b1-c582-4f34-a13c-99b85538c5f0"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/130652/mMMpC5vxM3ml/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('If2').item.json.ALUNO }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('If2').item.json.CELULAR }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        -140
+      ],
+      "id": "2f1d2585-582d-4b42-b1f6-34bf1f11fb91",
+      "name": "HTTP Botconversa Aluno"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/130652/BSMSo8DrYXnq/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('If').item.json.NOME }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('If').item.json.CONTATO }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        300
+      ],
+      "id": "1f2cf57d-9869-4e49-9ab9-b2256ccf4df5",
+      "name": "HTTP Botconversa Colab"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Colaboradores": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets Alunos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets Professores",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets Colaboradores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Botconversa Colab",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        []
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Botconversa Prof",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Professores": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa Prof": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "Replace Me2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Botconversa Aluno",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Alunos": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa Aluno": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa Colab": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "a75c5bc0-d791-4af8-be3d-a0c23ac8f080",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-26T13:30:11.714Z",
+      "createdAt": "2025-03-26T13:30:11.714Z",
+      "role": "workflow:owner",
+      "workflowId": "xpxssyu7vfV7mYc2",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
