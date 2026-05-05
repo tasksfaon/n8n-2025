@@ -1,0 +1,1137 @@
+{
+  "updatedAt": "2025-05-14T15:12:23.767Z",
+  "createdAt": "2025-05-14T13:56:22.238Z",
+  "id": "NVmciDLIcn1BLcXi",
+  "name": "[Dra. Márcia] Boas vindas whatsapp",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.pipedriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -100
+      ],
+      "id": "b73c0b4e-abb9-4134-ad5d-c7883f81a574",
+      "name": "Pipedrive Trigger",
+      "webhookId": "f24d53e6-7664-4117-9ab2-93a2d0f90a13",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "29ee238b-092e-469b-9cf0-a98b564f7065",
+              "leftValue": "={{ $json.data.stage_id }}",
+              "rightValue": 1327,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        -100
+      ],
+      "id": "02eae004-0d42-41f8-a87a-97027813cea3",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dealId": "={{ $json.meta.entity_id }}"
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        540,
+        -140
+      ],
+      "id": "76818fa1-98ef-4383-82f8-db69a9314e3b",
+      "name": "Pipedrive",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/m8bktH0mqMTyuQWTNwDl",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"ce2d067e-6839-4455-87b2-8a24b5995179\",\n  \"phoneNumber\": \"{{ $json.telefone }}\",\n  \"name\": \"{{ $json.nome }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        -340
+      ],
+      "id": "49396326-6153-4197-9124-196891b04d9a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "239cf398-2afc-400d-80c5-d74675f03014",
+              "name": "nome",
+              "value": "={{ $json.person_name }}",
+              "type": "string"
+            },
+            {
+              "id": "49b565fa-345f-47d4-9e24-2a42c2a626ed",
+              "name": "telefone",
+              "value": "={{ $json.person_id.phone[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "3c61f019-a756-40ea-87a5-4550d1f1f1cc",
+              "name": "email",
+              "value": "={{ $json.person_id.email[0].value }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        780,
+        -140
+      ],
+      "id": "15ad7857-ac37-4304-81ce-d28e0f64d8e5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        60
+      ],
+      "id": "5ce47274-b289-4108-a26b-98f7eecf1128",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.email }}",
+        "updateIfExists": true,
+        "additionalFields": {
+          "firstName": "={{ $json.nome }}",
+          "phone": "={{ $json.telefone }}"
+        }
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        -140
+      ],
+      "id": "5a0d1446-196d-4398-9d38-365f49a8bd90",
+      "name": "ActiveCampaign",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "listId": 6,
+        "contactId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        -160
+      ],
+      "id": "e92fcd44-3509-45ed-864d-8c88fa690feb",
+      "name": "ActiveCampaign1",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "42f2cbe6-4bd0-40ce-84a2-9a436d70dbb1",
+              "leftValue": "={{ $json.data.stage_id }}",
+              "rightValue": 1126,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        180
+      ],
+      "id": "521fd8e0-6b28-4d05-845b-127d3c9def8b",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dealId": "={{ $json.meta.entity_id }}"
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        800,
+        160
+      ],
+      "id": "189b807d-e64e-4b20-b959-43bc0df77e76",
+      "name": "Pipedrive1",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/m8bktH0mqMTyuQWTNwDl",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"ce2d067e-6839-4455-87b2-8a24b5995179\",\n  \"phoneNumber\": \"{{ $json.telefone }}\",\n  \"name\": \"{{ $json.nome }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        60
+      ],
+      "id": "82c76763-45c8-4d54-ae4b-5d7537ed4e14",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "239cf398-2afc-400d-80c5-d74675f03014",
+              "name": "nome",
+              "value": "={{ $json.person_name }}",
+              "type": "string"
+            },
+            {
+              "id": "49b565fa-345f-47d4-9e24-2a42c2a626ed",
+              "name": "telefone",
+              "value": "={{ $json.person_id.phone[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "3c61f019-a756-40ea-87a5-4550d1f1f1cc",
+              "name": "email",
+              "value": "={{ $json.person_id.email[0].value }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        160
+      ],
+      "id": "396e35ec-de65-412e-bffb-dab609aa5a95",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.email }}",
+        "updateIfExists": true,
+        "additionalFields": {
+          "firstName": "={{ $json.nome }}",
+          "phone": "={{ $json.telefone }}"
+        }
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        160
+      ],
+      "id": "d6ca92a0-c98a-4ad6-81d6-1d47139fc8e6",
+      "name": "ActiveCampaign2",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "listId": 5,
+        "contactId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        140
+      ],
+      "id": "f094d82d-b1c3-4e6d-9f25-880b00d86ead",
+      "name": "ActiveCampaign3",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        -340
+      ],
+      "id": "c50b5bcc-176c-4ac7-99b5-12fcd78e8467",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        20
+      ],
+      "id": "6cbb6373-16fa-4913-8b77-91bd3ebafd71",
+      "name": "No Operation, do nothing2"
+    }
+  ],
+  "connections": {
+    "Pipedrive Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Pipedrive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pipedrive": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pipedrive1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign2": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Pipedrive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Pipedrive Trigger": {
+      "webhookId": 2150428
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Pipedrive Trigger": [
+      {
+        "json": {
+          "data": {
+            "add_time": "2025-05-14T14:57:59Z",
+            "channel": 23364,
+            "channel_id": "Lançamento - Form Orgânico",
+            "close_time": null,
+            "creator_user_id": 3559832,
+            "currency": "BRL",
+            "custom_fields": {
+              "31ae0f90cc1b3ee3da765f9c9decf2321022a7cf": null
+            },
+            "expected_close_date": null,
+            "first_won_time": null,
+            "id": 63782,
+            "label_ids": [],
+            "lost_reason": null,
+            "lost_time": null,
+            "org_id": null,
+            "origin": "WebForms",
+            "origin_id": "184ec420-301f-11f0-b936-550385cbe424",
+            "owner_id": 3559832,
+            "person_id": 70471,
+            "pipeline_id": 183,
+            "probability": null,
+            "stage_change_time": null,
+            "stage_id": 1327,
+            "status": "open",
+            "title": "Formulários digitais, Lançamento - Form Orgânico Letícia Elisa Casagranda Piazzetta",
+            "update_time": null,
+            "value": 0,
+            "visible_to": "3",
+            "won_time": null,
+            "is_archived": false,
+            "archive_time": null
+          },
+          "previous": null,
+          "meta": {
+            "action": "create",
+            "company_id": "2396659",
+            "correlation_id": "5024c88c-46c1-4d0d-ac30-316ed563be49",
+            "entity_id": "63782",
+            "entity": "deal",
+            "id": "7296b56f-ccb3-45b9-84a1-c746fc0a222d",
+            "is_bulk_edit": false,
+            "timestamp": "2025-05-14T14:57:59.506Z",
+            "type": "general",
+            "user_id": "3559832",
+            "version": "2.0",
+            "webhook_id": "1830172",
+            "webhook_owner_id": "3559832",
+            "change_source": "app",
+            "attempt": 1,
+            "host": "center-ao.pipedrive.com"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "cf1a3c53-e4fb-4b09-b87f-5cde37e30ab7",
+  "activeVersionId": "cf1a3c53-e4fb-4b09-b87f-5cde37e30ab7",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-05-14T13:56:22.238Z",
+      "createdAt": "2025-05-14T13:56:22.238Z",
+      "role": "workflow:owner",
+      "workflowId": "NVmciDLIcn1BLcXi",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "cf1a3c53-e4fb-4b09-b87f-5cde37e30ab7",
+    "workflowId": "NVmciDLIcn1BLcXi",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.pipedriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          -100
+        ],
+        "id": "b73c0b4e-abb9-4134-ad5d-c7883f81a574",
+        "name": "Pipedrive Trigger",
+        "webhookId": "f24d53e6-7664-4117-9ab2-93a2d0f90a13",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "29ee238b-092e-469b-9cf0-a98b564f7065",
+                "leftValue": "={{ $json.data.stage_id }}",
+                "rightValue": 1327,
+                "operator": {
+                  "type": "number",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          220,
+          -100
+        ],
+        "id": "02eae004-0d42-41f8-a87a-97027813cea3",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "dealId": "={{ $json.meta.entity_id }}"
+        },
+        "type": "n8n-nodes-base.pipedrive",
+        "typeVersion": 1,
+        "position": [
+          540,
+          -140
+        ],
+        "id": "76818fa1-98ef-4383-82f8-db69a9314e3b",
+        "name": "Pipedrive",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://sendflow.pro/a/m8bktH0mqMTyuQWTNwDl",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"apiKey\": \"ce2d067e-6839-4455-87b2-8a24b5995179\",\n  \"phoneNumber\": \"{{ $json.telefone }}\",\n  \"name\": \"{{ $json.nome }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1020,
+          -340
+        ],
+        "id": "49396326-6153-4197-9124-196891b04d9a",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "239cf398-2afc-400d-80c5-d74675f03014",
+                "name": "nome",
+                "value": "={{ $json.person_name }}",
+                "type": "string"
+              },
+              {
+                "id": "49b565fa-345f-47d4-9e24-2a42c2a626ed",
+                "name": "telefone",
+                "value": "={{ $json.person_id.phone[0].value }}",
+                "type": "string"
+              },
+              {
+                "id": "3c61f019-a756-40ea-87a5-4550d1f1f1cc",
+                "name": "email",
+                "value": "={{ $json.person_id.email[0].value }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          780,
+          -140
+        ],
+        "id": "15ad7857-ac37-4304-81ce-d28e0f64d8e5",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2080,
+          60
+        ],
+        "id": "5ce47274-b289-4108-a26b-98f7eecf1128",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "email": "={{ $json.email }}",
+          "updateIfExists": true,
+          "additionalFields": {
+            "firstName": "={{ $json.nome }}",
+            "phone": "={{ $json.telefone }}"
+          }
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          1240,
+          -140
+        ],
+        "id": "5a0d1446-196d-4398-9d38-365f49a8bd90",
+        "name": "ActiveCampaign",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "contactList",
+          "listId": 6,
+          "contactId": "={{ $json.id }}"
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          1540,
+          -160
+        ],
+        "id": "e92fcd44-3509-45ed-864d-8c88fa690feb",
+        "name": "ActiveCampaign1",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "42f2cbe6-4bd0-40ce-84a2-9a436d70dbb1",
+                "leftValue": "={{ $json.data.stage_id }}",
+                "rightValue": 1126,
+                "operator": {
+                  "type": "number",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          520,
+          180
+        ],
+        "id": "521fd8e0-6b28-4d05-845b-127d3c9def8b",
+        "name": "If1"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "dealId": "={{ $json.meta.entity_id }}"
+        },
+        "type": "n8n-nodes-base.pipedrive",
+        "typeVersion": 1,
+        "position": [
+          800,
+          160
+        ],
+        "id": "189b807d-e64e-4b20-b959-43bc0df77e76",
+        "name": "Pipedrive1",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://sendflow.pro/a/m8bktH0mqMTyuQWTNwDl",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"apiKey\": \"ce2d067e-6839-4455-87b2-8a24b5995179\",\n  \"phoneNumber\": \"{{ $json.telefone }}\",\n  \"name\": \"{{ $json.nome }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1280,
+          60
+        ],
+        "id": "82c76763-45c8-4d54-ae4b-5d7537ed4e14",
+        "name": "HTTP Request1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "239cf398-2afc-400d-80c5-d74675f03014",
+                "name": "nome",
+                "value": "={{ $json.person_name }}",
+                "type": "string"
+              },
+              {
+                "id": "49b565fa-345f-47d4-9e24-2a42c2a626ed",
+                "name": "telefone",
+                "value": "={{ $json.person_id.phone[0].value }}",
+                "type": "string"
+              },
+              {
+                "id": "3c61f019-a756-40ea-87a5-4550d1f1f1cc",
+                "name": "email",
+                "value": "={{ $json.person_id.email[0].value }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1040,
+          160
+        ],
+        "id": "396e35ec-de65-412e-bffb-dab609aa5a95",
+        "name": "Edit Fields1"
+      },
+      {
+        "parameters": {
+          "email": "={{ $json.email }}",
+          "updateIfExists": true,
+          "additionalFields": {
+            "firstName": "={{ $json.nome }}",
+            "phone": "={{ $json.telefone }}"
+          }
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          1500,
+          160
+        ],
+        "id": "d6ca92a0-c98a-4ad6-81d6-1d47139fc8e6",
+        "name": "ActiveCampaign2",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "contactList",
+          "listId": 5,
+          "contactId": "={{ $json.id }}"
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          1800,
+          140
+        ],
+        "id": "f094d82d-b1c3-4e6d-9f25-880b00d86ead",
+        "name": "ActiveCampaign3",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1240,
+          -340
+        ],
+        "id": "c50b5bcc-176c-4ac7-99b5-12fcd78e8467",
+        "name": "No Operation, do nothing1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1480,
+          20
+        ],
+        "id": "6cbb6373-16fa-4913-8b77-91bd3ebafd71",
+        "name": "No Operation, do nothing2"
+      }
+    ],
+    "connections": {
+      "Pipedrive Trigger": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Pipedrive",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pipedrive": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pipedrive1": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request1": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTTP Request1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign2": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Pipedrive1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign1": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign3": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
