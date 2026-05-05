@@ -1,0 +1,363 @@
+{
+  "updatedAt": "2026-03-24T11:50:20.684Z",
+  "createdAt": "2025-04-22T14:39:12.297Z",
+  "id": "7fXitjZvmGN2mhb0",
+  "name": "[Fred] Compradores SP Hotmart-Botconversa",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fred-aprovada-sp",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -120,
+        100
+      ],
+      "id": "f79d8b49-64c8-442d-b173-a97d20a708e3",
+      "name": "Webhook",
+      "webhookId": "1daec955-b427-4638-a49e-6bc239cbccfd"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cffffa45-9cb7-436d-b02b-104741e74ca4",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.name }}",
+              "type": "string"
+            },
+            {
+              "id": "0fcf7389-3181-4991-ab4a-8174aa91a476",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.email }}",
+              "type": "string"
+            },
+            {
+              "id": "47c483ac-6dca-46d8-94d8-4dd783fd2150",
+              "name": "Telefone",
+              "value": "={{ $json.Telefoneformatado }}",
+              "type": "string"
+            },
+            {
+              "id": "a6966c5f-55c6-4e1d-9bc0-79ff53da9610",
+              "name": "DDD",
+              "value": "={{ $json.DDD }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        100
+      ],
+      "id": "4cbe89f3-c21e-4e65-bf29-f58d73756e7f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/154398/Q9O0xpqDGltQ/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        40
+      ],
+      "id": "5d46d728-a793-463b-8aa7-a8400a284f79",
+      "name": "HTTP Botconversa Comprar"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        120
+      ],
+      "id": "7aed2c0d-f9f3-44d5-b017-0b31ba0c5766",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o telefone da entrada\nconst rawPhone = $input.first().json.body.data.buyer.checkout_phone;\n\n// Remove tudo que não for número\nconst cleanedPhone = rawPhone.replace(/\\D/g, '');\n\n// Garante que o número esteja no formato com DDI 55\nlet phone = cleanedPhone;\n\n// Se o número começar com \"0\" ou não tiver \"55\", ajusta\nif (!phone.startsWith('55')) {\n  // Se o número tem 11 dígitos (DDD + número), adiciona 55\n  if (phone.length === 11) {\n    phone = '55' + phone;\n  }\n}\n\n// Extrai o DDD (após o 55, os dois próximos dígitos)\nconst ddd = phone.substring(2, 4);\n\n// Retorna os dois campos no formato esperado\nreturn [\n  {\n    json: {\n      Telefoneformatado: phone,\n      DDD: ddd\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        60,
+        100
+      ],
+      "id": "a0685a4d-07a3-49a6-840f-34421d81422d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "55ccbb82-676f-4ff7-a9bf-be7965f022f7",
+              "leftValue": "={{ $json.DDD }}",
+              "rightValue": "11",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        100
+      ],
+      "id": "2c181fa7-27f2-4326-8ad7-a4842bd35676",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa Comprar": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Botconversa Comprar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Jodd HTTP",
+            "content-length": "2151",
+            "content-type": "application/json",
+            "x-forwarded-for": "35.170.73.113",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-hotmart-hottok": "Dohp3MDQas9iC2iYaSGH03NryWBkPy9c79c1a7-b0f3-4557-ad0e-d06dba581d91",
+            "x-real-ip": "35.170.73.113",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "data": {
+              "product": {
+                "support_email": "produtos@fredelboni.com.br",
+                "has_co_production": false,
+                "name": "Audiobook: O Que Os Olhos Não Veem, Mas O Coração Sente",
+                "warranty_date": "2025-04-29T00:00:00Z",
+                "id": 2927954,
+                "ucode": "7d55a2ef-9ff9-4cf4-98be-3489be5a89c1"
+              },
+              "commissions": [
+                {
+                  "currency_value": "BRL",
+                  "source": "MARKETPLACE",
+                  "value": 3.74
+                },
+                {
+                  "currency_value": "BRL",
+                  "source": "PRODUCER",
+                  "value": 33.26
+                }
+              ],
+              "purchase": {
+                "original_offer_price": {
+                  "currency_value": "BRL",
+                  "value": 37
+                },
+                "subscription_anticipation_purchase": false,
+                "checkout_country": {
+                  "iso": "BR",
+                  "name": "Brasil"
+                },
+                "origin": {
+                  "src": "ig|paid|6683816616098_v2_s04|6683820803298|6683816615898|6683816616098|PAZXh0bgNhZW0BMABhZGlkAAAGFDLYwYoBp7sDB8xLEx86ElNmx5m5rpThGkMWrYaaCOB0WIpXENXbe2UPYGHSrYfWjm_F_aem_o9bhlvnRcmKZrlh-AkAXcg"
+                },
+                "order_bump": {
+                  "is_order_bump": false
+                },
+                "approved_date": 1745338290000,
+                "offer": {
+                  "code": "la8jcjs1"
+                },
+                "is_funnel": true,
+                "order_date": 1745338205000,
+                "price": {
+                  "currency_value": "BRL",
+                  "value": 37
+                },
+                "payment": {
+                  "pix_qrcode": "https://live-us.adyen.com/hpp/generateQRCodeImage.shtml?url=00020101021226900014br.gov.bcb.pix2568pix.adyen.com%2Fpixqrcodelocation%2Fpixloc%2Fv1%2Floc%2F_3T3btPORd6K6j6xqoPmfQ5204000053039865802BR5902HT6009SAO+PAULO62070503***6304AD08",
+                  "pix_expiration_date": 1745511005000,
+                  "installments_number": 1,
+                  "type": "PIX",
+                  "pix_code": "00020101021226900014br.gov.bcb.pix2568pix.adyen.com/pixqrcodelocation/pixloc/v1/loc/_3T3btPORd6K6j6xqoPmfQ5204000053039865802BR5902HT6009SAO PAULO62070503***6304AD08"
+                },
+                "full_price": {
+                  "currency_value": "BRL",
+                  "value": 37
+                },
+                "business_model": "I",
+                "invoice_by": "HOTMART",
+                "transaction": "HP3006853295",
+                "status": "APPROVED"
+              },
+              "affiliates": [
+                {
+                  "affiliate_code": "",
+                  "name": ""
+                }
+              ],
+              "producer": {
+                "legal_nature": "Pessoa Jurídica",
+                "document": "23168282000136",
+                "name": "Quimo Serviços Ltda - ME"
+              },
+              "buyer": {
+                "checkout_phone_code": "11",
+                "address": {
+                  "country": "Brasil",
+                  "country_iso": "BR"
+                },
+                "document": "38402267831",
+                "name": "Roberta Souza ",
+                "last_name": "Souza",
+                "checkout_phone": "11987999576",
+                "first_name": "Roberta",
+                "email": "rcsouzaa10@gmail.com",
+                "document_type": "CPF"
+              }
+            },
+            "id": "fb98e953-bf60-4e28-bf61-7f500680cb48",
+            "creation_date": 1745338293536,
+            "event": "PURCHASE_APPROVED",
+            "version": "2.0.0"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/fred-aprovada-sp",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "27b95dac-0a13-403a-bdb3-3ac79dbe2935",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-04-22T14:39:12.297Z",
+      "createdAt": "2025-04-22T14:39:12.297Z",
+      "role": "workflow:owner",
+      "workflowId": "7fXitjZvmGN2mhb0",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
