@@ -1,0 +1,573 @@
+{
+  "updatedAt": "2025-05-28T19:26:23.085Z",
+  "createdAt": "2025-03-31T21:36:18.175Z",
+  "id": "ibG5kqPK7B7NM0iR",
+  "name": "[Dra. Márcia] Boas vindas espera Teac 2025",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.pipedriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        0
+      ],
+      "id": "84792a53-edf0-4065-98b8-066e219bf4d8",
+      "name": "Pipedrive Trigger",
+      "webhookId": "7cdfee77-e540-49e7-b724-5836a3d9c304",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3c2b90a1-d326-4a40-94db-fb8269466b21",
+              "name": "ID deal",
+              "value": "={{ $json.data.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -40
+      ],
+      "id": "f1ca0fb7-50e6-4540-b2f8-35af267f99c1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dealId": "={{ $json[\"ID deal\"] }}"
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -40
+      ],
+      "id": "4d1e3261-5691-4712-bbc4-6171471f589a",
+      "name": "Pipedrive",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "08a346de-e8a0-47f3-b78f-6025e0a04283",
+              "leftValue": "={{ $json.meta.action }}",
+              "rightValue": "create",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -180,
+        0
+      ],
+      "id": "8bcad214-5405-4aa7-b695-12d4d37b082e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/tsSgxgIYTPLK6ZEcwivJ",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"c03a1f04-33ed-4a19-85d7-68a55ddc3d70\",\n  \"phoneNumber\": \"55{{ $json.person_id.phone[0].value }}\",\n  \"name\": \"{{ $json.person_id.name }}\"\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        -40
+      ],
+      "id": "7fc0bda0-3513-496a-b0f0-09eaaf242f6b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6a2045be-b315-491a-8db8-f2d262d752ec",
+              "leftValue": "={{ $('Pipedrive Trigger').item.json.data.title }}",
+              "rightValue": "[Neg Teac 2025]",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        300,
+        -40
+      ],
+      "id": "30abcaf4-9597-4136-9ba4-b921e4377efb",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        680,
+        300
+      ],
+      "id": "32e25bcb-03ff-4812-a2da-33140a5fcddb",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Pipedrive Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Pipedrive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pipedrive": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": {
+    "node:Pipedrive Trigger": {
+      "webhookId": 2150426
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Pipedrive Trigger": [
+      {
+        "json": {
+          "data": {
+            "add_time": "2025-03-22T14:23:45Z",
+            "channel": 23364,
+            "channel_id": "Solicitar contato - site YSAO YAMAMURA",
+            "close_time": null,
+            "creator_user_id": 3559832,
+            "currency": "BRL",
+            "custom_fields": {
+              "31ae0f90cc1b3ee3da765f9c9decf2321022a7cf": null
+            },
+            "expected_close_date": null,
+            "first_won_time": null,
+            "id": 63691,
+            "label_ids": [],
+            "lost_reason": null,
+            "lost_time": null,
+            "org_id": null,
+            "origin": "WebForms",
+            "origin_id": "db93bc50-3ee4-11eb-a127-b18ec1357b50",
+            "owner_id": 3559832,
+            "person_id": 70471,
+            "pipeline_id": 183,
+            "probability": null,
+            "stage_change_time": null,
+            "stage_id": 1230,
+            "status": "open",
+            "title": "[Neg Pediatria 2025] LETICIA ELISA CASAGRANDA PIAZZETTA",
+            "update_time": null,
+            "value": 0,
+            "visible_to": "3",
+            "won_time": null,
+            "is_archived": false,
+            "archive_time": null
+          },
+          "previous": null,
+          "meta": {
+            "action": "create",
+            "company_id": "2396659",
+            "correlation_id": "62c16ace-e0eb-4bcd-af9d-918891b418a9",
+            "entity_id": "63691",
+            "entity": "deal",
+            "id": "c640cee0-c1fb-4c79-be73-fad5616e1b6d",
+            "is_bulk_edit": false,
+            "timestamp": "2025-03-22T14:23:45.267Z",
+            "type": "general",
+            "user_id": "3559832",
+            "version": "2.0",
+            "webhook_id": "1737902",
+            "webhook_owner_id": "3559832",
+            "change_source": "app",
+            "attempt": 1,
+            "host": "center-ao.pipedrive.com"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "5be4d681-4a3f-4e7d-8a0a-ce03181f05ad",
+  "activeVersionId": "5be4d681-4a3f-4e7d-8a0a-ce03181f05ad",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-31T21:36:18.175Z",
+      "createdAt": "2025-03-31T21:36:18.175Z",
+      "role": "workflow:owner",
+      "workflowId": "ibG5kqPK7B7NM0iR",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "5be4d681-4a3f-4e7d-8a0a-ce03181f05ad",
+    "workflowId": "ibG5kqPK7B7NM0iR",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.pipedriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          -440,
+          0
+        ],
+        "id": "84792a53-edf0-4065-98b8-066e219bf4d8",
+        "name": "Pipedrive Trigger",
+        "webhookId": "7cdfee77-e540-49e7-b724-5836a3d9c304",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "3c2b90a1-d326-4a40-94db-fb8269466b21",
+                "name": "ID deal",
+                "value": "={{ $json.data.id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          640,
+          -40
+        ],
+        "id": "f1ca0fb7-50e6-4540-b2f8-35af267f99c1",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "dealId": "={{ $json[\"ID deal\"] }}"
+        },
+        "type": "n8n-nodes-base.pipedrive",
+        "typeVersion": 1,
+        "position": [
+          880,
+          -40
+        ],
+        "id": "4d1e3261-5691-4712-bbc4-6171471f589a",
+        "name": "Pipedrive",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "08a346de-e8a0-47f3-b78f-6025e0a04283",
+                "leftValue": "={{ $json.meta.action }}",
+                "rightValue": "create",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -180,
+          0
+        ],
+        "id": "8bcad214-5405-4aa7-b695-12d4d37b082e",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://sendflow.pro/a/tsSgxgIYTPLK6ZEcwivJ",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"apiKey\": \"c03a1f04-33ed-4a19-85d7-68a55ddc3d70\",\n  \"phoneNumber\": \"55{{ $json.person_id.phone[0].value }}\",\n  \"name\": \"{{ $json.person_id.name }}\"\n} ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1100,
+          -40
+        ],
+        "id": "7fc0bda0-3513-496a-b0f0-09eaaf242f6b",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "6a2045be-b315-491a-8db8-f2d262d752ec",
+                "leftValue": "={{ $('Pipedrive Trigger').item.json.data.title }}",
+                "rightValue": "[Neg Teac 2025]",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          300,
+          -40
+        ],
+        "id": "30abcaf4-9597-4136-9ba4-b921e4377efb",
+        "name": "If1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          680,
+          300
+        ],
+        "id": "32e25bcb-03ff-4812-a2da-33140a5fcddb",
+        "name": "No Operation, do nothing"
+      }
+    ],
+    "connections": {
+      "Pipedrive Trigger": {
+        "main": [
+          []
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Pipedrive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pipedrive": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
