@@ -1,0 +1,341 @@
+{
+  "updatedAt": "2025-11-10T19:39:53.016Z",
+  "createdAt": "2025-11-07T17:40:29.855Z",
+  "id": "nWM3oEU0G1okvdMU",
+  "name": "[Agrotalento]  lp",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fluxo-formulario-lp",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -208,
+        0
+      ],
+      "id": "d884d46f-b11a-48ee-94b8-f13f839321eb",
+      "name": "Webhook",
+      "webhookId": "a68c14e2-6e2c-41fc-a49c-2992c9a2b288"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/178611/DcHlMr3gojoL/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.email }}"
+            },
+            {
+              "name": "Wpp",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "Utm Source",
+              "value": "={{ $('Webhook').item.json.body.utm_source }}"
+            },
+            {
+              "name": "Utm Medium",
+              "value": "={{ $('Webhook').item.json.body.utm_medium }}"
+            },
+            {
+              "name": "Utm Campaign",
+              "value": "={{ $('Webhook').item.json.body.utm_campaign }}"
+            },
+            {
+              "name": "Utm Term",
+              "value": "={{ $('Webhook').item.json.body.utm_term }}"
+            },
+            {
+              "name": "Utm Content",
+              "value": "={{ $('Webhook').item.json.body.utm_content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "959c8bbb-ca1e-4391-b16e-1b15a806ce25",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "bad7adbb-bc48-4f9d-a7cd-a06e038861bc",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const data = item.json.body.data;\n\n  // --- TELEFONE ---\n  const rawPhone = $input.first().json.body.whatsapp || \"\";\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove DDI duplicado se necessário\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adiciona 9 se DDD < 30 e número com 8 dígitos\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remove 9 se DDD >= 30 e número com 10 dígitos começando com 9\n  if (parseInt(ddd) >= 30 && numero.length === 10 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  // --- NOME DO PRODUTO ---\n  const nomeProduto = data?.product?.name || \"\";\n  const nomeOrderBump = data?.purchase?.order_bump?.name || \"\";\n  const nomeFinal =\n    nomeProduto === \"O Código da Loja Infantil Vendedora\" ||\n    nomeOrderBump === \"O Código da Loja Infantil Vendedora\"\n      ? \"O Código da Loja Infantil Vendedora\"\n      : \"\";\n\n  return {\n    json: {\n      phone: telefoneFormatado,\n      produto: nomeFinal\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        0
+      ],
+      "id": "876b3fdd-acaf-4023-beb8-8c4c538e3cab",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+            "content-length": "455",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,eu;q=0.6",
+            "content-type": "application/json",
+            "origin": "https://mkt.agrotalento.com.br",
+            "priority": "u=1, i",
+            "referer": "https://mkt.agrotalento.com.br/",
+            "sec-ch-ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"macOS\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "x-forwarded-for": "138.36.81.64",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "138.36.81.64"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "nome": "Letícia Elisa Casagranda Piazzetta",
+            "email": "leticia@faondigital.com.br",
+            "whatsapp": "54991635474",
+            "utm_source": "teste-source",
+            "utm_medium": "teste-medium",
+            "utm_campaign": "teste-campaign",
+            "utm_term": "teste-term",
+            "utm_content": "teste-content",
+            "page_url": "https://mkt.agrotalento.com.br/captura-black-friday-agrotalento-2025/?utm_source=teste-source&utm_medium=teste-medium&utm_campaign=teste-campaign&utm_content=teste-content&utm_term=teste-term"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/fluxo-formulario-lp",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "d144c09b-48e3-4ad7-ac09-be7dd000cf5c",
+  "activeVersionId": "d144c09b-48e3-4ad7-ac09-be7dd000cf5c",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-11-07T17:40:29.855Z",
+      "createdAt": "2025-11-07T17:40:29.855Z",
+      "role": "workflow:owner",
+      "workflowId": "nWM3oEU0G1okvdMU",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "d144c09b-48e3-4ad7-ac09-be7dd000cf5c",
+    "workflowId": "nWM3oEU0G1okvdMU",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "fluxo-formulario-lp",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -208,
+          0
+        ],
+        "id": "d884d46f-b11a-48ee-94b8-f13f839321eb",
+        "name": "Webhook",
+        "webhookId": "a68c14e2-6e2c-41fc-a49c-2992c9a2b288"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/178611/DcHlMr3gojoL/",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "Nome",
+                "value": "={{ $('Webhook').item.json.body.nome }}"
+              },
+              {
+                "name": "Email",
+                "value": "={{ $('Webhook').item.json.body.email }}"
+              },
+              {
+                "name": "Wpp",
+                "value": "={{ $json.phone }}"
+              },
+              {
+                "name": "Utm Source",
+                "value": "={{ $('Webhook').item.json.body.utm_source }}"
+              },
+              {
+                "name": "Utm Medium",
+                "value": "={{ $('Webhook').item.json.body.utm_medium }}"
+              },
+              {
+                "name": "Utm Campaign",
+                "value": "={{ $('Webhook').item.json.body.utm_campaign }}"
+              },
+              {
+                "name": "Utm Term",
+                "value": "={{ $('Webhook').item.json.body.utm_term }}"
+              },
+              {
+                "name": "Utm Content",
+                "value": "={{ $('Webhook').item.json.body.utm_content }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          416,
+          0
+        ],
+        "id": "959c8bbb-ca1e-4391-b16e-1b15a806ce25",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          624,
+          0
+        ],
+        "id": "bad7adbb-bc48-4f9d-a7cd-a06e038861bc",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const data = item.json.body.data;\n\n  // --- TELEFONE ---\n  const rawPhone = $input.first().json.body.whatsapp || \"\";\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove DDI duplicado se necessário\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adiciona 9 se DDD < 30 e número com 8 dígitos\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remove 9 se DDD >= 30 e número com 10 dígitos começando com 9\n  if (parseInt(ddd) >= 30 && numero.length === 10 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  // --- NOME DO PRODUTO ---\n  const nomeProduto = data?.product?.name || \"\";\n  const nomeOrderBump = data?.purchase?.order_bump?.name || \"\";\n  const nomeFinal =\n    nomeProduto === \"O Código da Loja Infantil Vendedora\" ||\n    nomeOrderBump === \"O Código da Loja Infantil Vendedora\"\n      ? \"O Código da Loja Infantil Vendedora\"\n      : \"\";\n\n  return {\n    json: {\n      phone: telefoneFormatado,\n      produto: nomeFinal\n    }\n  };\n});\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          160,
+          0
+        ],
+        "id": "876b3fdd-acaf-4023-beb8-8c4c538e3cab",
+        "name": "Code in JavaScript"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
