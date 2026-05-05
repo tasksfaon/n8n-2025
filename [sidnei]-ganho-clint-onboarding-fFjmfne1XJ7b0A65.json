@@ -1,0 +1,1008 @@
+{
+  "updatedAt": "2026-04-16T11:56:19.883Z",
+  "createdAt": "2025-06-03T19:38:50.603Z",
+  "id": "fFjmfne1XJ7b0A65",
+  "name": "[Sidnei] Ganho Clint Onboarding",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-clint-onboarding",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -100,
+        280
+      ],
+      "id": "44fa1e86-eba2-443d-9f9d-0fc0c828994f",
+      "name": "Webhook",
+      "webhookId": "903ed1c5-0cca-4a5b-8026-149ff98033ac"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém os dados do nó webhook\nconst items = $input.all();\n\nreturn items.map(item => {\n    let phone = $input.first().json.body.contact_phone|| \"\";\n\n    // Remove caracteres especiais, mantendo apenas números\n    phone = phone.replace(/[^\\d]/g, \"\"); // Remove tudo que não for número\n\n    // Verifica se já está no formato 55DDDTelefone\n    const regex = /^55\\d{2}\\d{8,9}$/;\n    if (!regex.test(phone)) {\n        // Se tiver 10 ou 11 dígitos (DDD + telefone), adiciona 55\n        if (phone.length === 10 || phone.length === 11) {\n            phone = \"55\" + phone;\n        }\n    }\n\n    // Retorna apenas o telefone formatado\n    return { json: { phone } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        280
+      ],
+      "id": "0a753375-4104-4f35-a5f3-72e754f3a209",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "765811b9-6f3c-4e17-83b3-1fcc5cc9ccf6",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "3120a028-822d-4959-b490-ad0c9cfe092f",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "c0001ae3-ce11-4b73-9f3b-1d6f87718ebd",
+              "name": "Telefone",
+              "value": "={{ $('Code').item.json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "1ec312b0-5070-4bc1-a828-ddd4a54ca23b",
+              "name": "Treinamento",
+              "value": "={{ $('Webhook').item.json.body.contact_informacao_dos_trein }}",
+              "type": "string"
+            },
+            {
+              "id": "c9ded3dd-1af8-4eb6-b553-f93528041efd",
+              "name": "Data",
+              "value": "={{ new Date().toLocaleDateString(\"pt-BR\") }}",
+              "type": "string"
+            },
+            {
+              "id": "ad10aa44-cd77-4e0e-9666-c738ecb95614",
+              "name": "Beneficios",
+              "value": "={{ $('Webhook').item.json.body.contact_beneficios_de_membro }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        280
+      ],
+      "id": "ddffd614-583e-45a0-87bf-0c6c7f801686",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Treinamento }}",
+                    "rightValue": "CONEXÃO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "3e90317a-7c0b-4aab-93b1-cf92890d2291"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CONEXÃO"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c6e8dd18-f514-4c2e-b03b-7f0875888c66",
+                    "leftValue": "={{ $json.Treinamento }}",
+                    "rightValue": "PODER DA VENDA",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PODER DA VENDA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "cd5f437a-0960-47a0-b84b-342e73d7d02d",
+                    "leftValue": "={{ $json.Treinamento }}",
+                    "rightValue": "ROTA",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ROTA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e0428924-c6ce-4445-9514-fbe8ebc96092",
+                    "leftValue": "={{ $json.Treinamento }}",
+                    "rightValue": "TOP",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TOP"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "765467ec-b9d1-4e35-b3cd-1ff802f3d319",
+                    "leftValue": "={{ $json.Treinamento }}",
+                    "rightValue": "EMPREFAC",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "EMPREFAC"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d8cde813-398e-4ded-9594-b11f93639149",
+                    "leftValue": "={{ $json.Treinamento }}",
+                    "rightValue": "FORMAÇÃO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "FORMAÇÃO"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4565d5c1-7424-4505-a672-0ac2c1d37f10",
+                    "leftValue": "={{ $json.Treinamento }}",
+                    "rightValue": "NO CONTROLE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "NO CONTROLE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "06e5c1f8-3882-4d75-b9d3-216969022e24",
+                    "leftValue": "={{ $json.Treinamento }}",
+                    "rightValue": "ENCONTRO DE MEMBROS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ENCONTRO DE MEMBROS"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "edc9b611-2b7a-46c1-b544-77ae76003918",
+                    "leftValue": "={{ $json.Treinamento }}",
+                    "rightValue": "CONEXÃO/ O PODER DA VENDA/ ROTA",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CONEXÃO/ O PODER DA VENDA/ ROTA"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        540,
+        -140
+      ],
+      "id": "396b8a11-b687-40d6-b430-72fcb934f017",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/840080f5-01e1-45f8-bfd5-f5189be8ba3e",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -340
+      ],
+      "id": "3f74558c-1d9d-43fc-8017-c1480ba31415",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/a9e8eec0-6a5c-45dc-9e88-81f583bff676",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -180
+      ],
+      "id": "c9b03e1d-4c97-41e0-ba65-aa0a8fd4f9dd",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/2b588b4e-b141-4327-a33d-4e730ddadbf1",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -40
+      ],
+      "id": "e164dc4c-fa54-469e-89b3-64a93cb97ed9",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/88a54ff9-2926-462a-bca0-71b5fd1d77e8",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        120
+      ],
+      "id": "edf6bb93-8dfa-48c1-93d5-46860693a362",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/5896c444-d011-42ad-ab04-b10aefbe115d",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        260
+      ],
+      "id": "64a5db19-7dbc-4f84-9f78-0d42ff0a5e0a",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/ad938faf-0cc7-44c9-8b50-14c5804a9295",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        440
+      ],
+      "id": "7c11152d-576c-48fb-b047-1f1e2c3b85f4",
+      "name": "HTTP Request5"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/a84bf945-87f8-49f9-9a03-7da512c3a4db",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        600
+      ],
+      "id": "7006851c-fed5-4dad-a127-a87174c0db62",
+      "name": "HTTP Request6"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $node[\"Edit Fields\"].json[\"Beneficios\"]}}",
+                    "rightValue": "CONSULTORIA 360",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "5b1ca624-e580-4fdd-b5f7-d4234a8ce4cc"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CONSULTORIA 360"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ff0acb77-d8a8-4b63-811c-60d6491fb4da",
+                    "leftValue": "={{ $node[\"Edit Fields\"].json[\"Beneficios\"]}}",
+                    "rightValue": "GUIA",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "GUIA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ae6e03f8-6517-4fd7-bf3e-c13728055066",
+                    "leftValue": "={{ $node[\"Edit Fields\"].json[\"Beneficios\"]}}",
+                    "rightValue": "SITE DE SÓCIOS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SITE DE SÓCIOS"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        880,
+        780
+      ],
+      "id": "f0e5f5c6-67cb-407b-bc40-a9b3e28c54ac",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/e3708386-daf9-4c10-86b5-1ee5573154e4",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('Edit Fields').item.json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1500,
+        740
+      ],
+      "id": "44938818-623b-4556-a139-de7891862461",
+      "name": "HTTP Request7"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1940,
+        820
+      ],
+      "id": "b9420933-6a82-487f-8eb9-91ea631ec3cc",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        -160
+      ],
+      "id": "5870e87e-1621-4e6e-9c12-8ed8b2446f86",
+      "name": "No Operation, do nothing1"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request7": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.7.9",
+            "content-length": "683",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "traceparent": "00-683f51c7000000000738c7c9fb8970c0-20391d85fb9a773f-00",
+            "tracestate": "dd=t.tid:683f51c700000000;t.dm:-3;s:-1;p:20391d85fb9a773f",
+            "x-datadog-parent-id": "2321919544175261503",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=683f51c700000000",
+            "x-datadog-trace-id": "520385427283734720",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Isabella Teste",
+            "contact_email": "bellasimaia@gmail.con",
+            "contact_phone": "+5531984617540",
+            "deal_stage": "AGUARDANDO CONTATO",
+            "deal_user": "fernandafranco271@gmail.com",
+            "deal_status": "WON",
+            "contact_onboarding": [
+              "REALIZADO"
+            ],
+            "contact_status_onboarding": "",
+            "contact_responsavel_do_onboa": [
+              "ANDRESSA DE PAULA "
+            ],
+            "contact_informacao_dos_trein": [
+              "CONEXÃO - PAGO ",
+              "O PODER DA VENDA - PAGO ",
+              "ROTA - PAGO ",
+              "CONEXÃO/ O PODER DA VENDA/ ROTA - PAGO ",
+              "TOP EMPREENDEDOR - PAGO",
+              "EMPREFAC - PAGO",
+              "FORMAÇÃO DE EMBAIXADORES - PAGO",
+              "NO CONTROLE - PAGO",
+              "ENCONTRO DE MEMBROS - PAGO "
+            ],
+            "contact_beneficios_de_membro": [
+              "CONSULTORIA 360 - OK ",
+              "GUIA - OK",
+              "SITE DE SÓCIOS - OK "
+            ]
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-clint-onboarding",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "4b2c424d-d9af-4f4d-9629-7da9f7217fd8",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-06-03T19:38:50.603Z",
+      "createdAt": "2025-06-03T19:38:50.603Z",
+      "role": "workflow:owner",
+      "workflowId": "fFjmfne1XJ7b0A65",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
