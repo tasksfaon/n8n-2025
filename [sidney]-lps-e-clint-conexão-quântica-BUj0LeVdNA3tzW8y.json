@@ -1,1 +1,527 @@
-{"fileName":"[sidney]-lps-e-clint-conexão-quântica-BUj0LeVdNA3tzW8y.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2026-04-16T19:23:14.299Z",
+  "createdAt": "2025-05-30T12:56:13.205Z",
+  "id": "BUj0LeVdNA3tzW8y",
+  "name": "[Sidney] lps e clint Conexão Quântica",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lp-conexao",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "99698751-7dce-43ce-a72e-204d58916213",
+      "name": "Webhook",
+      "webhookId": "093d7653-64fa-4fa5-8f7d-34b278f1f738"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1c3e15b2-e0b7-4c75-81c7-d30cfe1e912b",
+              "name": "nome",
+              "value": "={{ $('Webhook').item.json.body.__submission.user_inputs.names }}",
+              "type": "string"
+            },
+            {
+              "id": "50433c3d-7299-4e46-8254-4cb9c34a7eb1",
+              "name": "telefone",
+              "value": "={{ $('Code').item.json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "8897d3a4-9025-447e-a763-9eeebe875b82",
+              "name": "email",
+              "value": "={{ $('Webhook').item.json.body.__submission.user_inputs.email }}",
+              "type": "string"
+            },
+            {
+              "id": "aaca05a3-8670-413b-8d10-1da21ea30cbc",
+              "name": "Polo",
+              "value": "={{ $('Webhook').item.json.body.hidden_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "ab71212d-1555-40b5-82cd-d5b563b40894",
+              "name": "Valor",
+              "value": "127",
+              "type": "string"
+            },
+            {
+              "id": "6991407d-aad5-4db2-a74e-b6efe3948193",
+              "name": "Data",
+              "value": "={{ new Date().getDate().toString().padStart(2, '0') + '/' + \n   (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' + \n   new Date().getFullYear() }}",
+              "type": "string"
+            },
+            {
+              "id": "829b61a8-5632-4e85-b648-4ed17bc0578f",
+              "name": "Utm Source",
+              "value": "={{ $('Code').item.json.utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "12e55bdb-99ee-4f10-ab30-e37c3f53eeb2",
+              "name": "Utm Campaign",
+              "value": "={{ $('Code').item.json.utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "5a6d9271-ef5d-4512-aca2-644fb222c340",
+              "name": "Utm Medium",
+              "value": "={{ $('Code').item.json.utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "7da7330c-2fcc-4175-b37e-c57a14720177",
+              "name": "Utm Content",
+              "value": "={{ $('Code').item.json.utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "927ab989-4564-4bc8-87b7-5f0b5c8ba571",
+              "name": "Utm Term",
+              "value": "={{ $('Code').item.json.utm_term }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        0
+      ],
+      "id": "41ebd3a1-8ced-4a77-b915-0232a9c6dbc7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst phoneRaw = data.body?.phone;\nconst rawUrl = data.body?.__submission?.source_url || '';\nconsole.log(\"URL bruta recebida:\", rawUrl);\n\n// Função para formatar o telefone (sem espaços)\nfunction formatarTelefone(numeroTelefone) {\n  if (!numeroTelefone) return '';\n  let telefoneLimpo = numeroTelefone.replace(/\\D/g, '');\n  let codigoPais = '55';\n\n  if (telefoneLimpo.length > 11 && telefoneLimpo.startsWith('55')) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(telefoneLimpo.length - 11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  if (parseInt(ddd) < 30 && numero.length === 8) numero = '9' + numero;\n  if (parseInt(ddd) >= 30 && numero.length === 9 && numero.startsWith('9')) numero = numero.slice(1);\n\n  return `${codigoPais}${ddd}${numero}`;\n}\n\n// Função manual para extrair UTMs da query string\nfunction extrairUTMs(url) {\n  const utms = {\n    utm_source: null,\n    utm_medium: null,\n    utm_campaign: null,\n    utm_content: null,\n    utm_term: null\n  };\n\n  if (!url || typeof url !== 'string') return utms;\n\n  const queryString = url.split('?')[1];\n  if (!queryString) return utms;\n\n  const pairs = queryString.split('&');\n\n  for (const pair of pairs) {\n    const [key, value] = pair.split('=').map(decodeURIComponent);\n    if (!key || !value) continue;\n\n    switch (key) {\n      case 'utm_source':\n      case 'utm_medium':\n      case 'utm_campaign':\n      case 'utm_content':\n      case 'utm_term':\n        utms[key] = value;\n        break;\n    }\n  }\n\n  return utms;\n}\n\n// Executar\nconst telefoneFormatado = formatarTelefone(phoneRaw);\nconst utms = extrairUTMs(rawUrl);\n\n// Retornar só os dados desejados\nreturn [\n  {\n    json: {\n      telefoneFormatado,\n      ...utms\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "09ed6fc3-6c63-4e55-bac3-aff298821fd7",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/dce7ea5f-49ba-45d8-9921-c2279bb21aa8",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.telefone }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "name": "Tag",
+              "value": "={{ $json.Polo }}"
+            },
+            {
+              "name": "Polo",
+              "value": "={{ $json.Polo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        860,
+        0
+      ],
+      "id": "3091e819-4a3f-45cf-9fce-ea1142c94604",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "452be982-5efb-4814-9fad-3883f5265224",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.7.2; https://caeclub.com.br",
+            "content-length": "1028",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/json",
+            "x-forwarded-for": "177.154.191.146",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "177.154.191.146"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "_fluentform_14_fluentformnonce": "bec875cb0c",
+            "names": {
+              "first_name": "Rafael"
+            },
+            "email": "rafaellucasromao@gmail.com",
+            "phone": "+5511989421270",
+            "hidden": "R$ 127,00",
+            "hidden_1": "CAE CLUB - Polo Tatuapé",
+            "__submission": {
+              "id": "798",
+              "form_id": "14",
+              "serial_number": "76",
+              "source_url": "https://caeclub.com.br/evento-tatuape/?utm_medium=paid&utm_source=ig&utm_id=120222201428470518&utm_content=120222201428570518&utm_term=120222201428440518&utm_campaign=120222201428470518&fbclid=PAZXh0bgNhZW0BMABhZGlkAasddLbon8YBp0kitjLv4JhNtD7842qzffIevjkI",
+              "user_id": "0",
+              "status": "unread",
+              "is_favourite": "0",
+              "browser": "Chrome",
+              "device": "Android",
+              "ip": "187.26.206.190",
+              "city": null,
+              "country": null,
+              "payment_status": null,
+              "payment_method": null,
+              "payment_type": null,
+              "currency": null,
+              "payment_total": null,
+              "total_paid": null,
+              "created_at": "2025-04-17 07:04:14",
+              "updated_at": "2025-04-17 07:04:14",
+              "user_inputs": {
+                "names": "Rafael",
+                "email": "rafaellucasromao@gmail.com",
+                "phone": "+5511989421270",
+                "hidden": "R$ 127,00",
+                "hidden_1": "CAE CLUB - Polo Tatuapé"
+              }
+            }
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/lps-clint-sidney",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "26261d3f-1232-49a2-927b-06b24737c262",
+  "activeVersionId": "26261d3f-1232-49a2-927b-06b24737c262",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-05-30T12:56:13.205Z",
+      "createdAt": "2025-05-30T12:56:13.205Z",
+      "role": "workflow:owner",
+      "workflowId": "BUj0LeVdNA3tzW8y",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-16T19:23:28.748Z",
+    "createdAt": "2026-04-16T19:23:14.300Z",
+    "versionId": "26261d3f-1232-49a2-927b-06b24737c262",
+    "workflowId": "BUj0LeVdNA3tzW8y",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "lp-conexao",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          240,
+          0
+        ],
+        "id": "99698751-7dce-43ce-a72e-204d58916213",
+        "name": "Webhook",
+        "webhookId": "093d7653-64fa-4fa5-8f7d-34b278f1f738"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "1c3e15b2-e0b7-4c75-81c7-d30cfe1e912b",
+                "name": "nome",
+                "value": "={{ $('Webhook').item.json.body.__submission.user_inputs.names }}",
+                "type": "string"
+              },
+              {
+                "id": "50433c3d-7299-4e46-8254-4cb9c34a7eb1",
+                "name": "telefone",
+                "value": "={{ $('Code').item.json.telefoneFormatado }}",
+                "type": "string"
+              },
+              {
+                "id": "8897d3a4-9025-447e-a763-9eeebe875b82",
+                "name": "email",
+                "value": "={{ $('Webhook').item.json.body.__submission.user_inputs.email }}",
+                "type": "string"
+              },
+              {
+                "id": "aaca05a3-8670-413b-8d10-1da21ea30cbc",
+                "name": "Polo",
+                "value": "={{ $('Webhook').item.json.body.hidden_1 }}",
+                "type": "string"
+              },
+              {
+                "id": "ab71212d-1555-40b5-82cd-d5b563b40894",
+                "name": "Valor",
+                "value": "127",
+                "type": "string"
+              },
+              {
+                "id": "6991407d-aad5-4db2-a74e-b6efe3948193",
+                "name": "Data",
+                "value": "={{ new Date().getDate().toString().padStart(2, '0') + '/' + \n   (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' + \n   new Date().getFullYear() }}",
+                "type": "string"
+              },
+              {
+                "id": "829b61a8-5632-4e85-b648-4ed17bc0578f",
+                "name": "Utm Source",
+                "value": "={{ $('Code').item.json.utm_source }}",
+                "type": "string"
+              },
+              {
+                "id": "12e55bdb-99ee-4f10-ab30-e37c3f53eeb2",
+                "name": "Utm Campaign",
+                "value": "={{ $('Code').item.json.utm_campaign }}",
+                "type": "string"
+              },
+              {
+                "id": "5a6d9271-ef5d-4512-aca2-644fb222c340",
+                "name": "Utm Medium",
+                "value": "={{ $('Code').item.json.utm_medium }}",
+                "type": "string"
+              },
+              {
+                "id": "7da7330c-2fcc-4175-b37e-c57a14720177",
+                "name": "Utm Content",
+                "value": "={{ $('Code').item.json.utm_content }}",
+                "type": "string"
+              },
+              {
+                "id": "927ab989-4564-4bc8-87b7-5f0b5c8ba571",
+                "name": "Utm Term",
+                "value": "={{ $('Code').item.json.utm_term }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          660,
+          0
+        ],
+        "id": "41ebd3a1-8ced-4a77-b915-0232a9c6dbc7",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "jsCode": "const data = $input.first().json;\nconst phoneRaw = data.body?.phone;\nconst rawUrl = data.body?.__submission?.source_url || '';\nconsole.log(\"URL bruta recebida:\", rawUrl);\n\n// Função para formatar o telefone (sem espaços)\nfunction formatarTelefone(numeroTelefone) {\n  if (!numeroTelefone) return '';\n  let telefoneLimpo = numeroTelefone.replace(/\\D/g, '');\n  let codigoPais = '55';\n\n  if (telefoneLimpo.length > 11 && telefoneLimpo.startsWith('55')) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(telefoneLimpo.length - 11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  if (parseInt(ddd) < 30 && numero.length === 8) numero = '9' + numero;\n  if (parseInt(ddd) >= 30 && numero.length === 9 && numero.startsWith('9')) numero = numero.slice(1);\n\n  return `${codigoPais}${ddd}${numero}`;\n}\n\n// Função manual para extrair UTMs da query string\nfunction extrairUTMs(url) {\n  const utms = {\n    utm_source: null,\n    utm_medium: null,\n    utm_campaign: null,\n    utm_content: null,\n    utm_term: null\n  };\n\n  if (!url || typeof url !== 'string') return utms;\n\n  const queryString = url.split('?')[1];\n  if (!queryString) return utms;\n\n  const pairs = queryString.split('&');\n\n  for (const pair of pairs) {\n    const [key, value] = pair.split('=').map(decodeURIComponent);\n    if (!key || !value) continue;\n\n    switch (key) {\n      case 'utm_source':\n      case 'utm_medium':\n      case 'utm_campaign':\n      case 'utm_content':\n      case 'utm_term':\n        utms[key] = value;\n        break;\n    }\n  }\n\n  return utms;\n}\n\n// Executar\nconst telefoneFormatado = formatarTelefone(phoneRaw);\nconst utms = extrairUTMs(rawUrl);\n\n// Retornar só os dados desejados\nreturn [\n  {\n    json: {\n      telefoneFormatado,\n      ...utms\n    }\n  }\n];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          440,
+          0
+        ],
+        "id": "09ed6fc3-6c63-4e55-bac3-aff298821fd7",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/dce7ea5f-49ba-45d8-9921-c2279bb21aa8",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "Nome",
+                "value": "={{ $json.nome }}"
+              },
+              {
+                "name": "Telefone",
+                "value": "={{ $json.telefone }}"
+              },
+              {
+                "name": "Email",
+                "value": "={{ $json.email }}"
+              },
+              {
+                "name": "Tag",
+                "value": "={{ $json.Polo }}"
+              },
+              {
+                "name": "Polo",
+                "value": "={{ $json.Polo }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          860,
+          0
+        ],
+        "id": "3091e819-4a3f-45cf-9fce-ea1142c94604",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1040,
+          0
+        ],
+        "id": "452be982-5efb-4814-9fad-3883f5265224",
+        "name": "No Operation, do nothing"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": "Version 26261d3f",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
