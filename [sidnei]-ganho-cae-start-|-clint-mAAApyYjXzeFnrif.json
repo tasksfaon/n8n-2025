@@ -1,1 +1,324 @@
-{"fileName":"[sidnei]-ganho-cae-start-|-clint-mAAApyYjXzeFnrif.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2026-04-16T11:52:10.830Z",
+  "createdAt": "2025-09-26T17:25:04.891Z",
+  "id": "mAAApyYjXzeFnrif",
+  "name": "[Sidnei] Ganho CAE Start | Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-cae-start-ganho",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        224
+      ],
+      "id": "7e028910-683f-4cc8-b91b-23d377aed355",
+      "name": "Webhook",
+      "webhookId": "be40a838-546a-46bc-8c1c-3a9b8b62be20"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "513a2a0e-d79e-4313-b647-58b67c327a8d",
+              "name": "Nome",
+              "value": "={{ $json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "5e3d0c41-8b64-4648-88c7-91b6745b6d98",
+              "name": "Email",
+              "value": "={{ $json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "654d4cca-408c-4fd5-8b48-cb95a234067b",
+              "name": "Telefone",
+              "value": "={{ $json.body.contact_phone }}",
+              "type": "string"
+            },
+            {
+              "id": "aac039af-abdc-4f45-8a68-e7065a1a7eec",
+              "name": "Ganho Funil",
+              "value": "={{ $json.body.contact_ganho_funil_cae_star }}",
+              "type": "string"
+            },
+            {
+              "id": "72ecdaaa-c0ac-4116-b1e7-e70d0e0070e1",
+              "name": "Polo",
+              "value": "={{ $json.body.contact_polo }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        224
+      ],
+      "id": "a632e16d-e7c3-4c08-aab4-06a7e61b4807",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        720,
+        224
+      ],
+      "id": "94fc46a5-45a5-417b-972a-ab9ad988087e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "228311e6-d921-4c5d-8743-ba7478be6b0a",
+              "leftValue": "={{ $json['Ganho Funil'] }}",
+              "rightValue": "Fraternidade",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        224
+      ],
+      "id": "db2f56d4-e4ec-43cf-964e-45a21fc0ffcb",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/98169048-037b-4243-b75e-3d76da5ee21b",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Ganho Funil",
+              "value": "={{ $json['Ganho Funil'] }}"
+            },
+            {
+              "name": "Polo",
+              "value": "={{ $json.Polo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        496,
+        144
+      ],
+      "id": "8c97119d-104b-417f-8413-a30a3dcba96c",
+      "name": "HTTP Clint Fraternidade"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/786c7eea-e0eb-4e6d-a370-80431e336224",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Ganho Funil",
+              "value": "={{ $json['Ganho Funil'] }}"
+            },
+            {
+              "name": "Polo",
+              "value": "={{ $json.Polo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        496,
+        320
+      ],
+      "id": "849b9e02-51f8-4d58-8e68-eaddfabfce01",
+      "name": "HTTP Clint Evento"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint Fraternidade",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Clint Evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Fraternidade": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Evento": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.11.0",
+            "content-length": "270",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "baggage": "sentry-environment=production,sentry-public_key=af3c6636fa6e4f89948eaa4e575b3286,sentry-trace_id=3bdc1e1f91ab4e339a0f16e281f10cf7,sentry-transaction=%2Fapi%2Fv1%2Fbot%2Fbot_answer%2F%7Bconnection_id%7D%2F,sentry-sample_rate=0.02,sentry-sampled=false,sentry-release=cbd87aea419877fc691519b8d5942309927ca50f,sentry-org_id=4504850859163648,sentry-sample_rand=0.5372386878221247,origin=3,name=flows,loc=app.tasks.flows.batch_evaluate_flow_action_evaluations_webhook_send_multibroker__r1,source=klaviyo,bubblegroup.http.route=api%2F1.1%2Fwf,bubblegroup.http.host=metrifiquei.bubbleapps.io,bubblegroup.workflow.appname=metrifiquei,bubblegroup.workflow.app_version=live,bubblegroup.workflow.situation=post_wf_api,bubblegroup.workflow.id=bTqMF,bubblegroup.workflow.event.type=APIEvent,bubblegroup.workflow.action.id=bTueZ,bubblegroup.workflow.action.type=apiconnector2-bTueO.bTueP,actorType=user,userToken=01K4N4EPF6RV3YQ6PDZ9G9ERTT,rootTraceId=a98df290efb3c3abf38fe4806f114ad2,userId=01F1FM1QRPZVFPV768WFSN0V1M,rootTimestamp=1757599986191",
+            "content-type": "application/json",
+            "traceparent": "00-68d6d17300000000231afddb140bff97-293d702ec2398f3f-01",
+            "tracestate": "dd=t.tid:68d6d17300000000;t.dm:-12;s:2;p:293d702ec2398f3f",
+            "x-datadog-parent-id": "2971654675263754047",
+            "x-datadog-sampling-priority": "2",
+            "x-datadog-tags": "_dd.p.tid=68d6d17300000000,_dd.p.dm=-12",
+            "x-datadog-trace-id": "2529613258097950615",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Isabella Teste",
+            "contact_email": "bellasimaia@gmail.com",
+            "contact_phone": "+5531991257953",
+            "deal_stage": "Venda Fraternidade",
+            "deal_user": "biahadriany@gmail.com",
+            "deal_status": "WON",
+            "contact_ganho_funil_cae_star": "Fraternidade",
+            "contact_polo": "CANCELADO "
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-cae-start-ganho",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "b4364cf5-5f2f-46a5-8351-ceaeb26f650c",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-09-26T17:25:04.891Z",
+      "createdAt": "2025-09-26T17:25:04.891Z",
+      "role": "workflow:owner",
+      "workflowId": "mAAApyYjXzeFnrif",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
