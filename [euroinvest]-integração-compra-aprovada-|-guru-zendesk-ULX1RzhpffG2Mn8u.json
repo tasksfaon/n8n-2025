@@ -1,0 +1,972 @@
+{
+  "updatedAt": "2025-10-07T12:57:13.246Z",
+  "createdAt": "2025-10-03T13:25:05.930Z",
+  "id": "ULX1RzhpffG2Mn8u",
+  "name": "[Euroinvest] Integração compra aprovada | Guru Zendesk",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "euro-ca",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        -32
+      ],
+      "id": "45b22639-42ed-4f8e-ac61-32fd6d0d638c",
+      "name": "Webhook",
+      "webhookId": "fc0c26e7-b4c9-4f0b-8534-30d7eb337a97"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7a441e23-3de2-48d7-9678-54f74dd8801e",
+              "name": "hora-compra",
+              "value": "={{ \n  new Date().toLocaleTimeString('pt-BR', { \n    timeZone: 'America/Sao_Paulo',\n    hour: '2-digit',\n    minute: '2-digit',\n    hour12: false\n  }) \n}}",
+              "type": "string"
+            },
+            {
+              "id": "249840e2-bad1-45d5-8189-9fbc3d20efa2",
+              "name": "ID",
+              "value": "={{ $('Webhook').item.json.headers[\"x-request-id\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "c74a34a5-8053-4e8f-a7ae-8da35607b570",
+              "name": "Nome Completo",
+              "value": "={{ $json.body.subscriber.name }}",
+              "type": "string"
+            },
+            {
+              "id": "d43a3006-a47c-4d52-9bea-b06aa9e96e10",
+              "name": "Primeiro Nome",
+              "value": "={{ $json.body.subscriber.name.split(' ')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "bdb66cb9-bb15-4bbd-b77a-ea8a9be248e2",
+              "name": "Último nome",
+              "value": "={{ $json.body.subscriber.name.split(' ').slice(1).join(' ') }}",
+              "type": "string"
+            },
+            {
+              "id": "d94d7d10-49fe-4e88-9551-c380e8467436",
+              "name": "E-mail",
+              "value": "={{ $json.body.subscriber.email }}",
+              "type": "string"
+            },
+            {
+              "id": "47219a32-5ed0-49d5-b20c-e533baf2c6c7",
+              "name": "Cpf",
+              "value": "={{ $json.body.subscriber.doc }}",
+              "type": "string"
+            },
+            {
+              "id": "f60c4247-79bd-4f8a-a0bd-7a7efbbd44a5",
+              "name": "Pais",
+              "value": "={{ $json.body.subscriber.address_country }}",
+              "type": "string"
+            },
+            {
+              "id": "47426a22-915d-4c14-9848-7c9179303d67",
+              "name": "Telefone",
+              "value": "={{ $json.body.subscriber.phone_local_code }}{{ $json.body.subscriber.phone_number }}",
+              "type": "string"
+            },
+            {
+              "id": "9e8d4892-2f73-46dd-8c36-160e5b33fb8d",
+              "name": "Produto",
+              "value": "={{ $json.body.product.name }}",
+              "type": "string"
+            },
+            {
+              "id": "20bf44c8-a773-46d3-9489-13e03fa5e8a5",
+              "name": "Meio de pagamento",
+              "value": "={{ $json.body.last_transaction.payment.method }}",
+              "type": "string"
+            },
+            {
+              "id": "fd997f90-96bc-4212-a534-f8641da2ad34",
+              "name": "Parcelas",
+              "value": "={{ $json.body.last_transaction.payment.installments.qty }}",
+              "type": "string"
+            },
+            {
+              "id": "b9b3e678-1190-44ab-b8e4-8f7524ced70a",
+              "name": "Preço",
+              "value": "={{ $json.body.last_transaction.payment.installments.value }}",
+              "type": "string"
+            },
+            {
+              "id": "4c499297-deab-4e15-9521-b51e6b3948aa",
+              "name": "Utm_campaign",
+              "value": "={{ $json.body.last_transaction.source.utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "41e6c8a7-d26e-4170-91a3-4109609c538a",
+              "name": "Utm_medium",
+              "value": "={{ $json.body.last_transaction.source.utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "475b858a-0997-4b81-ac9e-b9c5373c0202",
+              "name": "Utm_source",
+              "value": "={{ $json.body.last_transaction.source.utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "ece97ca8-8a24-4938-a434-3416843c869f",
+              "name": "Utm_term",
+              "value": "={{ $json.body.last_transaction.source.utm_term }}",
+              "type": "string"
+            },
+            {
+              "id": "eec119d0-9eae-46a8-87d5-da7259942770",
+              "name": "Utm_content",
+              "value": "={{ $json.body.last_transaction.source.utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "02681c4c-7cfc-4e2c-be5b-a8ec048f5a06",
+              "name": "Valor Limpo",
+              "value": "={{ $json.body.last_transaction.payment.total }}",
+              "type": "string"
+            },
+            {
+              "id": "2ba19d4e-14f0-44d5-b4aa-4b5b567b88b2",
+              "name": "Quantidade",
+              "value": "={{ $json.body.product.offer.units_per_sale }}",
+              "type": "string"
+            },
+            {
+              "id": "fcc33765-44b3-4a57-bcd8-f6c5e0fe12ee",
+              "name": "Oferta",
+              "value": "={{ $('Webhook').item.json.body.product.offer.name }}",
+              "type": "string"
+            },
+            {
+              "id": "074c90a7-8627-4361-a343-0c041c512f48",
+              "name": "Data",
+              "value": "={{    (d =>      d.getDate().toString().padStart(2, '0') + '/' +     (d.getMonth() + 1).toString().padStart(2, '0') + '/' +     d.getFullYear()   )(new Date(new Date().setFullYear(new Date().getFullYear()))) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "45cd1df7-c674-4b24-b57e-d6d467052729",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        -32
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -128
+      ],
+      "id": "3dc333c8-8e4b-4cb8-a6ad-2624082972ca",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a8fc5a2a-b9cd-4f25-84c5-ab612ecbb78a",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Plano Lite",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "bca10add-c8d0-4eee-bfa6-32213b4d545e",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Plano Junior",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "945602bf-d90f-43bf-872d-ea1ff003a527",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Plano Pleno",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "f9c61d7f-55f3-4726-82d3-dcfa22691e06",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Plano Senior",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "1596bb46-19c4-4874-b1d7-1eeb69854882",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Plano Master",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        -32
+      ],
+      "id": "cd580079-db6a-4914-a9ad-ed56e30eaa24",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a8fc5a2a-b9cd-4f25-84c5-ab612ecbb78a",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Europass",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        64
+      ],
+      "id": "827d7c5f-3025-44b3-b6a6-f700b6d5ffce",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a8fc5a2a-b9cd-4f25-84c5-ab612ecbb78a",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Clube Euro",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        160
+      ],
+      "id": "519a2e76-2f73-410e-9b77-a9fa13d0c023",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "description": "={{ $('Edit Fields').item.json['Primeiro Nome'] }}\nDMG - Planos com Teste",
+        "additionalFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 45230742655251,
+                "value": "DMG - Planos com Teste"
+              },
+              {}
+            ]
+          },
+          "group": 1500002191062,
+          "subject": "Solicitação DMG - Planos com Teste",
+          "tags": [
+            "aprovada",
+            "dmg_plano_teste"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        -272
+      ],
+      "id": "1a542777-c919-447f-a026-7f1a4f0c6a23",
+      "name": "Create a ticket Teste",
+      "credentials": {
+        "zendeskApi": {
+          "id": "Dh79OHVNGXqoNrcq",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "={{ $('Edit Fields').item.json['Primeiro Nome'] }}\nDMG - New Europass",
+        "additionalFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 45230742655251,
+                "value": "DMG - New Europass"
+              },
+              {
+                "id": 45232139134227,
+                "value": "Compra Aprovada"
+              }
+            ]
+          },
+          "tags": [
+            "aprovada",
+            "dmg_new_europass"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        -128
+      ],
+      "id": "e5d4ce7b-b457-4555-90a6-e29fdf23f8ab",
+      "name": "Create a ticket Europass",
+      "credentials": {
+        "zendeskApi": {
+          "id": "Dh79OHVNGXqoNrcq",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a8fc5a2a-b9cd-4f25-84c5-ab612ecbb78a",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Eurosmart",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        928,
+        272
+      ],
+      "id": "dc420bc0-9aee-4d1e-9d93-0e07560061f9",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "description": "={{ $('Edit Fields').item.json['Primeiro Nome'] }}\nDMG - Clube Euro",
+        "additionalFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 45230742655251,
+                "value": "DMG - Clube Euro"
+              },
+              {
+                "id": 45232139134227,
+                "value": "Compra Aprovada"
+              }
+            ]
+          },
+          "tags": [
+            "aprovada",
+            "dmg_clube_euro"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        16
+      ],
+      "id": "da8796df-181a-4a09-9060-dcb92e9f8a49",
+      "name": "Create a ticket Clube Euro",
+      "credentials": {
+        "zendeskApi": {
+          "id": "Dh79OHVNGXqoNrcq",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "={{ $('Edit Fields').item.json['Primeiro Nome'] }}\nDMG - Eurosmart",
+        "additionalFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "id": 45230742655251,
+                "value": "DMG - Eurosmart"
+              },
+              {
+                "id": 45232139134227,
+                "value": "Compra Aprovada"
+              }
+            ]
+          },
+          "tags": [
+            "aprovada",
+            "dmg_eurosmart"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        176
+      ],
+      "id": "4c304296-7a57-4a59-882d-928977b9d2d8",
+      "name": "Create a ticket Eurosmart",
+      "credentials": {
+        "zendeskApi": {
+          "id": "Dh79OHVNGXqoNrcq",
+          "name": "Zendesk account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a ticket Teste",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Create a ticket Europass",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Create a ticket Clube Euro",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a ticket Teste": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a ticket Europass": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Create a ticket Eurosmart",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a ticket Clube Euro": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a ticket Eurosmart": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.tododiaenergia.fabisabatini.com",
+            "user-agent": "digitalmanager.guru (dev@digitalmanager.guru)",
+            "content-length": "6237",
+            "content-type": "application/json",
+            "x-forwarded-for": "34.23.30.89",
+            "x-forwarded-host": "n8n.tododiaenergia.fabisabatini.com",
+            "x-forwarded-proto": "https",
+            "x-request-id": "9fcc2c59-c2b0-4d02-92ca-af12e9915594",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "affiliations": null,
+            "api_token": "7FDcTCNgcvZkeshns1a4xL4rVbSCGflw5xbgQPs7",
+            "cancel_at_cycle_end": 0,
+            "cancel_reason": "",
+            "cancelled_by": {
+              "name": "",
+              "email": "",
+              "date": ""
+            },
+            "charged_every_days": 365,
+            "charged_times": 1,
+            "contracts": [],
+            "current_invoice": {
+              "charge_at": "2025-09-05",
+              "code": "in_YMBqH7WlQPR2iuwpr",
+              "created_at": 1756992404,
+              "cycle": 1,
+              "days_until_payment": -1,
+              "discount_value": 0,
+              "id": "9fcc2ad0-1e44-45ac-bf56-d25b39e842c4",
+              "increment_value": 0,
+              "paid_at": "2025-09-04",
+              "payment_attempts": 0,
+              "payment_url": "https://checkout.fabianasabatini.com.br/pay/9fcc2ad0-1e44-45ac-bf56-d25b39e842c4/invoice",
+              "period_end": "2026-09-03",
+              "period_start": "2025-09-04",
+              "status": "paid",
+              "subscription_id": "9fcc2ad0-1ccf-40dd-99fa-dd8fc630e342",
+              "tax_value": 0,
+              "transaction_was_reissued": 0,
+              "type": "cycle",
+              "updated_at": 1756992515,
+              "value": 4200
+            },
+            "dates": {
+              "canceled_at": null,
+              "cycle_end_date": "2026-09-03",
+              "cycle_start_date": "2025-09-04",
+              "last_status_at": "2025-09-04T13:30:23Z",
+              "next_cycle_at": "2026-09-04",
+              "started_at": "2025-09-04T13:26:44Z"
+            },
+            "id": "sub_AKrwL6ShYXmR2C72",
+            "internal_id": "9fcc2ad0-1ccf-40dd-99fa-dd8fc630e342",
+            "last_status": "active",
+            "last_transaction": {
+              "affiliations": [],
+              "checkout_url": "https://checkout.fabianasabatini.com.br/subscribe/lifestyle-6-meses-4200",
+              "contact": {
+                "id": "9fcc2aa5-a277-448b-bd9b-28e21044fd36",
+                "name": "Viviane Souza Valle Cardoso",
+                "company_name": "",
+                "email": "vsvcardoso@gmail.com",
+                "doc": "03723272738",
+                "phone_number": "21992375483",
+                "phone_local_code": "55",
+                "address": "Rua Mariz e Barros",
+                "address_number": "28",
+                "address_comp": "lado par",
+                "address_district": "Icaraí",
+                "address_city": "Niterói",
+                "address_state": "RJ",
+                "address_state_full_name": "RJ",
+                "address_country": "BR",
+                "address_zip_code": "24220121",
+                "lead": []
+              },
+              "dates": {
+                "canceled_at": null,
+                "confirmed_at": "2025-09-04T13:27:27Z",
+                "created_at": "2025-09-04T13:26:16Z",
+                "expires_at": "2025-09-05T03:00:00Z",
+                "ordered_at": "2025-09-04T13:25:54Z",
+                "unavailable_until": "2025-09-04T13:27:27Z",
+                "updated_at": "2025-09-04T13:27:58Z",
+                "warranty_until": null
+              },
+              "ecommerces": [],
+              "extras": {
+                "accepted_terms_url": 0,
+                "accepted_privacy_policy_url": 0
+              },
+              "id": "9fcc2a84-1690-4ac8-8c34-f31bd42b1e03",
+              "infrastructure": {
+                "ip": "200.225.101.21",
+                "city": "rio de janeiro",
+                "host": "checkout.fabianasabatini.com.br",
+                "ga_id": "",
+                "region": "rj",
+                "country": "BR",
+                "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+                "city_lat_long": "-22.906847,-43.172897",
+                "facebook_browser_id": ""
+              },
+              "invoice": {
+                "charge_at": "2025-09-05",
+                "created_at": "2025-09-04T13:26:44Z",
+                "cycle": 1,
+                "discount_value": 0,
+                "id": "in_YMBqH7WlQPR2iuwpr",
+                "increment_value": 0,
+                "period_end": "2026-09-03",
+                "period_start": "2025-09-04",
+                "status": "paid",
+                "tax_value": 0,
+                "tries": 0,
+                "try": 0,
+                "type": "cycle",
+                "value": 4200
+              },
+              "payment": {
+                "affiliate_value": 0,
+                "acquirer": {
+                  "code": "",
+                  "message": "",
+                  "name": "",
+                  "nsu": "",
+                  "tid": ""
+                },
+                "can_try_again": 1,
+                "coupon": null,
+                "currency": "BRL",
+                "discount_value": 0,
+                "gross": 4200,
+                "installments": {
+                  "value": 4200,
+                  "qty": 1,
+                  "interest": 0
+                },
+                "marketplace_id": "124290347197",
+                "marketplace_name": "mercadopago",
+                "marketplace_value": 79.8,
+                "method": "pix",
+                "net": 4120.2,
+                "processing_times": {
+                  "started_at": "2025-09-04T13:26:39.746Z",
+                  "finished_at": "2025-09-04T13:26:40.901Z",
+                  "delay_in_seconds": 1
+                },
+                "refund_reason": "",
+                "refuse_reason": "accredited",
+                "tax": {
+                  "value": 0,
+                  "rate": 0
+                },
+                "total": 4200,
+                "pix": {
+                  "qrcode": {
+                    "signature": "00020126360014br.gov.bcb.pix01145410301000018152040000530398654074200.005802BR5916TT202501241506506009Sao Paulo62250521mpqrinter124290347197630491D8",
+                    "url": "https://checkout.fabianasabatini.com.br/api/checkout/invoices/9fcc2a84-1690-4ac8-8c34-f31bd42b1e03/qrcodes/pix"
+                  },
+                  "expiration_date": "2025-09-05"
+                }
+              },
+              "product": {
+                "id": "1752861609",
+                "image_url": "https://storage.googleapis.com/disk.clkdmg.site/clients/9e11fa65-fde9-4bd3-9498-11081c28b0db/images/products/9f6bfd90-9733-430e-8082-a68f22e5e910.png",
+                "internal_id": "9f6bfd76-72a1-49d1-b4e1-0bcbc11c3f25",
+                "marketplace_id": "1752861609",
+                "marketplace_name": "mercadopago",
+                "name": "Eurosmart",
+                "offer": {
+                  "id": "9fcc1a96-ec40-4b7b-8bdf-b34436192b48",
+                  "name": "Eurosmart"
+                },
+                "producer": {
+                  "marketplace_id": "1738000526",
+                  "name": "Todo Dia Energia Serviços",
+                  "contact_email": ""
+                },
+                "qty": 1,
+                "total_value": 4200,
+                "type": "plan",
+                "unit_value": 4200
+              },
+              "shipment": {
+                "carrier": "",
+                "service": "",
+                "tracking": "",
+                "value": 0,
+                "status": "",
+                "delivery_time": ""
+              },
+              "shipping": {
+                "name": " - ",
+                "value": 0
+              },
+              "source": {
+                "source": null,
+                "checkout_source": null,
+                "utm_source": null,
+                "utm_campaign": null,
+                "utm_medium": null,
+                "utm_content": null,
+                "utm_term": null,
+                "pptc": []
+              },
+              "status": "approved",
+              "type": "producer",
+              "self_attribution": null
+            },
+            "name": "Eurosmart",
+            "next_cycle_installments": 1,
+            "next_cycle_value": 4200,
+            "next_product": {
+              "id": "9f6bfd76-72a1-49d1-b4e1-0bcbc11c3f25",
+              "marketplace_id": "1752861609",
+              "marketplace_name": "mercadopago",
+              "name": "Eurosmart",
+              "offer": {
+                "cash_discount": 0,
+                "id": "9fcc1a96-ec40-4b7b-8bdf-b34436192b48",
+                "name": "Eurosmart",
+                "plan": {
+                  "cycles": 1,
+                  "discount": {
+                    "cycles": 0,
+                    "value": 0
+                  },
+                  "increment": {
+                    "cycles": 0,
+                    "value": 0
+                  },
+                  "interval": 1,
+                  "interval_type": "year",
+                  "provider": "guru",
+                  "split_cycles": 0,
+                  "trial_days": 0
+                },
+                "units_per_sale": 1,
+                "value": 4200
+              }
+            },
+            "payment_method": "pix",
+            "product": {
+              "id": "9f6bfd76-72a1-49d1-b4e1-0bcbc11c3f25",
+              "marketplace_id": "1752861609",
+              "marketplace_name": "mercadopago",
+              "name": "Eurosmart",
+              "offer": {
+                "cash_discount": 0,
+                "id": "9fcc1a96-ec40-4b7b-8bdf-b34436192b48",
+                "name": "Eurosmart",
+                "plan": {
+                  "cycles": 1,
+                  "discount": {
+                    "cycles": 0,
+                    "value": 0
+                  },
+                  "increment": {
+                    "cycles": 0,
+                    "value": 0
+                  },
+                  "interval": 1,
+                  "interval_type": "year",
+                  "provider": "guru",
+                  "split_cycles": 0,
+                  "trial_days": 0
+                },
+                "units_per_sale": 1,
+                "value": 4200
+              }
+            },
+            "provider": "guru",
+            "subscriber": {
+              "address": "Rua Mariz e Barros",
+              "address_city": "Niterói",
+              "address_comp": "lado par",
+              "address_country": "BR",
+              "address_district": "Icaraí",
+              "address_number": "28",
+              "address_state": "RJ",
+              "address_zip_code": "24220121",
+              "doc": "03723272738",
+              "email": "teste@teste.com.br",
+              "id": "9fcc2aa5-a277-448b-bd9b-28e21044fd36",
+              "name": "Teste",
+              "phone_local_code": "55",
+              "phone_number": "31986475982"
+            },
+            "subscription_code": "sub_AKrwL6ShYXmR2C72",
+            "trial_days": 0,
+            "trial_finished_at": null,
+            "trial_started_at": null,
+            "webhook_type": "subscription"
+          },
+          "webhookUrl": "https://n8n.tododiaenergia.fabisabatini.com/webhook/fabi-assinatura-ativa",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "57ba2d34-273f-4aa9-9f36-ae4650708933",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-10-03T13:25:05.930Z",
+      "createdAt": "2025-10-03T13:25:05.930Z",
+      "role": "workflow:owner",
+      "workflowId": "ULX1RzhpffG2Mn8u",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
