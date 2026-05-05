@@ -1,0 +1,164 @@
+{
+  "updatedAt": "2026-03-24T11:51:27.799Z",
+  "createdAt": "2025-03-24T22:47:45.523Z",
+  "id": "AbPae1LV5ajebUYd",
+  "name": "[Ana camargo] typeform + sendflow",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "formId": "BZQdzXNf"
+      },
+      "type": "n8n-nodes-base.typeformTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "04924a48-be3e-49a8-bd55-ef1eac20c115",
+      "name": "Typeform Trigger",
+      "webhookId": "e4c2cc27-13cf-490b-8528-01ffce141b4d",
+      "credentials": {
+        "typeformApi": {
+          "id": "IAzyab0PqJKtB0yj",
+          "name": "Typeform account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "57f86318-cb19-401d-8cc5-5631df42dde5",
+              "name": "nome",
+              "value": "={{ $json[\"Qual é o seu nome?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "9469a348-1dae-4454-a955-73072d7e05bb",
+              "name": "telefone",
+              "value": "={{ $json[\"Qual é o seu WhatsApp?\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "ac356396-b63d-44a5-8795-79b4c438f35a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/2IRMmwZXuYYYDatXBzh4",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"427af861-c681-40c3-beab-7996f2ed58a3\",\n  \"phoneNumber\": \"{{ $json.telefone }}\",\n  \"name\": \"{{ $json.nome }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "b186c4ea-6721-419a-b026-6aa1c873018c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        640,
+        0
+      ],
+      "id": "4ace56ec-fce7-49d7-aef8-ddc5ca1e40d5",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Typeform Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": {
+    "node:Typeform Trigger": {}
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Typeform Trigger": [
+      {
+        "json": {
+          "Qual é o seu nome?": "leticia teste 2",
+          "Qual é o seu WhatsApp?": "+5554991635474",
+          "É o primeiro evento que você participa com a Ana?": "Sim, é meu primeiro evento",
+          "Você já possui uma loja?": "Ainda não, mas quero abrir minha loja",
+          "Qual o seu nicho?": "Moda Feminina",
+          "O que tem sido mais desafiador para você na sua loja?": "Equilibrar a rotina da loja com a vida pessoal",
+          "Qual é o faturamento médio mensal da sua loja?": "Acima de R$ 30.000",
+          "Qual o seu maior sonho?": "sonho"
+        }
+      }
+    ]
+  },
+  "versionId": "bd485a58-b8fa-4be2-8c45-cbb49b09a3c0",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-24T22:47:45.523Z",
+      "createdAt": "2025-03-24T22:47:45.523Z",
+      "role": "workflow:owner",
+      "workflowId": "AbPae1LV5ajebUYd",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
