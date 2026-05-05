@@ -1,1 +1,229 @@
-{"fileName":"[ana-camargo]-soberana-pro-captação-mentoria-grupos---sendflow-clint-KN8gPUXKhr2XWfIR.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2026-03-24T11:51:15.880Z",
+  "createdAt": "2025-04-14T19:58:22.012Z",
+  "id": "KN8gPUXKhr2XWfIR",
+  "name": "[Ana Camargo] Soberana Pro Captação Mentoria Grupos - Sendflow Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ana-grupo-soberana-pro",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        -140
+      ],
+      "id": "54c6edf9-8126-458b-9063-b5d9bc0bd64f",
+      "name": "Webhook",
+      "webhookId": "d916e609-b144-49ca-a4b7-c461ba4b17f3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone = item.json.body.data?.[\"number\"] || \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 10 dígitos começando com 10)\n  if (parseInt(ddd) >= 30 && numero.length === 10 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        -140
+      ],
+      "id": "4fd2bfb4-b9a1-46dd-80e1-b1168d927189",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64b6720a-4018-425c-98c2-5d44a2e045eb",
+              "name": "Data",
+              "value": "={{ \n  new Date().getDate().toString().padStart(2, '0') + '/' +\n  (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +\n  new Date().getFullYear() + ' ' +\n  new Date().getHours().toString().padStart(2, '0') + ':' +\n  new Date().getMinutes().toString().padStart(2, '0')\n}}",
+              "type": "string"
+            },
+            {
+              "id": "08f1d58e-8c4e-4bf3-8ee1-a8e42ef9819f",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "0ecfc49f-9f1c-4a0b-b9dc-3d970db8fe1a",
+              "name": "Campanha",
+              "value": "={{ $('Webhook').item.json.body.data.campaignName }}",
+              "type": "string"
+            },
+            {
+              "id": "153e18e6-89e6-4e06-b122-3b2b99b51fc8",
+              "name": "Grupo",
+              "value": "={{ $('Webhook').item.json.body.data.groupName }}",
+              "type": "string"
+            },
+            {
+              "id": "aa84edc5-7962-4bcd-8aa0-0cebcdf9455a",
+              "name": "No Grupo",
+              "value": "=Sim",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        -140
+      ],
+      "id": "a4e4a92c-9fdc-45ef-9b81-6ac36d596ee8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        860,
+        -140
+      ],
+      "id": "b4a3c0dd-3192-400a-87e8-2cbc84568eac",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/a88f2a19-cdbe-4b42-bc27-38ee9a8b254a",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        -140
+      ],
+      "id": "c23dd588-c8d5-4b78-99ba-f3625804db9d",
+      "name": "HTTP Clint"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.7.7",
+            "content-length": "273",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "sendtok": "5DB47742869B5066BFBAA77C0ED3CC0C3456FE8C4E",
+            "x-forwarded-for": "168.138.150.10",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "168.138.150.10"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "Av8ABSnzPTQE5OHAtEJM",
+            "event": "group.updated.members.added",
+            "data": {
+              "campaignName": "Instagram vendedor - Pago",
+              "groupName": "Instagram vendedor #10",
+              "campaignId": "4t68jDctEg4ws3ASI6nO",
+              "number": "558596474276",
+              "createdAt": "2025-04-11T01:07:56.264Z"
+            },
+            "version": "1.0.0"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-EVI0325-gr-entrou",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "10bd1bce-5243-4fc8-a346-77c7b43f0464",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-04-14T19:58:22.012Z",
+      "createdAt": "2025-04-14T19:58:22.012Z",
+      "role": "workflow:owner",
+      "workflowId": "KN8gPUXKhr2XWfIR",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
