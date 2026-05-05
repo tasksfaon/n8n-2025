@@ -1,1 +1,368 @@
-{"fileName":"[ncic]-sup-extensão-12-meses---carrinho-abandonado-D6ajbngqvUC3mHoi.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2025-05-13T15:03:08.332Z",
+  "createdAt": "2025-03-14T19:41:43.453Z",
+  "id": "D6ajbngqvUC3mHoi",
+  "name": "[NCIC] SUP EXTENSÃO 12 MESES - Carrinho abandonado",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ncic-sup-12-abandono",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "46f3ce75-9808-4d6a-be9d-f2f4813718bd",
+      "name": "Webhook",
+      "webhookId": "b8118031-456b-4683-a8b2-28f98488a835"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém os dados do nó webhook\nconst items = $input.all();\n\nreturn items.map(item => {\n    let phone = item.json.body?.[\"contact[phone]\"] || \"\";\n\n    // Verifica se já está no formato 55DDDTelefone\n    const regex = /^55\\d{2}\\d{8,9}$/;\n    if (!regex.test(phone)) {\n        // Remove caracteres não numéricos\n        const phoneClean = phone.replace(/\\D/g, \"\");\n\n        // Se tiver 10 ou 11 dígitos (DDD + telefone), adiciona 55\n        if (phoneClean.length === 10 || phoneClean.length === 11) {\n            phone = \"55\" + phoneClean;\n        }\n    }\n\n    // Retorna apenas o telefone formatado\n    return { json: { phone } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "0c3dc99d-39e5-43c4-90e8-71827ffae10b",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b563c496-5646-4123-ac4a-b33ac2cad2fd",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body['contact[first_name]'] }} {{ $('Webhook').item.json.body['contact[last_name]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "1fc159a0-6a6e-431c-951e-a9f456c4a519",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body['contact[email]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ef593ff3-538a-4f24-8d30-7dba96d9b2cc",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "87ad47c2-a183-4fe8-95ca-b6d925c682ab",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/29eaa365-bed3-4c77-a75f-1b01fe4d0819",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        -120
+      ],
+      "id": "521f27cb-e5d6-4974-8211-1f355b827b8f",
+      "name": "HTTP Clint"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1260,
+        -40
+      ],
+      "id": "75869ba2-1479-406d-8498-7171b68333bb",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/82271/00GcfS3C1RPP/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        20
+      ],
+      "id": "8fb3c6ee-d085-46cb-ada1-8eb30f7c0762",
+      "name": "HTTP Botconversa"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Botconversa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "GuzzleHttp/6.5.5 curl/8.3.0 PHP/8.1.29",
+            "content-length": "5205",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "52.2.43.221",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.2.43.221",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact[id]": "6940",
+            "contact[email]": "bellasimaia@gmail.com",
+            "contact[first_name]": "Isabella Siqueira",
+            "contact[last_name]": "",
+            "contact[phone]": "31984617540",
+            "contact[orgname]": "",
+            "contact[customer_acct_name]": "",
+            "contact[tags]": "[PI3] LEAD, [LAMINAS] Carrinho Abandonado, [LAMINAS] Cartão Recusado, [CME1] COMPRA APROVADA, [CME1] CARRINHO ABANDONADO, [CME1] CARTÃO RECUSADO, [NC]Nova-Pediatria-workshop, [PI3] Captação Leads",
+            "contact[ip4]": "0.0.0.0",
+            "contact[fields][especializao]": "",
+            "contact[fields][como_ficou_sabendo_do_curso]": "",
+            "contact[fields][gostaramos_de_saber_o_que_voc_espera_aprender_com_esse_curso_nos_conte_de_forma_resumida]": "",
+            "contact[fields][situao]": "",
+            "contact[fields][utmsourcepe2]": "",
+            "contact[fields][utmmediumpe2]": "",
+            "contact[fields][utmcampaignpe2]": "",
+            "contact[fields][utmcontentpe2]": "",
+            "contact[fields][datainscricaopi2]": "",
+            "contact[fields][qrcode]": "",
+            "contact[fields][imgqrcode]": "",
+            "contact[fields][datamatricula]": "",
+            "contact[fields][utmcontentpi2matricula]": "",
+            "contact[fields][utmsourcepi2matricula]": "",
+            "contact[fields][utmmediumpi2matricula]": "",
+            "contact[fields][utmcampaignpi2matricula]": "",
+            "contact[fields][utmcontentsp22024]": "",
+            "contact[fields][utmcampaignsp22024]": "",
+            "contact[fields][utmsourcesp22024]": "manychat-sup",
+            "contact[fields][utmmediumsp22024]": "",
+            "contact[fields][datainscricaosp22024]": "",
+            "contact[fields][boletourl]": "",
+            "contact[fields][boletobarcode]": "",
+            "contact[fields][utmsourcenpi]": "",
+            "contact[fields][utm_mediumnpi]": "",
+            "contact[fields][utm_contentnpi]": "",
+            "contact[fields][utmcampaignnpi]": "",
+            "contact[fields][datainscricaonpi]": "",
+            "contact[fields][utmsourcencicomunidade]": "",
+            "contact[fields][utmmediumncicomunidade]": "",
+            "contact[fields][utmcampaignncicomunidade]": "",
+            "contact[fields][utmcontentncicomunidade]": "",
+            "contact[fields][datacomprancicomunidade]": "",
+            "contact[fields][datarenovaoncicomunidade]": "",
+            "contact[fields][utmcontentpi3]": "",
+            "contact[fields][utmsourcepi3]": "manychat-ped3-obesidade",
+            "contact[fields][utmmediumpi3]": "",
+            "contact[fields][utmcampaignpi3]": "POS PED3",
+            "contact[fields][datainscricaopi3]": "2024-11-26",
+            "contact[fields][utmssourcesup3]": "",
+            "contact[fields][utmsmediumsup3]": "",
+            "contact[fields][utmscampaignsup3]": "",
+            "contact[fields][utmscontentsup3]": "",
+            "contact[fields][utmstermsup3]": "",
+            "contact[fields][utmsource]": "",
+            "contact[fields][utmmedium]": "",
+            "contact[fields][utmcontent]": "",
+            "contact[fields][utmcampaign]": "",
+            "contact[fields][utmterm]": "",
+            "contact[fields][crmcrn]": "",
+            "contact[fields][sup3respondiinstagram]": "",
+            "contact[fields][sup3respondiidade]": "",
+            "contact[fields][sup3respondicidadeestado]": "",
+            "contact[fields][sup3respondigenero]": "",
+            "contact[fields][sup3respondimediconutricionista]": "",
+            "contact[fields][sup3respondiespecialidade]": "",
+            "contact[fields][sup3respondifoco]": "",
+            "contact[fields][sup3responditempoformacao]": "",
+            "contact[fields][sup3respondiatendimento]": "",
+            "contact[fields][sup3respondiatuasup]": "",
+            "contact[fields][sup3responditempoatua]": "",
+            "contact[fields][sup3respondialunonc]": "",
+            "contact[fields][sup3respondialunonccurso]": "",
+            "contact[fields][sup3responditempoconhece]": "",
+            "contact[fields][sup3respondiconheceu]": "",
+            "contact[fields][sup3respondidesafio]": "",
+            "contact[fields][sup3respondimudarcarreira]": "",
+            "contact[fields][sup3respondiexpectativa]": "",
+            "contact[fields][sup3respondirelevantecarreira]": "",
+            "contact[fields][sup3respondisonho]": "",
+            "contact[fields][sup3respondimedo]": "",
+            "contact[fields][sup3respondirenda]": "",
+            "contact[fields][sup3respondiperguntanath]": "",
+            "contact[fields][novaidade]": "Entre 25 e 30 anos",
+            "contact[fields][novacidade]": "Teste",
+            "contact[fields][novapediatra]": "",
+            "contact[fields][novaoutraespecialidade]": "Teste",
+            "contact[fields][novagenero]": "Feminino",
+            "contact[fields][novatempoformado]": "Entre 1 e 3 anos",
+            "contact[fields][novaatendimento]": "Atendo convênio e particular",
+            "contact[fields][novavalorconsulta]": "Teste",
+            "contact[fields][novanpacientes]": "Entre 10 e 20",
+            "contact[fields][novarendamensal]": "Entre R$20.000 e R$30.000",
+            "contact[fields][novamotivoinscricao]": "",
+            "contact[fields][novacomoconheceu]": "Outros",
+            "contact[fields][novaoutroconheceu]": "",
+            "contact[fields][novaaprenderworkshop]": "tESTE",
+            "contact[fields][novaouviufalarpediatria]": "",
+            "contact[fields][novautilizapraticas]": "Não utilizo, mas quero começar",
+            "contact[fields][novareceio]": "",
+            "contact[fields][novadesafioimplementar]": "",
+            "contact[fields][novaduvida]": "TESTE",
+            "contact[fields][novaresultado]": "",
+            "contact[fields][novadesafiopratica]": "",
+            "contact[fields][novamudarcarreira]": "TESTE",
+            "contact[fields][novatempoconhecenath]": "Menos de 6 meses",
+            "contact[fields][novasonho]": "TESTE",
+            "contact[fields][novamedo]": "TESTE",
+            "contact[fields][novadatainscricao]": "2025-01-21",
+            "seriesid": "33"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ncic-sup3-compra-aprovada",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "487ce402-72cf-4c3e-908a-06f131f6e8c9",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-14T19:41:43.453Z",
+      "createdAt": "2025-03-14T19:41:43.453Z",
+      "role": "workflow:owner",
+      "workflowId": "D6ajbngqvUC3mHoi",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
