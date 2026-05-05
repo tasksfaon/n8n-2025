@@ -1,0 +1,4924 @@
+{
+  "updatedAt": "2026-04-16T11:46:50.258Z",
+  "createdAt": "2025-09-18T16:44:57.827Z",
+  "id": "UD7orSIhT3YcpLGv",
+  "name": "[Sidnei] Coquetel Membro Controle | Heroespark Sheets",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-controle-membros",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c3793275-08e9-42d3-ad49-e3dae35a49b6",
+      "name": "Webhook",
+      "webhookId": "3eae5b57-fd55-4050-bcaf-b7f4146de91c"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\n// Captura o telefone da entrada\nconst rawPhone = String($input.first().json.body.buyer_phone|| '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\nlet ddd = null;\n\n// Se começa com 11 dígitos e DDD válido, adiciona 55\nif (/^\\d{10,11}$/.test(cleaned)) {\n  cleaned = '55' + cleaned;\n}\n\n// Corrige DDI duplicado se houver (ex: 5555...)\nif (cleaned.startsWith('5555')) {\n  cleaned = '55' + cleaned.slice(4);\n}\n\n// Se começa com \"55\" e tem 10 ou 11 dígitos depois, é BR válido\nif (/^55\\d{10,11}$/.test(cleaned)) {\n  ddd = cleaned.slice(2, 4); // Extrai os dois dígitos após 55\n} else {\n  // Caso contrário, valida como número internacional (E.164: máx 15 dígitos)\n  if (!/^\\d{8,15}$/.test(cleaned)) {\n    cleaned = '';\n  }\n}\n\n// Retorna\nreturn [{\n  json: {\n    telefoneOriginal: rawPhone,\n    telefoneFormatado: cleaned,\n    ddd: ddd\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c181ad79-9349-4bec-8f03-89ddb17339ee",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bf921373-bdcd-4889-8550-5613457d3db8",
+              "name": "Data",
+              "value": "={{   new Date().toLocaleString('pt-BR', {     timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit',     hour12: false   }).replace(',', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "ba513a3c-0ba4-4e76-8554-d99ab787865a",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.buyer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "23f56d55-a503-4259-ac97-204d48e345ab",
+              "name": "Email",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "b83d0825-037f-4edd-8518-6b5caf3d6008",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "e3d807af-5fd9-4436-aff2-6a54b55e7c06",
+              "name": "cpf",
+              "value": "={{ $('Webhook').item.json.body.buyer_document_id }}",
+              "type": "string"
+            },
+            {
+              "id": "7c6f6af4-e9aa-4728-9e64-6c08a04d7def",
+              "name": "mês",
+              "value": "={{ $('Webhook').item.json.body.utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "d12b2c88-c856-4ff2-ba35-846982d29ade",
+              "name": "Vendedor",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "94a38b4b-f9f1-44a3-8534-88b25a3dc0eb",
+              "name": "Polo",
+              "value": "={{ \n$('Webhook').item.json.body.utm_source\n  ?.toLowerCase()\n  .replace(/\\b\\w/g, c => c.toUpperCase())\n}}",
+              "type": "string"
+            },
+            {
+              "id": "478ee3bf-a555-4624-93e4-bd87f4778a08",
+              "name": "Produto",
+              "value": "={{ $('Webhook').item.json.body.product_name }}",
+              "type": "string"
+            },
+            {
+              "id": "7412b2b0-b72e-4ef0-a634-95cbb60ce444",
+              "name": "Empresa",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "a6e35320-6f6f-49e9-acc8-b996687786c5",
+              "name": "Valor",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "039dc958-80a5-420c-803f-a551f0b6e969",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1999077494,
+          "mode": "list",
+          "cachedResultName": "BACKLOG",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1999077494"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "EMAIL": "={{ $json.Email }}",
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "={{ $json.Polo && $json.Polo.trim() !== '' ? 'R$ 127' : 'R$ 57' }}",
+            "Data": "={{ $json.Data }} ",
+            "Polo": "={{ $json.Polo }}"
+          },
+          "matchingColumns": [
+            "EMAIL"
+          ],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Polo",
+              "displayName": "Polo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        2432
+      ],
+      "id": "b6f4c58b-92ac-4f8b-b54a-a2d16b6dac1e",
+      "name": "Append or update row in sheet Externo",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        2432
+      ],
+      "id": "22fcef38-bb35-427d-8066-511d21a6d9cc",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Butantã",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "a48e1a58-0232-4c46-b59b-36fa0a15fa9e"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d3b01056-54fd-49fa-950b-94b928a33f82",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Granja Viana",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "36607b54-9aea-4bc5-a084-11cb2b997add",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Santo Amaro",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "077411bb-6b43-4ac0-88f0-f697d2cbfb19",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Lapa",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7f655cae-c0f0-418b-af68-ce8c9b746671",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Tatuapé",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a5d07295-ff67-420b-a950-4ef80f6adf3b",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Osasco",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2c3ded5f-e4b5-42af-b1cf-b7eef52a07a6",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Alphavil",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "cdbbf95e-dd00-4709-8f39-67317718427a",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Vila Maria",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6bd0859c-e30e-4f6e-b86b-a431c4235d33",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Faria Lima",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b9ad6a98-7615-46bf-ad34-33c8e5c3a0f2",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Santos",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f377afe8-2bab-478b-9b7c-78c4177d5d05",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Penha",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "93696e4d-fc6e-4681-b786-3c91725fdd84",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Mooca",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e0891aaf-20c0-438e-a583-1014694eb067",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Campo Belo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3b4699c2-edbd-406c-902d-03c73a0af7e5",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Ipiranga",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "173e2720-ab96-4975-bc2f-e903800cc28d",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Santana",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "95b01df4-2bdb-4f1c-a4c5-b67949c21f35",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Taboao",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4d359c81-9af7-455d-9359-4037ac08c6fa",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Praia Grande",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d9f8ac7e-f061-4904-94bc-5cba1eea7ba2",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Guarulhos",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "131f1bef-b85c-4fad-ba34-5b33b3423d26",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "São Bernardo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ac3341fd-9213-4b06-9ea2-e7bf20d68c5f",
+                    "leftValue": "={{ $json.Polo }}",
+                    "rightValue": "Grande Abc",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        784,
+        -928
+      ],
+      "id": "abd2667e-5985-405f-9079-a45afe881818",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "BUTANTÃ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1168,
+        -1152
+      ],
+      "id": "0c420d94-7569-4430-a072-22ba111ca897",
+      "name": "Append or update row in sheet Butantã",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 413583023,
+          "mode": "list",
+          "cachedResultName": "GRANJA VIANA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=413583023"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1168,
+        -992
+      ],
+      "id": "bc4cf462-3bb7-4383-9e3b-3f03ee980f41",
+      "name": "Append or update row in sheet Granja Viana",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1223273102,
+          "mode": "list",
+          "cachedResultName": "SANTO AMARO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1223273102"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1168,
+        -816
+      ],
+      "id": "3f557d6e-d1d4-4ccd-902c-5e4b75016339",
+      "name": "Append or update row in sheet Santo Amaro",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1136262048,
+          "mode": "list",
+          "cachedResultName": "LAPA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1136262048"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1168,
+        -672
+      ],
+      "id": "ff1a3363-546a-4673-bcf5-81f703285e28",
+      "name": "Append or update row in sheet Lapa",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1884283684,
+          "mode": "list",
+          "cachedResultName": "TATUAPÉ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1884283684"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Pagamento": "SIM",
+            "Valores": "0"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1168,
+        -512
+      ],
+      "id": "6b4cc993-8625-4869-bf7c-e2e5e0d21680",
+      "name": "Append or update row in sheet Tatuapé",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1805636816,
+          "mode": "list",
+          "cachedResultName": "ALPHAVILLE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1805636816"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1152,
+        -96
+      ],
+      "id": "181d5347-779e-4cf3-8422-2efff63ee415",
+      "name": "Append or update row in sheet Alphavile",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1847520243,
+          "mode": "list",
+          "cachedResultName": "VILA MARIA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1847520243"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1152,
+        64
+      ],
+      "id": "bdd6a8c1-95b2-4179-a5cc-e651262d7383",
+      "name": "Append or update row in sheet Vila Maria",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1156445015,
+          "mode": "list",
+          "cachedResultName": "FARIA LIMA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1156445015"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1152,
+        256
+      ],
+      "id": "463899fb-ee73-45d7-8793-cc916cc65dbd",
+      "name": "Append or update row in sheet Faria Lima",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 871371540,
+          "mode": "list",
+          "cachedResultName": "SANTOS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=871371540"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1136,
+        432
+      ],
+      "id": "763816f7-a37e-47ee-817e-9c42eedbb55c",
+      "name": "Append or update row in sheet Santos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1808250010,
+          "mode": "list",
+          "cachedResultName": "PENHA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1808250010"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1152,
+        -224
+      ],
+      "id": "f14798f8-5c08-46c7-b9aa-1c91223929d4",
+      "name": "Append or update row in sheet Penha",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1715889115,
+          "mode": "list",
+          "cachedResultName": "MOOCA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1715889115"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        624
+      ],
+      "id": "c2413353-5c0a-4699-8f50-2d01f42c22a6",
+      "name": "Append or update row in sheet Mooca",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1004967257,
+          "mode": "list",
+          "cachedResultName": "CAMPO BELO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1004967257"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        784
+      ],
+      "id": "57f3f469-9f0a-4eb8-97b2-557c620a088b",
+      "name": "Append or update row in sheet Campo Belo",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 145411705,
+          "mode": "list",
+          "cachedResultName": "IPIRANGA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=145411705"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1104,
+        944
+      ],
+      "id": "0155a88c-932f-4fe2-800a-5ca798e10785",
+      "name": "Append or update row in sheet Ipiranga",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1202504317,
+          "mode": "list",
+          "cachedResultName": "SANTANA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1202504317"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1088,
+        1136
+      ],
+      "id": "881c1948-dc77-4e59-b4ec-bc257d194c35",
+      "name": "Append or update row in sheet Santana",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1123149226,
+          "mode": "list",
+          "cachedResultName": "TABOÃO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1123149226"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        1328
+      ],
+      "id": "704fd55d-6491-4339-92a2-1f37b1001497",
+      "name": "Append or update row in sheet Taboao",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 841060336,
+          "mode": "list",
+          "cachedResultName": "PRAIA GRANDE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=841060336"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "OBSERVAÇÃO",
+              "displayName": "OBSERVAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        1536
+      ],
+      "id": "3c1b0253-2f6d-48f6-be43-f99d126d3f58",
+      "name": "Append or update row in sheet Praia Grande",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 269780363,
+          "mode": "list",
+          "cachedResultName": "GUARULHOS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=269780363"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1040,
+        1744
+      ],
+      "id": "ef366549-9ace-42e3-8411-2a05e45283a4",
+      "name": "Append or update row in sheet Guarulhos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1505785140,
+          "mode": "list",
+          "cachedResultName": "GRANDE ABC",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1505785140"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "OBSERVAÇÃO",
+              "displayName": "OBSERVAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        1936
+      ],
+      "id": "17810dc1-2ed8-44db-a361-e84490583198",
+      "name": "Append or update row in sheet São Bernardo",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1505785140,
+          "mode": "list",
+          "cachedResultName": "GRANDE ABC",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=1505785140"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "OBSERVAÇÃO",
+              "displayName": "OBSERVAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1008,
+        2144
+      ],
+      "id": "560a64b3-71d6-41c3-b4fc-0eef753a3fce",
+      "name": "Append or update row in sheet Grande ABC",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2512,
+        -976
+      ],
+      "id": "7921a478-adff-4692-9492-d13c900b825c",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1hTf3dwHEcKa8OhdaBXWmHjfKyRqFU2yzsp9HNtTTRxw/edit?gid=1999077494#gid=1999077494",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 319033544,
+          "mode": "list",
+          "cachedResultName": "OSASCO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=319033544"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NOME DO PARTICIPANTE ": "={{ $json.Nome }}",
+            "EMPRESA": "={{ $json.Empresa }}",
+            "WHATSAPP": "={{ $json.Telefone }}",
+            "MÊS REF": "={{ $json['mês'] }}",
+            "EMAIL": "={{ $json.Email }}",
+            "CPF MEMBRO": "={{ $json.cpf }}",
+            "CONVIDADO POR": "={{ $json.Vendedor }}",
+            "Valores": "=0",
+            "Pagamento": "SIM"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PRES.",
+              "displayName": "PRES.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOME DO PARTICIPANTE ",
+              "displayName": "NOME DO PARTICIPANTE ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA",
+              "displayName": "EMPRESA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WHATSAPP",
+              "displayName": "WHATSAPP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MÊS REF",
+              "displayName": "MÊS REF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF MEMBRO",
+              "displayName": "CPF MEMBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CONVIDADO POR",
+              "displayName": "CONVIDADO POR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LINK LOGO",
+              "displayName": "LINK LOGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APRESENTAÇÃO",
+              "displayName": "APRESENTAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FICHA CAE CLUB",
+              "displayName": "FICHA CAE CLUB",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Observação",
+              "displayName": "Observação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valores",
+              "displayName": "Valores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pagamento",
+              "displayName": "Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1168,
+        -400
+      ],
+      "id": "3570f7d2-f2f7-47ea-ba7c-fd55ae4f01bc",
+      "name": "Append or update row in sheet Osasco",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2032,
+        2032
+      ],
+      "id": "21f887f6-00e4-4d8b-a180-8488ac57289c",
+      "name": "AI Agent"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append or update row in sheet Externo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Externo": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet Butantã",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Granja Viana",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Santo Amaro",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Lapa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Tatuapé",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Osasco",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Alphavile",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Vila Maria",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Faria Lima",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Santos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Penha",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Mooca",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Campo Belo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Ipiranga",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Santana",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Taboao",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Praia Grande",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Guarulhos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet São Bernardo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet Grande ABC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Butantã": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Penha": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Taboao": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Granja Viana": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Alphavile": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Mooca": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Praia Grande": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Santo Amaro": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Vila Maria": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Campo Belo": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Guarulhos": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Lapa": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Faria Lima": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Ipiranga": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet São Bernardo": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Tatuapé": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Santos": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Santana": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Grande ABC": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet Osasco": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "HeroSpark/1.0",
+            "content-length": "220",
+            "baggage": "sentry-trace_id=734d651c1ab34780be23e6db40610e4f,sentry-environment=production,sentry-public_key=b722173edaec94334323db1280f8af27",
+            "content-type": "application/json",
+            "hs-request-id": "10104567",
+            "sentry-trace": "734d651c1ab34780be23e6db40610e4f-b3dc3e52f4f74738",
+            "x-forwarded-for": "201.23.25.33",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "201.23.25.33",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "buyer_name": "Jonathan Andre Pires",
+            "utm_medium": "Fevereiro",
+            "utm_source": "TATUAPÉ",
+            "buyer_phone": "(11) 97986-6224",
+            "product_name": "COQUETEL MEMBRO CAE CLUB",
+            "buyer_phone_ddi": "55",
+            "buyer_document_id": "312.310.458-33"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-controle-membros",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "6d33ca46-dd34-4925-afe6-2ad30b6b5088",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-09-18T16:44:57.827Z",
+      "createdAt": "2025-09-18T16:44:57.827Z",
+      "role": "workflow:owner",
+      "workflowId": "UD7orSIhT3YcpLGv",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
