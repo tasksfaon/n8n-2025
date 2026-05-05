@@ -1,0 +1,2116 @@
+{
+  "updatedAt": "2026-04-13T15:46:41.559Z",
+  "createdAt": "2026-03-20T18:21:40.788Z",
+  "id": "IkisebV-aAxTWDrNjFQBC",
+  "name": "[Marcia Yamamura] Cadastros paginas como eu trato e curso introdutório",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "curso-introdutorio-cadastro",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ed76a981-3a8a-4dc6-b7f4-3c0ec12e1869",
+      "name": "Webhook",
+      "webhookId": "3b0a9da5-0743-430b-bf15-e1f50028cb42"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "curso-comoeutrato-cadastro",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        208
+      ],
+      "id": "e66197e1-1665-4966-bc71-1c555e856cc1",
+      "name": "Webhook1",
+      "webhookId": "3b0a9da5-0743-430b-bf15-e1f50028cb42"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================\n// 1) TELEFONE\n// ===============================\nconst input = $input.first().json;\nconst body = input.body || {};\n\nconst rawPhone = String(body.Telefone || '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // ok\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  cleaned = '';\n}\n\n// ===============================\n// 2) UF: Nome do estado -> Sigla\n// ===============================\nconst estadoParaUF = {\n  \"ACRE\": \"AC\",\n  \"ALAGOAS\": \"AL\",\n  \"AMAPÁ\": \"AP\",\n  \"AMAPA\": \"AP\",\n  \"AMAZONAS\": \"AM\",\n  \"BAHIA\": \"BA\",\n  \"CEARÁ\": \"CE\",\n  \"CEARA\": \"CE\",\n  \"DISTRITO FEDERAL\": \"DF\",\n  \"ESPÍRITO SANTO\": \"ES\",\n  \"ESPIRITO SANTO\": \"ES\",\n  \"GOIÁS\": \"GO\",\n  \"GOIAS\": \"GO\",\n  \"MARANHÃO\": \"MA\",\n  \"MARANHAO\": \"MA\",\n  \"MATO GROSSO\": \"MT\",\n  \"MATO GROSSO DO SUL\": \"MS\",\n  \"MINAS GERAIS\": \"MG\",\n  \"PARÁ\": \"PA\",\n  \"PARA\": \"PA\",\n  \"PARAÍBA\": \"PB\",\n  \"PARAIBA\": \"PB\",\n  \"PARANÁ\": \"PR\",\n  \"PARANA\": \"PR\",\n  \"PERNAMBUCO\": \"PE\",\n  \"PIAUÍ\": \"PI\",\n  \"PIAUI\": \"PI\",\n  \"RIO DE JANEIRO\": \"RJ\",\n  \"RIO GRANDE DO NORTE\": \"RN\",\n  \"RIO GRANDE DO SUL\": \"RS\",\n  \"RONDÔNIA\": \"RO\",\n  \"RONDONIA\": \"RO\",\n  \"RORAIMA\": \"RR\",\n  \"SANTA CATARINA\": \"SC\",\n  \"SÃO PAULO\": \"SP\",\n  \"SAO PAULO\": \"SP\",\n  \"SERGIPE\": \"SE\",\n  \"TOCANTINS\": \"TO\"\n};\n\n// ✅ IDs REAIS do seu campo \"UF do CRM\" (enum)\nconst ufMap = {\n  \"AC\": 6050,\n  \"AL\": 6051,\n  \"AP\": 6052,\n  \"AM\": 6053,\n  \"BA\": 6054,\n  \"CE\": 6055,\n  \"DF\": 6056,\n  \"ES\": 6057,\n  \"GO\": 6058,\n  \"MA\": 6059,\n  \"MT\": 6060,\n  \"MS\": 6061,\n  \"MG\": 6062,\n  \"PA\": 6063,\n  \"PB\": 6064,\n  \"PR\": 6065,\n  \"PE\": 6066,\n  \"PI\": 6067,\n  \"RJ\": 6068,\n  \"RN\": 6069,\n  \"RS\": 6070,\n  \"RO\": 6071,\n  \"RR\": 6072,\n  \"SC\": 6073,\n  \"SP\": 6074,\n  \"SE\": 6075,\n  \"TO\": 6076\n};\n\n// pega UF do CRM como veio (estado por extenso ou sigla)\nconst ufBruto = String(body[\"UF do CRM\"] || \"\").trim();\nconst ufUpper = ufBruto.toUpperCase();\n\n// se já veio \"RJ\", usa; se veio \"Rio de Janeiro\", converte pra \"RJ\"\nconst ufSigla = ufUpper.length === 2 ? ufUpper : (estadoParaUF[ufUpper] || \"\");\nconst UF_ID = ufSigla ? (ufMap[ufSigla] ?? null) : null;\n\n// ===============================\n// 3) PROFISSÃO: frase -> categoria\n// ===============================\nconst profissionalMap = {\n  \"Médico\": 2,\n  \"Medico\": 2,\n  \"Fisioterapeuta\": 3,\n  \"Enfermeiro\": 4,\n  \"Nutricionista\": 5,\n  \"Outro\": 6\n};\n\nconst profBruto = String(body.Profissional || \"\").trim();\n\n// normaliza casos tipo \"Sou Médico\"\nlet profNorm = profBruto\n  .replace(/^sou\\s+/i, \"\")      // remove \"Sou \"\n  .replace(/^eu\\s+sou\\s+/i, \"\") // remove \"Eu sou \"\n  .trim();\n\n// padroniza alguns sinônimos comuns\nif (/medic/i.test(profNorm)) profNorm = \"Médico\";\nif (/fisio/i.test(profNorm)) profNorm = \"Fisioterapeuta\";\nif (/enferm/i.test(profNorm)) profNorm = \"Enfermeiro\";\nif (/nutri/i.test(profNorm)) profNorm = \"Nutricionista\";\n\nconst Profissional_ID = profissionalMap[profNorm] ?? null;\n\n// ===============================\n// 4) RETORNO\n// ===============================\nreturn [{\n  json: {\n    telefoneFormatado: cleaned,\n    ufTextoRecebido: ufBruto,\n    ufSigla,\n    UF_ID,\n    profissaoTextoRecebido: profBruto,\n    profNorm,\n    Profissional_ID,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5797efbe-cd21-4582-b67f-d7f9451272be",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fb59dae5-0111-412e-8e34-7ee57c42583f",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body['Nome Completo*'] }}",
+              "type": "string"
+            },
+            {
+              "id": "daab8f75-4c69-4fd9-a513-b3c08f95c108",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body['Email*'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9ccdbebc-68f0-4e25-aea6-9c3ea0c62be3",
+              "name": "Telefone",
+              "value": "={{ $('Webhook').item.json.body['DDD + Celular*'] }}",
+              "type": "string"
+            },
+            {
+              "id": "17ecdd99-7ee2-4273-85a8-67b18ab3fdba",
+              "name": "Profissão",
+              "value": "={{ $('Webhook').item.json.body['Profissional*'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ae097603-6a48-4dc5-bdfd-eb75acdfdd13",
+              "name": "CRM",
+              "value": "={{ $('Webhook').item.json.body['CRM (apenas número)*'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a617ee9c-8215-4d38-bf7b-5fe935583c02",
+              "name": "UF",
+              "value": "={{ $('Webhook').item.json.body['UF do CRM*'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d16163d5-3054-44f8-9924-b2693a84701b",
+              "name": "Mensagem",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "68820f39-5dc4-40ea-8126-d59e93e2ecb2",
+              "name": "utm source",
+              "value": "={{ $('Webhook').item.json.body.utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "2ab1166e-93f8-466c-a2cf-25e3635f86f1",
+              "name": "utm medium",
+              "value": "={{ $('Webhook').item.json.body.utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "4081a115-1b1b-4f8c-accf-d1368c71bf5c",
+              "name": "utm campaign",
+              "value": "={{ $('Webhook').item.json.body.utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "af7b7b66-81ea-4929-b9fb-c8991b1b57a1",
+              "name": "utm content",
+              "value": "={{ $('Webhook').item.json.body.utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "7748377c-a3f3-4d7f-92f8-0984f76616c5",
+              "name": "utm term",
+              "value": "={{ $('Webhook').item.json.body.utm_term }}",
+              "type": "string"
+            },
+            {
+              "id": "d9af02b2-75cc-4fa5-90d1-9bd032492587",
+              "name": "Data",
+              "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "07392ba7-c0b2-4afe-a14d-17cd97fd55ce",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        0
+      ],
+      "id": "368fc70a-210a-4fe1-a034-43c436202eaf",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pipedrive.com/v1/persons?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"name\": \"{{ $json.Nome }}\",\n    \"email\": \"{{ $json.Email }}\",\n    \"phone\": \"{{ $json.Telefone }}\",\n\n    \"487088fb302d80a85669079afe41a91a21fd45ff\": \"{{ $json.CRM }}\",\n    \"f77f5009ce48d7b62427c2d0961522f1830eb66e\": \"{{ $json.UF }}\",\n    \"334747750ddbc82c2010b5a75da2d82b3bf71783\": \"{{ $json['Profissão'] }}\",\n\n    \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n    \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n    \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n    \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n    \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\",\n\n    \"a58c7a5981502e45f08c88ae54379fb16387547f\": \"{{ $json['utm source'] }}\",\n    \"53e2271622f39f32eecdb9e3c746fd69630e7366\": \"{{ $json.Mensagem }}\"\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        640,
+        0
+      ],
+      "id": "ff65d511-4a84-4424-8ba5-a68094110254",
+      "name": "HTTP Pipedrive Criar Person"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pipedrive.com/v1/deals?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"title\": \"[Neg INTRODUTORIO 2026] {{ $('Edit Fields').item.json.Nome }}\",\n    \"person_id\": \"{{ $json.data.id }}\",\n    \"pipeline_id\": 228,\n    \"stage_id\": 1519\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        848,
+        0
+      ],
+      "id": "ac813d2e-9394-403f-a55b-eb7d425acfeb",
+      "name": "HTTP Pipedrive Criar Deal"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E",
+          "mode": "list",
+          "cachedResultName": "[Center AO] Leads lista de espera",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 183732580,
+          "mode": "list",
+          "cachedResultName": "Introdutório",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=183732580"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Edit Fields').item.json.Email }}",
+            "Data": "={{ $('Edit Fields').item.json.Data }}",
+            "Nome": "={{ $('Edit Fields').item.json.Nome }}",
+            "Telefone ": "={{ $('Edit Fields').item.json.Telefone }}",
+            "Crm": "={{ $('Edit Fields').item.json.CRM }}",
+            "UF": "={{ $('Edit Fields').item.json.UF }}",
+            "Profissão": "={{ $('Edit Fields').item.json['Profissão'] }}",
+            "utm source": "={{ $('Edit Fields').item.json['utm source'] }}",
+            "utm medium": "={{ $('Edit Fields').item.json['utm medium'] }}",
+            "utm campaign": "={{ $('Edit Fields').item.json['utm campaign'] }}",
+            "utm content": "={{ $('Edit Fields').item.json['utm content'] }}",
+            "utm term": "={{ $('Edit Fields').item.json['utm term'] }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UF",
+              "displayName": "UF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Profissão",
+              "displayName": "Profissão",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensagem",
+              "displayName": "Mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm source",
+              "displayName": "utm source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm medium",
+              "displayName": "utm medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm campaign",
+              "displayName": "utm campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm content",
+              "displayName": "utm content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm term",
+              "displayName": "utm term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        0
+      ],
+      "id": "7b595740-7e1a-43aa-a444-b1bfa640601b",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/sendapi/actions/send-text-message",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer send_api-uppnczmu815qeehe6rcrfz63ix5zj8k1y1n1ci11"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "accountId",
+              "value": "D6sYKIJ6g574l0vHredU"
+            },
+            {
+              "name": "releaseId",
+              "value": "Q7mNNp6h6UbWBVLjHZNw"
+            },
+            {
+              "name": "messageText",
+              "value": "=*Novo cadastro de interesse curso introdutório*\n\nNome: {{ $('Edit Fields').item.json.Nome }}\nTelefone: {{ $('Edit Fields').item.json.Telefone }}\nEmail: {{ $('Edit Fields').item.json.Email }}\nProfissão: {{ $('Edit Fields').item.json['Profissão'] }}\nCrm: {{ $('Edit Fields').item.json.CRM }}\nUf: {{ $('Edit Fields').item.json.UF }}\nData: {{ $('Edit Fields').item.json.Data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1264,
+        0
+      ],
+      "id": "5f7c1284-fc0e-45a8-9108-3e1cb5bb5443",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "especialização-cadastro",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        544
+      ],
+      "id": "30122fb8-3944-4d3c-a7ae-2dd948b7e8be",
+      "name": "Webhook2",
+      "webhookId": "3b0a9da5-0743-430b-bf15-e1f50028cb42"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================\n// 1) TELEFONE\n// ===============================\nconst input = $input.first().json;\nconst body = input.body || {};\n\nconst rawPhone = String(body.Telefone || '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // ok\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  cleaned = '';\n}\n\n// ===============================\n// 2) UF: Nome do estado -> Sigla\n// ===============================\nconst estadoParaUF = {\n  \"ACRE\": \"AC\",\n  \"ALAGOAS\": \"AL\",\n  \"AMAPÁ\": \"AP\",\n  \"AMAPA\": \"AP\",\n  \"AMAZONAS\": \"AM\",\n  \"BAHIA\": \"BA\",\n  \"CEARÁ\": \"CE\",\n  \"CEARA\": \"CE\",\n  \"DISTRITO FEDERAL\": \"DF\",\n  \"ESPÍRITO SANTO\": \"ES\",\n  \"ESPIRITO SANTO\": \"ES\",\n  \"GOIÁS\": \"GO\",\n  \"GOIAS\": \"GO\",\n  \"MARANHÃO\": \"MA\",\n  \"MARANHAO\": \"MA\",\n  \"MATO GROSSO\": \"MT\",\n  \"MATO GROSSO DO SUL\": \"MS\",\n  \"MINAS GERAIS\": \"MG\",\n  \"PARÁ\": \"PA\",\n  \"PARA\": \"PA\",\n  \"PARAÍBA\": \"PB\",\n  \"PARAIBA\": \"PB\",\n  \"PARANÁ\": \"PR\",\n  \"PARANA\": \"PR\",\n  \"PERNAMBUCO\": \"PE\",\n  \"PIAUÍ\": \"PI\",\n  \"PIAUI\": \"PI\",\n  \"RIO DE JANEIRO\": \"RJ\",\n  \"RIO GRANDE DO NORTE\": \"RN\",\n  \"RIO GRANDE DO SUL\": \"RS\",\n  \"RONDÔNIA\": \"RO\",\n  \"RONDONIA\": \"RO\",\n  \"RORAIMA\": \"RR\",\n  \"SANTA CATARINA\": \"SC\",\n  \"SÃO PAULO\": \"SP\",\n  \"SAO PAULO\": \"SP\",\n  \"SERGIPE\": \"SE\",\n  \"TOCANTINS\": \"TO\"\n};\n\n// ✅ IDs REAIS do seu campo \"UF do CRM\" (enum)\nconst ufMap = {\n  \"AC\": 6050,\n  \"AL\": 6051,\n  \"AP\": 6052,\n  \"AM\": 6053,\n  \"BA\": 6054,\n  \"CE\": 6055,\n  \"DF\": 6056,\n  \"ES\": 6057,\n  \"GO\": 6058,\n  \"MA\": 6059,\n  \"MT\": 6060,\n  \"MS\": 6061,\n  \"MG\": 6062,\n  \"PA\": 6063,\n  \"PB\": 6064,\n  \"PR\": 6065,\n  \"PE\": 6066,\n  \"PI\": 6067,\n  \"RJ\": 6068,\n  \"RN\": 6069,\n  \"RS\": 6070,\n  \"RO\": 6071,\n  \"RR\": 6072,\n  \"SC\": 6073,\n  \"SP\": 6074,\n  \"SE\": 6075,\n  \"TO\": 6076\n};\n\n// pega UF do CRM como veio (estado por extenso ou sigla)\nconst ufBruto = String(body[\"UF do CRM\"] || \"\").trim();\nconst ufUpper = ufBruto.toUpperCase();\n\n// se já veio \"RJ\", usa; se veio \"Rio de Janeiro\", converte pra \"RJ\"\nconst ufSigla = ufUpper.length === 2 ? ufUpper : (estadoParaUF[ufUpper] || \"\");\nconst UF_ID = ufSigla ? (ufMap[ufSigla] ?? null) : null;\n\n// ===============================\n// 3) PROFISSÃO: frase -> categoria\n// ===============================\nconst profissionalMap = {\n  \"Médico\": 2,\n  \"Medico\": 2,\n  \"Fisioterapeuta\": 3,\n  \"Enfermeiro\": 4,\n  \"Nutricionista\": 5,\n  \"Outro\": 6\n};\n\nconst profBruto = String(body.Profissional || \"\").trim();\n\n// normaliza casos tipo \"Sou Médico\"\nlet profNorm = profBruto\n  .replace(/^sou\\s+/i, \"\")      // remove \"Sou \"\n  .replace(/^eu\\s+sou\\s+/i, \"\") // remove \"Eu sou \"\n  .trim();\n\n// padroniza alguns sinônimos comuns\nif (/medic/i.test(profNorm)) profNorm = \"Médico\";\nif (/fisio/i.test(profNorm)) profNorm = \"Fisioterapeuta\";\nif (/enferm/i.test(profNorm)) profNorm = \"Enfermeiro\";\nif (/nutri/i.test(profNorm)) profNorm = \"Nutricionista\";\n\nconst Profissional_ID = profissionalMap[profNorm] ?? null;\n\n// ===============================\n// 4) RETORNO\n// ===============================\nreturn [{\n  json: {\n    telefoneFormatado: cleaned,\n    ufTextoRecebido: ufBruto,\n    ufSigla,\n    UF_ID,\n    profissaoTextoRecebido: profBruto,\n    profNorm,\n    Profissional_ID,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        544
+      ],
+      "id": "12a223ce-a357-47f3-8b21-7747ae09a605",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fb59dae5-0111-412e-8e34-7ee57c42583f",
+              "name": "Nome",
+              "value": "={{ $('Webhook2').item.json.body['Nome completo'] }}",
+              "type": "string"
+            },
+            {
+              "id": "daab8f75-4c69-4fd9-a513-b3c08f95c108",
+              "name": "Email",
+              "value": "={{ $('Webhook2').item.json.body['E-mail'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9ccdbebc-68f0-4e25-aea6-9c3ea0c62be3",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "17ecdd99-7ee2-4273-85a8-67b18ab3fdba",
+              "name": "Profissão",
+              "value": "={{ $('Webhook2').item.json.body.Profissional }}",
+              "type": "string"
+            },
+            {
+              "id": "ae097603-6a48-4dc5-bdfd-eb75acdfdd13",
+              "name": "CRM",
+              "value": "={{ $('Webhook2').item.json.body.CRM }}",
+              "type": "string"
+            },
+            {
+              "id": "a617ee9c-8215-4d38-bf7b-5fe935583c02",
+              "name": "UF",
+              "value": "={{ $('Webhook2').item.json.body['UF do CRM'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d16163d5-3054-44f8-9924-b2693a84701b",
+              "name": "Mensagem",
+              "value": "={{ $('Webhook2').item.json.body['Mensagem (opcional)'] }}",
+              "type": "string"
+            },
+            {
+              "id": "68820f39-5dc4-40ea-8126-d59e93e2ecb2",
+              "name": "utm source",
+              "value": "={{ $('Webhook2').item.json.body.utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "2ab1166e-93f8-466c-a2cf-25e3635f86f1",
+              "name": "utm medium",
+              "value": "={{ $('Webhook2').item.json.body.utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "4081a115-1b1b-4f8c-accf-d1368c71bf5c",
+              "name": "utm campaign",
+              "value": "={{ $('Webhook2').item.json.body.utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "af7b7b66-81ea-4929-b9fb-c8991b1b57a1",
+              "name": "utm content",
+              "value": "={{ $('Webhook2').item.json.body.utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "7748377c-a3f3-4d7f-92f8-0984f76616c5",
+              "name": "utm term",
+              "value": "={{ $('Webhook2').item.json.body.utm_term }}",
+              "type": "string"
+            },
+            {
+              "id": "d9af02b2-75cc-4fa5-90d1-9bd032492587",
+              "name": "Data",
+              "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        544
+      ],
+      "id": "daae2479-a275-4d35-b0f1-9faa96ba388c",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        544
+      ],
+      "id": "02f38959-8d6b-4eef-bc65-a3702b7b85f4",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pipedrive.com/v1/persons?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"name\": \"{{ $json.Nome }}\",\n    \"email\": \"{{ $json.Email }}\",\n    \"phone\": \"{{ $json.Telefone }}\",\n\n    \"487088fb302d80a85669079afe41a91a21fd45ff\": \"{{ $json.CRM }}\",\n    \"f77f5009ce48d7b62427c2d0961522f1830eb66e\": \"{{ $json.UF }}\",\n    \"334747750ddbc82c2010b5a75da2d82b3bf71783\": \"{{ $json['Profissão'] }}\",\n\n    \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n    \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n    \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n    \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n    \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\",\n\n    \"a58c7a5981502e45f08c88ae54379fb16387547f\": \"{{ $json['utm source'] }}\",\n    \"53e2271622f39f32eecdb9e3c746fd69630e7366\": \"{{ $json.Mensagem }}\"\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        672,
+        544
+      ],
+      "id": "609b17f9-0ec6-4677-8c4a-42d58f91899b",
+      "name": "HTTP Pipedrive Criar Person1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pipedrive.com/v1/deals?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"title\": \"[Neg Turma 57 2026 API] {{ $('Edit Fields1').item.json.Nome }}\",\n    \"person_id\": \"{{ $json.data.id }}\",\n    \"pipeline_id\": 196,\n    \"stage_id\": 1496\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        880,
+        544
+      ],
+      "id": "bdaf0644-8e19-4a8e-9ac4-daf41a334616",
+      "name": "HTTP Pipedrive Criar Deal1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E",
+          "mode": "list",
+          "cachedResultName": "[Center AO] Leads lista de espera",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2027659463,
+          "mode": "list",
+          "cachedResultName": "[Filtro] Pipeline ESPECIALIZAÇÃO 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=2027659463"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Edit Fields1').item.json.Email }}",
+            "Data": "={{ $('Edit Fields1').item.json.Data }}",
+            "Nome": "={{ $('Edit Fields1').item.json.Nome }}",
+            "Telefone ": "={{ $('Edit Fields1').item.json.Telefone }}",
+            "Crm": "={{ $('Edit Fields1').item.json.CRM }}",
+            "UF": "={{ $('Edit Fields1').item.json.UF }}",
+            "Profissão": "={{ $('Edit Fields1').item.json['Profissão'] }}",
+            "utm source": "={{ $('Edit Fields1').item.json['utm source'] }}",
+            "utm medium": "={{ $('Edit Fields1').item.json['utm medium'] }}",
+            "utm campaign": "={{ $('Edit Fields1').item.json['utm campaign'] }}",
+            "utm content": "={{ $('Edit Fields1').item.json['utm content'] }}",
+            "utm term": "={{ $('Edit Fields1').item.json['utm term'] }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UF",
+              "displayName": "UF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Profissão",
+              "displayName": "Profissão",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensagem",
+              "displayName": "Mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm source",
+              "displayName": "utm source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm medium",
+              "displayName": "utm medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm campaign",
+              "displayName": "utm campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm content",
+              "displayName": "utm content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm term",
+              "displayName": "utm term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1088,
+        544
+      ],
+      "id": "60dcc43e-6d5b-4aa6-af50-022f47489166",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/sendapi/actions/send-text-message",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer send_api-uppnczmu815qeehe6rcrfz63ix5zj8k1y1n1ci11"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "accountId",
+              "value": "D6sYKIJ6g574l0vHredU"
+            },
+            {
+              "name": "releaseId",
+              "value": "Q7mNNp6h6UbWBVLjHZNw"
+            },
+            {
+              "name": "messageText",
+              "value": "=*Novo cadastro de interesse especialização*\n\nNome: {{ $('Edit Fields1').item.json.Nome }}\nTelefone: {{ $('Edit Fields1').item.json.Telefone }}\nEmail: {{ $('Edit Fields1').item.json.Email }}\nProfissão: {{ $('Edit Fields1').item.json['Profissão'] }}\nCrm: {{ $('Edit Fields1').item.json.CRM }}\nUf: {{ $('Edit Fields1').item.json.UF }}\nData: {{ $('Edit Fields1').item.json.Data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1296,
+        544
+      ],
+      "id": "0645fa93-7fee-45fa-a6f2-de00de0cede3",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pipedrive Criar Person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Criar Person": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pipedrive Criar Deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Criar Deal": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pipedrive Criar Person1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Criar Person1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pipedrive Criar Deal1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Criar Deal1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.9.4; https://institutoacupuntura.com.br",
+            "content-length": "761",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "107.150.167.192",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "107.150.167.192"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Nome Completo*": "teste2",
+            "Email*": "teste@hotmail.com",
+            "DDD + Celular*": "28998838234",
+            "Profissional*": "Médico",
+            "CRM (apenas número)*": "435345",
+            "UF do CRM*": "AL - Alagoas",
+            "utm_source": "whatsapp",
+            "utm_medium": "social",
+            "utm_campaign": "curso_introdutorio_medicos",
+            "utm_term": "",
+            "utm_content": "link_direto",
+            "Date": "abril 2, 2026",
+            "Time": "9:46 pm",
+            "Page URL": "https://institutoacupuntura.com.br/acupuntura-introdutorio-medicos/?utm_source=whatsapp&utm_medium=social&utm_campaign=curso_introdutorio_medicos&utm_content=link_direto",
+            "User Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+            "Remote IP": "189.58.195.15",
+            "Powered by": "PRO Elements",
+            "form_id": "b895ef4",
+            "form_name": "New Form"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/curso-introdutorio-cadastro",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Webhook2": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.9.4; https://institutoacupuntura.com.br",
+            "content-length": "368",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "107.150.167.192",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "107.150.167.192"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Nome completo": "Michel Fardin Silva",
+            "E-mail": "micheldsfardin@hotmail.com",
+            "Telefone": "28998838138",
+            "Profissional": "Sou Médico",
+            "CRM": "342234",
+            "UF do CRM": "Acre",
+            "Mensagem (opcional)": "zdsc",
+            "No Label field_fa88c18": "",
+            "utm_source": "",
+            "utm_campaign": "",
+            "utm_content": "",
+            "utm_medium": "",
+            "utm_term": "",
+            "data": "13/04/2026",
+            "form_id": "5ca8a43",
+            "form_name": "Lista de espera - Turma 2026 - Pós acupuntura médica"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/especialização-cadastro",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "57b8c570-3a6c-4c6e-aedd-636ec2b75046",
+  "activeVersionId": "57b8c570-3a6c-4c6e-aedd-636ec2b75046",
+  "triggerCount": 3,
+  "shared": [
+    {
+      "updatedAt": "2026-03-20T18:21:40.788Z",
+      "createdAt": "2026-03-20T18:21:40.788Z",
+      "role": "workflow:owner",
+      "workflowId": "IkisebV-aAxTWDrNjFQBC",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-13T15:46:44.413Z",
+    "createdAt": "2026-04-13T15:46:41.561Z",
+    "versionId": "57b8c570-3a6c-4c6e-aedd-636ec2b75046",
+    "workflowId": "IkisebV-aAxTWDrNjFQBC",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "curso-introdutorio-cadastro",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "ed76a981-3a8a-4dc6-b7f4-3c0ec12e1869",
+        "name": "Webhook",
+        "webhookId": "3b0a9da5-0743-430b-bf15-e1f50028cb42"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "curso-comoeutrato-cadastro",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          16,
+          208
+        ],
+        "id": "e66197e1-1665-4966-bc71-1c555e856cc1",
+        "name": "Webhook1",
+        "webhookId": "3b0a9da5-0743-430b-bf15-e1f50028cb42"
+      },
+      {
+        "parameters": {
+          "jsCode": "// ===============================\n// 1) TELEFONE\n// ===============================\nconst input = $input.first().json;\nconst body = input.body || {};\n\nconst rawPhone = String(body.Telefone || '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // ok\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  cleaned = '';\n}\n\n// ===============================\n// 2) UF: Nome do estado -> Sigla\n// ===============================\nconst estadoParaUF = {\n  \"ACRE\": \"AC\",\n  \"ALAGOAS\": \"AL\",\n  \"AMAPÁ\": \"AP\",\n  \"AMAPA\": \"AP\",\n  \"AMAZONAS\": \"AM\",\n  \"BAHIA\": \"BA\",\n  \"CEARÁ\": \"CE\",\n  \"CEARA\": \"CE\",\n  \"DISTRITO FEDERAL\": \"DF\",\n  \"ESPÍRITO SANTO\": \"ES\",\n  \"ESPIRITO SANTO\": \"ES\",\n  \"GOIÁS\": \"GO\",\n  \"GOIAS\": \"GO\",\n  \"MARANHÃO\": \"MA\",\n  \"MARANHAO\": \"MA\",\n  \"MATO GROSSO\": \"MT\",\n  \"MATO GROSSO DO SUL\": \"MS\",\n  \"MINAS GERAIS\": \"MG\",\n  \"PARÁ\": \"PA\",\n  \"PARA\": \"PA\",\n  \"PARAÍBA\": \"PB\",\n  \"PARAIBA\": \"PB\",\n  \"PARANÁ\": \"PR\",\n  \"PARANA\": \"PR\",\n  \"PERNAMBUCO\": \"PE\",\n  \"PIAUÍ\": \"PI\",\n  \"PIAUI\": \"PI\",\n  \"RIO DE JANEIRO\": \"RJ\",\n  \"RIO GRANDE DO NORTE\": \"RN\",\n  \"RIO GRANDE DO SUL\": \"RS\",\n  \"RONDÔNIA\": \"RO\",\n  \"RONDONIA\": \"RO\",\n  \"RORAIMA\": \"RR\",\n  \"SANTA CATARINA\": \"SC\",\n  \"SÃO PAULO\": \"SP\",\n  \"SAO PAULO\": \"SP\",\n  \"SERGIPE\": \"SE\",\n  \"TOCANTINS\": \"TO\"\n};\n\n// ✅ IDs REAIS do seu campo \"UF do CRM\" (enum)\nconst ufMap = {\n  \"AC\": 6050,\n  \"AL\": 6051,\n  \"AP\": 6052,\n  \"AM\": 6053,\n  \"BA\": 6054,\n  \"CE\": 6055,\n  \"DF\": 6056,\n  \"ES\": 6057,\n  \"GO\": 6058,\n  \"MA\": 6059,\n  \"MT\": 6060,\n  \"MS\": 6061,\n  \"MG\": 6062,\n  \"PA\": 6063,\n  \"PB\": 6064,\n  \"PR\": 6065,\n  \"PE\": 6066,\n  \"PI\": 6067,\n  \"RJ\": 6068,\n  \"RN\": 6069,\n  \"RS\": 6070,\n  \"RO\": 6071,\n  \"RR\": 6072,\n  \"SC\": 6073,\n  \"SP\": 6074,\n  \"SE\": 6075,\n  \"TO\": 6076\n};\n\n// pega UF do CRM como veio (estado por extenso ou sigla)\nconst ufBruto = String(body[\"UF do CRM\"] || \"\").trim();\nconst ufUpper = ufBruto.toUpperCase();\n\n// se já veio \"RJ\", usa; se veio \"Rio de Janeiro\", converte pra \"RJ\"\nconst ufSigla = ufUpper.length === 2 ? ufUpper : (estadoParaUF[ufUpper] || \"\");\nconst UF_ID = ufSigla ? (ufMap[ufSigla] ?? null) : null;\n\n// ===============================\n// 3) PROFISSÃO: frase -> categoria\n// ===============================\nconst profissionalMap = {\n  \"Médico\": 2,\n  \"Medico\": 2,\n  \"Fisioterapeuta\": 3,\n  \"Enfermeiro\": 4,\n  \"Nutricionista\": 5,\n  \"Outro\": 6\n};\n\nconst profBruto = String(body.Profissional || \"\").trim();\n\n// normaliza casos tipo \"Sou Médico\"\nlet profNorm = profBruto\n  .replace(/^sou\\s+/i, \"\")      // remove \"Sou \"\n  .replace(/^eu\\s+sou\\s+/i, \"\") // remove \"Eu sou \"\n  .trim();\n\n// padroniza alguns sinônimos comuns\nif (/medic/i.test(profNorm)) profNorm = \"Médico\";\nif (/fisio/i.test(profNorm)) profNorm = \"Fisioterapeuta\";\nif (/enferm/i.test(profNorm)) profNorm = \"Enfermeiro\";\nif (/nutri/i.test(profNorm)) profNorm = \"Nutricionista\";\n\nconst Profissional_ID = profissionalMap[profNorm] ?? null;\n\n// ===============================\n// 4) RETORNO\n// ===============================\nreturn [{\n  json: {\n    telefoneFormatado: cleaned,\n    ufTextoRecebido: ufBruto,\n    ufSigla,\n    UF_ID,\n    profissaoTextoRecebido: profBruto,\n    profNorm,\n    Profissional_ID,\n  }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          208,
+          0
+        ],
+        "id": "5797efbe-cd21-4582-b67f-d7f9451272be",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "fb59dae5-0111-412e-8e34-7ee57c42583f",
+                "name": "Nome",
+                "value": "={{ $('Webhook').item.json.body['Nome Completo*'] }}",
+                "type": "string"
+              },
+              {
+                "id": "daab8f75-4c69-4fd9-a513-b3c08f95c108",
+                "name": "Email",
+                "value": "={{ $('Webhook').item.json.body['Email*'] }}",
+                "type": "string"
+              },
+              {
+                "id": "9ccdbebc-68f0-4e25-aea6-9c3ea0c62be3",
+                "name": "Telefone",
+                "value": "={{ $('Webhook').item.json.body['DDD + Celular*'] }}",
+                "type": "string"
+              },
+              {
+                "id": "17ecdd99-7ee2-4273-85a8-67b18ab3fdba",
+                "name": "Profissão",
+                "value": "={{ $('Webhook').item.json.body['Profissional*'] }}",
+                "type": "string"
+              },
+              {
+                "id": "ae097603-6a48-4dc5-bdfd-eb75acdfdd13",
+                "name": "CRM",
+                "value": "={{ $('Webhook').item.json.body['CRM (apenas número)*'] }}",
+                "type": "string"
+              },
+              {
+                "id": "a617ee9c-8215-4d38-bf7b-5fe935583c02",
+                "name": "UF",
+                "value": "={{ $('Webhook').item.json.body['UF do CRM*'] }}",
+                "type": "string"
+              },
+              {
+                "id": "d16163d5-3054-44f8-9924-b2693a84701b",
+                "name": "Mensagem",
+                "value": "=",
+                "type": "string"
+              },
+              {
+                "id": "68820f39-5dc4-40ea-8126-d59e93e2ecb2",
+                "name": "utm source",
+                "value": "={{ $('Webhook').item.json.body.utm_source }}",
+                "type": "string"
+              },
+              {
+                "id": "2ab1166e-93f8-466c-a2cf-25e3635f86f1",
+                "name": "utm medium",
+                "value": "={{ $('Webhook').item.json.body.utm_medium }}",
+                "type": "string"
+              },
+              {
+                "id": "4081a115-1b1b-4f8c-accf-d1368c71bf5c",
+                "name": "utm campaign",
+                "value": "={{ $('Webhook').item.json.body.utm_campaign }}",
+                "type": "string"
+              },
+              {
+                "id": "af7b7b66-81ea-4929-b9fb-c8991b1b57a1",
+                "name": "utm content",
+                "value": "={{ $('Webhook').item.json.body.utm_content }}",
+                "type": "string"
+              },
+              {
+                "id": "7748377c-a3f3-4d7f-92f8-0984f76616c5",
+                "name": "utm term",
+                "value": "={{ $('Webhook').item.json.body.utm_term }}",
+                "type": "string"
+              },
+              {
+                "id": "d9af02b2-75cc-4fa5-90d1-9bd032492587",
+                "name": "Data",
+                "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          416,
+          0
+        ],
+        "id": "07392ba7-c0b2-4afe-a14d-17cd97fd55ce",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2016,
+          0
+        ],
+        "id": "368fc70a-210a-4fe1-a034-43c436202eaf",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pipedrive.com/v1/persons?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"name\": \"{{ $json.Nome }}\",\n    \"email\": \"{{ $json.Email }}\",\n    \"phone\": \"{{ $json.Telefone }}\",\n\n    \"487088fb302d80a85669079afe41a91a21fd45ff\": \"{{ $json.CRM }}\",\n    \"f77f5009ce48d7b62427c2d0961522f1830eb66e\": \"{{ $json.UF }}\",\n    \"334747750ddbc82c2010b5a75da2d82b3bf71783\": \"{{ $json['Profissão'] }}\",\n\n    \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n    \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n    \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n    \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n    \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\",\n\n    \"a58c7a5981502e45f08c88ae54379fb16387547f\": \"{{ $json['utm source'] }}\",\n    \"53e2271622f39f32eecdb9e3c746fd69630e7366\": \"{{ $json.Mensagem }}\"\n  }",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          640,
+          0
+        ],
+        "id": "ff65d511-4a84-4424-8ba5-a68094110254",
+        "name": "HTTP Pipedrive Criar Person"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pipedrive.com/v1/deals?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"title\": \"[Neg INTRODUTORIO 2026] {{ $('Edit Fields').item.json.Nome }}\",\n    \"person_id\": \"{{ $json.data.id }}\",\n    \"pipeline_id\": 228,\n    \"stage_id\": 1519\n  }",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          848,
+          0
+        ],
+        "id": "ac813d2e-9394-403f-a55b-eb7d425acfeb",
+        "name": "HTTP Pipedrive Criar Deal"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E",
+            "mode": "list",
+            "cachedResultName": "[Center AO] Leads lista de espera",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 183732580,
+            "mode": "list",
+            "cachedResultName": "Introdutório",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=183732580"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $('Edit Fields').item.json.Email }}",
+              "Data": "={{ $('Edit Fields').item.json.Data }}",
+              "Nome": "={{ $('Edit Fields').item.json.Nome }}",
+              "Telefone ": "={{ $('Edit Fields').item.json.Telefone }}",
+              "Crm": "={{ $('Edit Fields').item.json.CRM }}",
+              "UF": "={{ $('Edit Fields').item.json.UF }}",
+              "Profissão": "={{ $('Edit Fields').item.json['Profissão'] }}",
+              "utm source": "={{ $('Edit Fields').item.json['utm source'] }}",
+              "utm medium": "={{ $('Edit Fields').item.json['utm medium'] }}",
+              "utm campaign": "={{ $('Edit Fields').item.json['utm campaign'] }}",
+              "utm content": "={{ $('Edit Fields').item.json['utm content'] }}",
+              "utm term": "={{ $('Edit Fields').item.json['utm term'] }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "UF",
+                "displayName": "UF",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Profissão",
+                "displayName": "Profissão",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Mensagem",
+                "displayName": "Mensagem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm source",
+                "displayName": "utm source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm medium",
+                "displayName": "utm medium",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm campaign",
+                "displayName": "utm campaign",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm content",
+                "displayName": "utm content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm term",
+                "displayName": "utm term",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1056,
+          0
+        ],
+        "id": "7b595740-7e1a-43aa-a444-b1bfa640601b",
+        "name": "Append or update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://sendflow.pro/sendapi/actions/send-text-message",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "accept",
+                "value": "*/*"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer send_api-uppnczmu815qeehe6rcrfz63ix5zj8k1y1n1ci11"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "accountId",
+                "value": "D6sYKIJ6g574l0vHredU"
+              },
+              {
+                "name": "releaseId",
+                "value": "Q7mNNp6h6UbWBVLjHZNw"
+              },
+              {
+                "name": "messageText",
+                "value": "=*Novo cadastro de interesse curso introdutório*\n\nNome: {{ $('Edit Fields').item.json.Nome }}\nTelefone: {{ $('Edit Fields').item.json.Telefone }}\nEmail: {{ $('Edit Fields').item.json.Email }}\nProfissão: {{ $('Edit Fields').item.json['Profissão'] }}\nCrm: {{ $('Edit Fields').item.json.CRM }}\nUf: {{ $('Edit Fields').item.json.UF }}\nData: {{ $('Edit Fields').item.json.Data }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1264,
+          0
+        ],
+        "id": "5f7c1284-fc0e-45a8-9108-3e1cb5bb5443",
+        "name": "HTTP Request1"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "especialização-cadastro",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          32,
+          544
+        ],
+        "id": "30122fb8-3944-4d3c-a7ae-2dd948b7e8be",
+        "name": "Webhook2",
+        "webhookId": "3b0a9da5-0743-430b-bf15-e1f50028cb42"
+      },
+      {
+        "parameters": {
+          "jsCode": "// ===============================\n// 1) TELEFONE\n// ===============================\nconst input = $input.first().json;\nconst body = input.body || {};\n\nconst rawPhone = String(body.Telefone || '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // ok\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  cleaned = '';\n}\n\n// ===============================\n// 2) UF: Nome do estado -> Sigla\n// ===============================\nconst estadoParaUF = {\n  \"ACRE\": \"AC\",\n  \"ALAGOAS\": \"AL\",\n  \"AMAPÁ\": \"AP\",\n  \"AMAPA\": \"AP\",\n  \"AMAZONAS\": \"AM\",\n  \"BAHIA\": \"BA\",\n  \"CEARÁ\": \"CE\",\n  \"CEARA\": \"CE\",\n  \"DISTRITO FEDERAL\": \"DF\",\n  \"ESPÍRITO SANTO\": \"ES\",\n  \"ESPIRITO SANTO\": \"ES\",\n  \"GOIÁS\": \"GO\",\n  \"GOIAS\": \"GO\",\n  \"MARANHÃO\": \"MA\",\n  \"MARANHAO\": \"MA\",\n  \"MATO GROSSO\": \"MT\",\n  \"MATO GROSSO DO SUL\": \"MS\",\n  \"MINAS GERAIS\": \"MG\",\n  \"PARÁ\": \"PA\",\n  \"PARA\": \"PA\",\n  \"PARAÍBA\": \"PB\",\n  \"PARAIBA\": \"PB\",\n  \"PARANÁ\": \"PR\",\n  \"PARANA\": \"PR\",\n  \"PERNAMBUCO\": \"PE\",\n  \"PIAUÍ\": \"PI\",\n  \"PIAUI\": \"PI\",\n  \"RIO DE JANEIRO\": \"RJ\",\n  \"RIO GRANDE DO NORTE\": \"RN\",\n  \"RIO GRANDE DO SUL\": \"RS\",\n  \"RONDÔNIA\": \"RO\",\n  \"RONDONIA\": \"RO\",\n  \"RORAIMA\": \"RR\",\n  \"SANTA CATARINA\": \"SC\",\n  \"SÃO PAULO\": \"SP\",\n  \"SAO PAULO\": \"SP\",\n  \"SERGIPE\": \"SE\",\n  \"TOCANTINS\": \"TO\"\n};\n\n// ✅ IDs REAIS do seu campo \"UF do CRM\" (enum)\nconst ufMap = {\n  \"AC\": 6050,\n  \"AL\": 6051,\n  \"AP\": 6052,\n  \"AM\": 6053,\n  \"BA\": 6054,\n  \"CE\": 6055,\n  \"DF\": 6056,\n  \"ES\": 6057,\n  \"GO\": 6058,\n  \"MA\": 6059,\n  \"MT\": 6060,\n  \"MS\": 6061,\n  \"MG\": 6062,\n  \"PA\": 6063,\n  \"PB\": 6064,\n  \"PR\": 6065,\n  \"PE\": 6066,\n  \"PI\": 6067,\n  \"RJ\": 6068,\n  \"RN\": 6069,\n  \"RS\": 6070,\n  \"RO\": 6071,\n  \"RR\": 6072,\n  \"SC\": 6073,\n  \"SP\": 6074,\n  \"SE\": 6075,\n  \"TO\": 6076\n};\n\n// pega UF do CRM como veio (estado por extenso ou sigla)\nconst ufBruto = String(body[\"UF do CRM\"] || \"\").trim();\nconst ufUpper = ufBruto.toUpperCase();\n\n// se já veio \"RJ\", usa; se veio \"Rio de Janeiro\", converte pra \"RJ\"\nconst ufSigla = ufUpper.length === 2 ? ufUpper : (estadoParaUF[ufUpper] || \"\");\nconst UF_ID = ufSigla ? (ufMap[ufSigla] ?? null) : null;\n\n// ===============================\n// 3) PROFISSÃO: frase -> categoria\n// ===============================\nconst profissionalMap = {\n  \"Médico\": 2,\n  \"Medico\": 2,\n  \"Fisioterapeuta\": 3,\n  \"Enfermeiro\": 4,\n  \"Nutricionista\": 5,\n  \"Outro\": 6\n};\n\nconst profBruto = String(body.Profissional || \"\").trim();\n\n// normaliza casos tipo \"Sou Médico\"\nlet profNorm = profBruto\n  .replace(/^sou\\s+/i, \"\")      // remove \"Sou \"\n  .replace(/^eu\\s+sou\\s+/i, \"\") // remove \"Eu sou \"\n  .trim();\n\n// padroniza alguns sinônimos comuns\nif (/medic/i.test(profNorm)) profNorm = \"Médico\";\nif (/fisio/i.test(profNorm)) profNorm = \"Fisioterapeuta\";\nif (/enferm/i.test(profNorm)) profNorm = \"Enfermeiro\";\nif (/nutri/i.test(profNorm)) profNorm = \"Nutricionista\";\n\nconst Profissional_ID = profissionalMap[profNorm] ?? null;\n\n// ===============================\n// 4) RETORNO\n// ===============================\nreturn [{\n  json: {\n    telefoneFormatado: cleaned,\n    ufTextoRecebido: ufBruto,\n    ufSigla,\n    UF_ID,\n    profissaoTextoRecebido: profBruto,\n    profNorm,\n    Profissional_ID,\n  }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          240,
+          544
+        ],
+        "id": "12a223ce-a357-47f3-8b21-7747ae09a605",
+        "name": "Code in JavaScript1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "fb59dae5-0111-412e-8e34-7ee57c42583f",
+                "name": "Nome",
+                "value": "={{ $('Webhook2').item.json.body['Nome completo'] }}",
+                "type": "string"
+              },
+              {
+                "id": "daab8f75-4c69-4fd9-a513-b3c08f95c108",
+                "name": "Email",
+                "value": "={{ $('Webhook2').item.json.body['E-mail'] }}",
+                "type": "string"
+              },
+              {
+                "id": "9ccdbebc-68f0-4e25-aea6-9c3ea0c62be3",
+                "name": "Telefone",
+                "value": "={{ $json.telefoneFormatado }}",
+                "type": "string"
+              },
+              {
+                "id": "17ecdd99-7ee2-4273-85a8-67b18ab3fdba",
+                "name": "Profissão",
+                "value": "={{ $('Webhook2').item.json.body.Profissional }}",
+                "type": "string"
+              },
+              {
+                "id": "ae097603-6a48-4dc5-bdfd-eb75acdfdd13",
+                "name": "CRM",
+                "value": "={{ $('Webhook2').item.json.body.CRM }}",
+                "type": "string"
+              },
+              {
+                "id": "a617ee9c-8215-4d38-bf7b-5fe935583c02",
+                "name": "UF",
+                "value": "={{ $('Webhook2').item.json.body['UF do CRM'] }}",
+                "type": "string"
+              },
+              {
+                "id": "d16163d5-3054-44f8-9924-b2693a84701b",
+                "name": "Mensagem",
+                "value": "={{ $('Webhook2').item.json.body['Mensagem (opcional)'] }}",
+                "type": "string"
+              },
+              {
+                "id": "68820f39-5dc4-40ea-8126-d59e93e2ecb2",
+                "name": "utm source",
+                "value": "={{ $('Webhook2').item.json.body.utm_source }}",
+                "type": "string"
+              },
+              {
+                "id": "2ab1166e-93f8-466c-a2cf-25e3635f86f1",
+                "name": "utm medium",
+                "value": "={{ $('Webhook2').item.json.body.utm_medium }}",
+                "type": "string"
+              },
+              {
+                "id": "4081a115-1b1b-4f8c-accf-d1368c71bf5c",
+                "name": "utm campaign",
+                "value": "={{ $('Webhook2').item.json.body.utm_campaign }}",
+                "type": "string"
+              },
+              {
+                "id": "af7b7b66-81ea-4929-b9fb-c8991b1b57a1",
+                "name": "utm content",
+                "value": "={{ $('Webhook2').item.json.body.utm_content }}",
+                "type": "string"
+              },
+              {
+                "id": "7748377c-a3f3-4d7f-92f8-0984f76616c5",
+                "name": "utm term",
+                "value": "={{ $('Webhook2').item.json.body.utm_term }}",
+                "type": "string"
+              },
+              {
+                "id": "d9af02b2-75cc-4fa5-90d1-9bd032492587",
+                "name": "Data",
+                "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          448,
+          544
+        ],
+        "id": "daae2479-a275-4d35-b0f1-9faa96ba388c",
+        "name": "Edit Fields1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2048,
+          544
+        ],
+        "id": "02f38959-8d6b-4eef-bc65-a3702b7b85f4",
+        "name": "No Operation, do nothing1"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pipedrive.com/v1/persons?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"name\": \"{{ $json.Nome }}\",\n    \"email\": \"{{ $json.Email }}\",\n    \"phone\": \"{{ $json.Telefone }}\",\n\n    \"487088fb302d80a85669079afe41a91a21fd45ff\": \"{{ $json.CRM }}\",\n    \"f77f5009ce48d7b62427c2d0961522f1830eb66e\": \"{{ $json.UF }}\",\n    \"334747750ddbc82c2010b5a75da2d82b3bf71783\": \"{{ $json['Profissão'] }}\",\n\n    \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n    \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n    \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n    \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n    \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\",\n\n    \"a58c7a5981502e45f08c88ae54379fb16387547f\": \"{{ $json['utm source'] }}\",\n    \"53e2271622f39f32eecdb9e3c746fd69630e7366\": \"{{ $json.Mensagem }}\"\n  }",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          672,
+          544
+        ],
+        "id": "609b17f9-0ec6-4677-8c4a-42d58f91899b",
+        "name": "HTTP Pipedrive Criar Person1"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pipedrive.com/v1/deals?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"title\": \"[Neg Turma 57 2026 API] {{ $('Edit Fields1').item.json.Nome }}\",\n    \"person_id\": \"{{ $json.data.id }}\",\n    \"pipeline_id\": 196,\n    \"stage_id\": 1496\n  }",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          880,
+          544
+        ],
+        "id": "bdaf0644-8e19-4a8e-9ac4-daf41a334616",
+        "name": "HTTP Pipedrive Criar Deal1"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E",
+            "mode": "list",
+            "cachedResultName": "[Center AO] Leads lista de espera",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 2027659463,
+            "mode": "list",
+            "cachedResultName": "[Filtro] Pipeline ESPECIALIZAÇÃO 2026",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=2027659463"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $('Edit Fields1').item.json.Email }}",
+              "Data": "={{ $('Edit Fields1').item.json.Data }}",
+              "Nome": "={{ $('Edit Fields1').item.json.Nome }}",
+              "Telefone ": "={{ $('Edit Fields1').item.json.Telefone }}",
+              "Crm": "={{ $('Edit Fields1').item.json.CRM }}",
+              "UF": "={{ $('Edit Fields1').item.json.UF }}",
+              "Profissão": "={{ $('Edit Fields1').item.json['Profissão'] }}",
+              "utm source": "={{ $('Edit Fields1').item.json['utm source'] }}",
+              "utm medium": "={{ $('Edit Fields1').item.json['utm medium'] }}",
+              "utm campaign": "={{ $('Edit Fields1').item.json['utm campaign'] }}",
+              "utm content": "={{ $('Edit Fields1').item.json['utm content'] }}",
+              "utm term": "={{ $('Edit Fields1').item.json['utm term'] }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "UF",
+                "displayName": "UF",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Profissão",
+                "displayName": "Profissão",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Mensagem",
+                "displayName": "Mensagem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm source",
+                "displayName": "utm source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm medium",
+                "displayName": "utm medium",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm campaign",
+                "displayName": "utm campaign",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm content",
+                "displayName": "utm content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm term",
+                "displayName": "utm term",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1088,
+          544
+        ],
+        "id": "60dcc43e-6d5b-4aa6-af50-022f47489166",
+        "name": "Append or update row in sheet1",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://sendflow.pro/sendapi/actions/send-text-message",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "accept",
+                "value": "*/*"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer send_api-uppnczmu815qeehe6rcrfz63ix5zj8k1y1n1ci11"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "accountId",
+                "value": "D6sYKIJ6g574l0vHredU"
+              },
+              {
+                "name": "releaseId",
+                "value": "Q7mNNp6h6UbWBVLjHZNw"
+              },
+              {
+                "name": "messageText",
+                "value": "=*Novo cadastro de interesse especialização*\n\nNome: {{ $('Edit Fields1').item.json.Nome }}\nTelefone: {{ $('Edit Fields1').item.json.Telefone }}\nEmail: {{ $('Edit Fields1').item.json.Email }}\nProfissão: {{ $('Edit Fields1').item.json['Profissão'] }}\nCrm: {{ $('Edit Fields1').item.json.CRM }}\nUf: {{ $('Edit Fields1').item.json.UF }}\nData: {{ $('Edit Fields1').item.json.Data }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1296,
+          544
+        ],
+        "id": "0645fa93-7fee-45fa-a6f2-de00de0cede3",
+        "name": "HTTP Request"
+      }
+    ],
+    "connections": {
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "HTTP Pipedrive Criar Person",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Criar Person": {
+        "main": [
+          [
+            {
+              "node": "HTTP Pipedrive Criar Deal",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Criar Deal": {
+        "main": [
+          [
+            {
+              "node": "Append or update row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Append or update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request1": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook2": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript1": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "HTTP Pipedrive Criar Person1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Criar Person1": {
+        "main": [
+          [
+            {
+              "node": "HTTP Pipedrive Criar Deal1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Criar Deal1": {
+        "main": [
+          [
+            {
+              "node": "Append or update row in sheet1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Append or update row in sheet1": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": "Version 57b8c570",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
