@@ -1,0 +1,507 @@
+{
+  "updatedAt": "2026-03-24T11:52:05.441Z",
+  "createdAt": "2025-07-14T14:12:58.749Z",
+  "id": "ysNZ9p6xBxT5FtUq",
+  "name": "[Ana Camargo] [IMER0825] pop up preenchido LP Sheets Active",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "workshop-lojista-infatil-07-25",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        440
+      ],
+      "id": "0acd7653-c14f-4b96-9ac1-fb33ed3fa64b",
+      "name": "Webhook",
+      "webhookId": "34de4661-b13c-44b6-ba78-30b1b7d40679"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone =  $input.first().json.body['Seu DDD + WhatsApp:'] || \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 10 dígitos começando com 9)\n  if (parseInt(ddd) >= 30 && numero.length === 10 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -260,
+        440
+      ],
+      "id": "8bcc7984-6e90-49ff-939e-1548a5d550d8",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50e85938-5f93-4e68-8023-d1e348cc59ea",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body['Digite seu nome completo'] }}",
+              "type": "string"
+            },
+            {
+              "id": "683fdbc9-ad30-4919-8081-053bc1487df3",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body['Seu melhor e-mail:'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f8a97570-39fd-4e8f-9c40-53bc95ae9310",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "883f841d-62bc-4540-9c05-3a17bee936a0",
+              "name": "Data Lead",
+              "value": "={{    new Date().getDate().toString().padStart(2, '0') + '/' +   (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +   new Date().getFullYear() + ' ' +   new Date().getHours().toString().padStart(2, '0') + ':' +   new Date().getMinutes().toString().padStart(2, '0') }}",
+              "type": "string"
+            },
+            {
+              "id": "41497430-0ce0-466a-b136-25eb3d9b138d",
+              "name": "Utm Source",
+              "value": "={{ $('Webhook').item.json.body.utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "a6e1bf87-5c16-4f18-8d2f-4b7bcc1e934e",
+              "name": "Utm Medium",
+              "value": "={{ $('Webhook').item.json.body.utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "4970d5fa-0866-4253-9dac-1f3128605f4d",
+              "name": "Utm Campaign",
+              "value": "={{ $('Webhook').item.json.body.utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "37d743f3-e639-4041-80b1-cdf5b51535ab",
+              "name": "Utm Content",
+              "value": "={{ $('Webhook').item.json.body.utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "b235d9b7-1986-4fda-af0f-ff908ffb10d6",
+              "name": "Utm Term",
+              "value": "={{ $('Webhook').item.json.body.utm_term }}",
+              "type": "string"
+            },
+            {
+              "id": "b5417212-d96c-419e-944c-4f8ca16c4b61",
+              "name": "sck",
+              "value": "={{ $('Webhook').item.json.body.sck }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -40,
+        440
+      ],
+      "id": "b1b88873-7602-4c8e-8249-051777154f73",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        920,
+        440
+      ],
+      "id": "76dc19fd-d7ed-48e7-bfba-c9d85c31391a",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.Email }}",
+        "updateIfExists": true,
+        "additionalFields": {
+          "fieldValues": {
+            "property": [
+              {
+                "field": "94",
+                "value": "={{ $json['Utm Source'] }}"
+              },
+              {
+                "field": "95",
+                "value": "={{ $json['Utm Medium'] }}"
+              },
+              {
+                "field": "96",
+                "value": "={{ $json['Utm Content'] }}"
+              },
+              {
+                "field": "97",
+                "value": "={{ $json['Utm Campaign'] }}"
+              },
+              {
+                "field": "98",
+                "value": "={{ $json['Utm Term'] }}"
+              }
+            ]
+          },
+          "firstName": "={{ $json.Nome }}",
+          "phone": "={{ $json.Telefone }}"
+        }
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        240,
+        440
+      ],
+      "id": "843690d0-694f-41d1-94f3-e4d072e3a260",
+      "name": "ActiveCampaign",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "MAs1ynQMB6e1yg25",
+          "name": "ActiveCampaign Ana Camargo (MVL)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "listId": 34,
+        "contactId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        440,
+        440
+      ],
+      "id": "01022e8b-4549-42d1-bcb3-f4d3c4d0b040",
+      "name": "ActiveCampaign List",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "MAs1ynQMB6e1yg25",
+          "name": "ActiveCampaign Ana Camargo (MVL)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactTag",
+        "tagId": "1925",
+        "contactId": "={{ $('ActiveCampaign').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        640,
+        440
+      ],
+      "id": "454bf3ee-6767-4b25-b9c9-d46247290833",
+      "name": "ActiveCampaign Tag",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "MAs1ynQMB6e1yg25",
+          "name": "ActiveCampaign Ana Camargo (MVL)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1SSpHe3FZSoS7wd7lkda2iN7s3HhoUwdc_xiB7EAOu1s/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SSpHe3FZSoS7wd7lkda2iN7s3HhoUwdc_xiB7EAOu1s/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json['Data Lead'] }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "Utm Source": "={{ $json['Utm Source'] }}",
+            "Utm Campaign": "={{ $json['Utm Campaign'] }}",
+            "Utm Content": "={{ $json['Utm Content'] }}",
+            "Utm Medium": "={{ $json['Utm Medium'] }}",
+            "Utm Term": "={{ $json['Utm Term'] }}",
+            "sck": "={{ $json.sck }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Source",
+              "displayName": "Utm Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Campaign",
+              "displayName": "Utm Campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Medium",
+              "displayName": "Utm Medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Content",
+              "displayName": "Utm Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Term",
+              "displayName": "Utm Term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sck",
+              "displayName": "sck",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        340,
+        700
+      ],
+      "id": "c15de897-7679-44f2-8df1-5e096c043cc2",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign List": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign Tag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign Tag": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.8.2; https://analauracamargo.com.br",
+            "content-length": "262",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "177.154.191.246",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "177.154.191.246"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Digite seu nome completo": "Teste",
+            "Seu melhor e-mail:": "alba_alentejo5@hotmail.com",
+            "Seu DDD + WhatsApp:": "31999854851",
+            "utm_source": "undefined",
+            "utm_campaign": "undefined",
+            "utm_medium": "undefined",
+            "utm_content": "undefined",
+            "utm_term": "undefined",
+            "sck": "",
+            "form_id": "3d413aa",
+            "form_name": "imer0825"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/workshop-lojista-infatil-07-25",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "96fb7efb-86f5-49e7-90ea-f502387b52ff",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-07-14T14:12:58.749Z",
+      "createdAt": "2025-07-14T14:12:58.749Z",
+      "role": "workflow:owner",
+      "workflowId": "ysNZ9p6xBxT5FtUq",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
