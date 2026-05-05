@@ -1,0 +1,240 @@
+{
+  "updatedAt": "2025-04-09T16:54:01.803Z",
+  "createdAt": "2025-03-24T12:42:47.410Z",
+  "id": "88qgb5UURmaUMzwK",
+  "name": "[fabi] disparo em massa choque -> codigo de rastreio",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a4b43f45-8f8d-4f42-8b43-1cdd12c36126",
+      "name": "No Operation, do nothing1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4a47faeb-0a64-410c-a2fc-601b9f769dc7",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1060,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "id": "0fe85676-69ea-4177-b270-88e7a0a918fd",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        180
+      ],
+      "webhookId": "e0d73821-61d0-40ab-b1d8-4f24588d53e4",
+      "alwaysOutputData": true,
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b24f107e-6364-45f9-950d-439a2953e9d5",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -280,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1812e-VRVdj5aQPOqr1QN8UmQ8emQ1Jhp8vp2oO9o4iE",
+          "mode": "list",
+          "cachedResultName": "Bônus 30 Primeiras - Choque VIP 03.02",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1812e-VRVdj5aQPOqr1QN8UmQ8emQ1Jhp8vp2oO9o4iE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1688663515,
+          "mode": "list",
+          "cachedResultName": "Cópia de Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1812e-VRVdj5aQPOqr1QN8UmQ8emQ1Jhp8vp2oO9o4iE/edit#gid=1688663515"
+        },
+        "options": {}
+      },
+      "id": "a79ad216-d630-4057-b3e1-b01eb4d373be",
+      "name": "Google Sheets2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        -820,
+        160
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba6c4ff8-c782-4cf6-becf-7fa85bf8a1c6",
+              "name": "código",
+              "value": "={{ $json[\"código\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "a620a738-5c24-43ec-a3b1-096a276d847a",
+              "name": "telefone",
+              "value": "={{ $json.telefone }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d0adce12-9a51-4bee-b6e3-a5765ad74bb2",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -560,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/hrSNN85559AFt4arSrcG",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"b32bdf4a-84ea-4abd-9b45-f70a0be4ba67\",\n  \"phoneNumber\": \"{{ $json.telefone }}\",\n  \"email\": \"{{ $json[\"código\"] }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        120,
+        180
+      ],
+      "id": "f7002172-b54f-494f-8069-467b6a65faa7",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "4771b7a9-c3b5-466e-9559-852ecff34bc5",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-03-24T12:42:47.410Z",
+      "createdAt": "2025-03-24T12:42:47.410Z",
+      "role": "workflow:owner",
+      "workflowId": "88qgb5UURmaUMzwK",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
