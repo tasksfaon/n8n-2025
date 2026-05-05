@@ -1,1 +1,47 @@
-{"fileName":"[euro]-[trader-na-veia]-entrou-no-grupo-68GqeaumB9rpgB46.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2025-11-19T20:01:25.563Z",
+  "createdAt": "2025-11-19T20:00:10.860Z",
+  "id": "68GqeaumB9rpgB46",
+  "name": "[Euro] [Trader na Veia] Entrou no Grupo",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "euro-trader-grupo-entrou",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4914dfd4-1df3-44de-aaf4-6fc2008249d0",
+      "name": "Webhook",
+      "webhookId": "881fcf1e-1c57-40af-92fe-c9f8150993de"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "1e04d350-715b-4c70-a625-cdd67c85cfae",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-19T20:00:10.860Z",
+      "createdAt": "2025-11-19T20:00:10.860Z",
+      "role": "workflow:owner",
+      "workflowId": "68GqeaumB9rpgB46",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
