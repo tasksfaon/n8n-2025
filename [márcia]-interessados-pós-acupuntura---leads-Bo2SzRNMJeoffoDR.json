@@ -1,0 +1,664 @@
+{
+  "updatedAt": "2025-05-19T13:43:25.263Z",
+  "createdAt": "2025-05-12T12:51:35.028Z",
+  "id": "Bo2SzRNMJeoffoDR",
+  "name": "[Márcia] Interessados Pós Acupuntura - Leads",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "marcia-leads-pos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "155732b8-5fe6-4037-af24-db135e003b04",
+      "name": "Webhook",
+      "webhookId": "0df3ae38-ae76-4ccf-b258-5fd68c54bfb3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém os dados do nó webhook\nconst items = $input.all();\n\nreturn items.map(item => {\n    let phone = item.json.body?.[\"contact[phone]\"] || \"\";\n\n    // Verifica se já está no formato 55DDDTelefone\n    const regex = /^55\\d{2}\\d{8,9}$/;\n    if (!regex.test(phone)) {\n        // Remove caracteres não numéricos\n        const phoneClean = phone.replace(/\\D/g, \"\");\n\n        // Se tiver 10 ou 11 dígitos (DDD + telefone), adiciona 55\n        if (phoneClean.length === 10 || phoneClean.length === 11) {\n            phone = \"55\" + phoneClean;\n        }\n    }\n\n    // Retorna apenas o telefone formatado\n    return { json: { phone } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "8a2ddec3-1b5a-4473-99de-1b8a45dad46e",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d86cfce0-4a55-470e-87dc-3d96e73e1b19",
+              "name": "Data",
+              "value": "={{ new Date().getDate().toString().padStart(2, '0') + '/' + \n   (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' + \n   new Date().getFullYear() + ' ' +\n   new Date().getHours().toString().padStart(2, '0') + ':' +\n   new Date().getMinutes().toString().padStart(2, '0') }}",
+              "type": "string"
+            },
+            {
+              "id": "b563c496-5646-4123-ac4a-b33ac2cad2fd",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body['contact[first_name]'] }} {{ $('Webhook').item.json.body['contact[last_name]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "1fc159a0-6a6e-431c-951e-a9f456c4a519",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body['contact[email]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ef593ff3-538a-4f24-8d30-7dba96d9b2cc",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "254c8e33-6a4e-42c3-93cf-ac1615c708fa",
+              "name": "Utm source",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "e1f83948-8e6a-41d9-97e0-0b9194d947c3",
+              "name": "Utm Medium",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "bb43dd4f-8909-4100-a289-57d0aa5a242f",
+              "name": "Utm Campaign",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "435e9ed1-cc15-4ffd-9f18-1fe6d66f939d",
+              "name": "Utm Content",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "5ab0a04f-568e-4b5b-97c6-3f45ccbe56b2",
+              "name": "Utm Term",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "090fc135-4b75-40b1-8b7c-cc36bced0a12",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "6b4ac2d6-c74a-476e-be97-38e5531f0e99",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1-AOpqR7pMk_lu2afsjzxJRCokw5ZMGEDMd7S3psrOwM/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-AOpqR7pMk_lu2afsjzxJRCokw5ZMGEDMd7S3psrOwM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone": "={{ $json.Telefone }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        0
+      ],
+      "id": "402c7a92-bb2a-4bcf-ba09-6681dd61f9bd",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "GuzzleHttp/6.5.5 curl/8.3.0 PHP/8.1.29",
+            "content-length": "5205",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "52.2.43.221",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.2.43.221",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact[id]": "6940",
+            "contact[email]": "bellasimaia@gmail.com",
+            "contact[first_name]": "Isabella Siqueira",
+            "contact[last_name]": "",
+            "contact[phone]": "31984617540",
+            "contact[orgname]": "",
+            "contact[customer_acct_name]": "",
+            "contact[tags]": "[PI3] LEAD, [LAMINAS] Carrinho Abandonado, [LAMINAS] Cartão Recusado, [CME1] COMPRA APROVADA, [CME1] CARRINHO ABANDONADO, [CME1] CARTÃO RECUSADO, [NC]Nova-Pediatria-workshop, [PI3] Captação Leads",
+            "contact[ip4]": "0.0.0.0",
+            "contact[fields][especializao]": "",
+            "contact[fields][como_ficou_sabendo_do_curso]": "",
+            "contact[fields][gostaramos_de_saber_o_que_voc_espera_aprender_com_esse_curso_nos_conte_de_forma_resumida]": "",
+            "contact[fields][situao]": "",
+            "contact[fields][utmsourcepe2]": "",
+            "contact[fields][utmmediumpe2]": "",
+            "contact[fields][utmcampaignpe2]": "",
+            "contact[fields][utmcontentpe2]": "",
+            "contact[fields][datainscricaopi2]": "",
+            "contact[fields][qrcode]": "",
+            "contact[fields][imgqrcode]": "",
+            "contact[fields][datamatricula]": "",
+            "contact[fields][utmcontentpi2matricula]": "",
+            "contact[fields][utmsourcepi2matricula]": "",
+            "contact[fields][utmmediumpi2matricula]": "",
+            "contact[fields][utmcampaignpi2matricula]": "",
+            "contact[fields][utmcontentsp22024]": "",
+            "contact[fields][utmcampaignsp22024]": "",
+            "contact[fields][utmsourcesp22024]": "manychat-sup",
+            "contact[fields][utmmediumsp22024]": "",
+            "contact[fields][datainscricaosp22024]": "",
+            "contact[fields][boletourl]": "",
+            "contact[fields][boletobarcode]": "",
+            "contact[fields][utmsourcenpi]": "",
+            "contact[fields][utm_mediumnpi]": "",
+            "contact[fields][utm_contentnpi]": "",
+            "contact[fields][utmcampaignnpi]": "",
+            "contact[fields][datainscricaonpi]": "",
+            "contact[fields][utmsourcencicomunidade]": "",
+            "contact[fields][utmmediumncicomunidade]": "",
+            "contact[fields][utmcampaignncicomunidade]": "",
+            "contact[fields][utmcontentncicomunidade]": "",
+            "contact[fields][datacomprancicomunidade]": "",
+            "contact[fields][datarenovaoncicomunidade]": "",
+            "contact[fields][utmcontentpi3]": "",
+            "contact[fields][utmsourcepi3]": "manychat-ped3-obesidade",
+            "contact[fields][utmmediumpi3]": "",
+            "contact[fields][utmcampaignpi3]": "POS PED3",
+            "contact[fields][datainscricaopi3]": "2024-11-26",
+            "contact[fields][utmssourcesup3]": "",
+            "contact[fields][utmsmediumsup3]": "",
+            "contact[fields][utmscampaignsup3]": "",
+            "contact[fields][utmscontentsup3]": "",
+            "contact[fields][utmstermsup3]": "",
+            "contact[fields][utmsource]": "",
+            "contact[fields][utmmedium]": "",
+            "contact[fields][utmcontent]": "",
+            "contact[fields][utmcampaign]": "",
+            "contact[fields][utmterm]": "",
+            "contact[fields][crmcrn]": "",
+            "contact[fields][sup3respondiinstagram]": "",
+            "contact[fields][sup3respondiidade]": "",
+            "contact[fields][sup3respondicidadeestado]": "",
+            "contact[fields][sup3respondigenero]": "",
+            "contact[fields][sup3respondimediconutricionista]": "",
+            "contact[fields][sup3respondiespecialidade]": "",
+            "contact[fields][sup3respondifoco]": "",
+            "contact[fields][sup3responditempoformacao]": "",
+            "contact[fields][sup3respondiatendimento]": "",
+            "contact[fields][sup3respondiatuasup]": "",
+            "contact[fields][sup3responditempoatua]": "",
+            "contact[fields][sup3respondialunonc]": "",
+            "contact[fields][sup3respondialunonccurso]": "",
+            "contact[fields][sup3responditempoconhece]": "",
+            "contact[fields][sup3respondiconheceu]": "",
+            "contact[fields][sup3respondidesafio]": "",
+            "contact[fields][sup3respondimudarcarreira]": "",
+            "contact[fields][sup3respondiexpectativa]": "",
+            "contact[fields][sup3respondirelevantecarreira]": "",
+            "contact[fields][sup3respondisonho]": "",
+            "contact[fields][sup3respondimedo]": "",
+            "contact[fields][sup3respondirenda]": "",
+            "contact[fields][sup3respondiperguntanath]": "",
+            "contact[fields][novaidade]": "Entre 25 e 30 anos",
+            "contact[fields][novacidade]": "Teste",
+            "contact[fields][novapediatra]": "",
+            "contact[fields][novaoutraespecialidade]": "Teste",
+            "contact[fields][novagenero]": "Feminino",
+            "contact[fields][novatempoformado]": "Entre 1 e 3 anos",
+            "contact[fields][novaatendimento]": "Atendo convênio e particular",
+            "contact[fields][novavalorconsulta]": "Teste",
+            "contact[fields][novanpacientes]": "Entre 10 e 20",
+            "contact[fields][novarendamensal]": "Entre R$20.000 e R$30.000",
+            "contact[fields][novamotivoinscricao]": "",
+            "contact[fields][novacomoconheceu]": "Outros",
+            "contact[fields][novaoutroconheceu]": "",
+            "contact[fields][novaaprenderworkshop]": "tESTE",
+            "contact[fields][novaouviufalarpediatria]": "",
+            "contact[fields][novautilizapraticas]": "Não utilizo, mas quero começar",
+            "contact[fields][novareceio]": "",
+            "contact[fields][novadesafioimplementar]": "",
+            "contact[fields][novaduvida]": "TESTE",
+            "contact[fields][novaresultado]": "",
+            "contact[fields][novadesafiopratica]": "",
+            "contact[fields][novamudarcarreira]": "TESTE",
+            "contact[fields][novatempoconhecenath]": "Menos de 6 meses",
+            "contact[fields][novasonho]": "TESTE",
+            "contact[fields][novamedo]": "TESTE",
+            "contact[fields][novadatainscricao]": "2025-01-21",
+            "seriesid": "33"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ncic-sup3-compra-aprovada",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "875d0e78-d09a-458b-9cf3-f638ee153001",
+  "activeVersionId": "875d0e78-d09a-458b-9cf3-f638ee153001",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-05-12T12:51:35.028Z",
+      "createdAt": "2025-05-12T12:51:35.028Z",
+      "role": "workflow:owner",
+      "workflowId": "Bo2SzRNMJeoffoDR",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "875d0e78-d09a-458b-9cf3-f638ee153001",
+    "workflowId": "Bo2SzRNMJeoffoDR",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "marcia-leads-pos",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "155732b8-5fe6-4037-af24-db135e003b04",
+        "name": "Webhook",
+        "webhookId": "0df3ae38-ae76-4ccf-b258-5fd68c54bfb3"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Obtém os dados do nó webhook\nconst items = $input.all();\n\nreturn items.map(item => {\n    let phone = item.json.body?.[\"contact[phone]\"] || \"\";\n\n    // Verifica se já está no formato 55DDDTelefone\n    const regex = /^55\\d{2}\\d{8,9}$/;\n    if (!regex.test(phone)) {\n        // Remove caracteres não numéricos\n        const phoneClean = phone.replace(/\\D/g, \"\");\n\n        // Se tiver 10 ou 11 dígitos (DDD + telefone), adiciona 55\n        if (phoneClean.length === 10 || phoneClean.length === 11) {\n            phone = \"55\" + phoneClean;\n        }\n    }\n\n    // Retorna apenas o telefone formatado\n    return { json: { phone } };\n});\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "8a2ddec3-1b5a-4473-99de-1b8a45dad46e",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "d86cfce0-4a55-470e-87dc-3d96e73e1b19",
+                "name": "Data",
+                "value": "={{ new Date().getDate().toString().padStart(2, '0') + '/' + \n   (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' + \n   new Date().getFullYear() + ' ' +\n   new Date().getHours().toString().padStart(2, '0') + ':' +\n   new Date().getMinutes().toString().padStart(2, '0') }}",
+                "type": "string"
+              },
+              {
+                "id": "b563c496-5646-4123-ac4a-b33ac2cad2fd",
+                "name": "Nome",
+                "value": "={{ $('Webhook').item.json.body['contact[first_name]'] }} {{ $('Webhook').item.json.body['contact[last_name]'] }}",
+                "type": "string"
+              },
+              {
+                "id": "1fc159a0-6a6e-431c-951e-a9f456c4a519",
+                "name": "Email",
+                "value": "={{ $('Webhook').item.json.body['contact[email]'] }}",
+                "type": "string"
+              },
+              {
+                "id": "ef593ff3-538a-4f24-8d30-7dba96d9b2cc",
+                "name": "Telefone",
+                "value": "={{ $json.phone }}",
+                "type": "string"
+              },
+              {
+                "id": "254c8e33-6a4e-42c3-93cf-ac1615c708fa",
+                "name": "Utm source",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "e1f83948-8e6a-41d9-97e0-0b9194d947c3",
+                "name": "Utm Medium",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "bb43dd4f-8909-4100-a289-57d0aa5a242f",
+                "name": "Utm Campaign",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "435e9ed1-cc15-4ffd-9f18-1fe6d66f939d",
+                "name": "Utm Content",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "5ab0a04f-568e-4b5b-97c6-3f45ccbe56b2",
+                "name": "Utm Term",
+                "value": "",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          440,
+          0
+        ],
+        "id": "090fc135-4b75-40b1-8b7c-cc36bced0a12",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          880,
+          0
+        ],
+        "id": "6b4ac2d6-c74a-476e-be97-38e5531f0e99",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1-AOpqR7pMk_lu2afsjzxJRCokw5ZMGEDMd7S3psrOwM/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Leads",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-AOpqR7pMk_lu2afsjzxJRCokw5ZMGEDMd7S3psrOwM/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone": "={{ $json.Telefone }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Telefone",
+                "displayName": "Telefone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          660,
+          0
+        ],
+        "id": "402c7a92-bb2a-4bcf-ba09-6681dd61f9bd",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
