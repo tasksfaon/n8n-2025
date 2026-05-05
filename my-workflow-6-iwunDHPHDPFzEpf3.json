@@ -1,1 +1,1108 @@
-{"fileName":"my-workflow-6-iwunDHPHDPFzEpf3.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2025-12-15T15:00:43.579Z",
+  "createdAt": "2025-12-14T22:30:02.173Z",
+  "id": "iwunDHPHDPFzEpf3",
+  "name": "My workflow 6",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teste",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        256,
+        -16
+      ],
+      "id": "ba58349f-1f36-4e7f-b8bb-4897c65ff729",
+      "name": "Webhook",
+      "webhookId": "8ff61db6-ece2-4802-97c3-7585d59c5c80"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===============================\n// 1) TELEFONE\n// ===============================\nconst input = $input.first().json;\nconst body = input.body || {};\n\nconst rawPhone = String(body.Telefone || '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // ok\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  cleaned = '';\n}\n\n// ===============================\n// 2) UF: Nome do estado -> Sigla\n// ===============================\nconst estadoParaUF = {\n  \"ACRE\": \"AC\",\n  \"ALAGOAS\": \"AL\",\n  \"AMAPÁ\": \"AP\",\n  \"AMAPA\": \"AP\",\n  \"AMAZONAS\": \"AM\",\n  \"BAHIA\": \"BA\",\n  \"CEARÁ\": \"CE\",\n  \"CEARA\": \"CE\",\n  \"DISTRITO FEDERAL\": \"DF\",\n  \"ESPÍRITO SANTO\": \"ES\",\n  \"ESPIRITO SANTO\": \"ES\",\n  \"GOIÁS\": \"GO\",\n  \"GOIAS\": \"GO\",\n  \"MARANHÃO\": \"MA\",\n  \"MARANHAO\": \"MA\",\n  \"MATO GROSSO\": \"MT\",\n  \"MATO GROSSO DO SUL\": \"MS\",\n  \"MINAS GERAIS\": \"MG\",\n  \"PARÁ\": \"PA\",\n  \"PARA\": \"PA\",\n  \"PARAÍBA\": \"PB\",\n  \"PARAIBA\": \"PB\",\n  \"PARANÁ\": \"PR\",\n  \"PARANA\": \"PR\",\n  \"PERNAMBUCO\": \"PE\",\n  \"PIAUÍ\": \"PI\",\n  \"PIAUI\": \"PI\",\n  \"RIO DE JANEIRO\": \"RJ\",\n  \"RIO GRANDE DO NORTE\": \"RN\",\n  \"RIO GRANDE DO SUL\": \"RS\",\n  \"RONDÔNIA\": \"RO\",\n  \"RONDONIA\": \"RO\",\n  \"RORAIMA\": \"RR\",\n  \"SANTA CATARINA\": \"SC\",\n  \"SÃO PAULO\": \"SP\",\n  \"SAO PAULO\": \"SP\",\n  \"SERGIPE\": \"SE\",\n  \"TOCANTINS\": \"TO\"\n};\n\n// ✅ IDs REAIS do seu campo \"UF do CRM\" (enum)\nconst ufMap = {\n  \"AC\": 6050,\n  \"AL\": 6051,\n  \"AP\": 6052,\n  \"AM\": 6053,\n  \"BA\": 6054,\n  \"CE\": 6055,\n  \"DF\": 6056,\n  \"ES\": 6057,\n  \"GO\": 6058,\n  \"MA\": 6059,\n  \"MT\": 6060,\n  \"MS\": 6061,\n  \"MG\": 6062,\n  \"PA\": 6063,\n  \"PB\": 6064,\n  \"PR\": 6065,\n  \"PE\": 6066,\n  \"PI\": 6067,\n  \"RJ\": 6068,\n  \"RN\": 6069,\n  \"RS\": 6070,\n  \"RO\": 6071,\n  \"RR\": 6072,\n  \"SC\": 6073,\n  \"SP\": 6074,\n  \"SE\": 6075,\n  \"TO\": 6076\n};\n\n// pega UF do CRM como veio (estado por extenso ou sigla)\nconst ufBruto = String(body[\"UF do CRM\"] || \"\").trim();\nconst ufUpper = ufBruto.toUpperCase();\n\n// se já veio \"RJ\", usa; se veio \"Rio de Janeiro\", converte pra \"RJ\"\nconst ufSigla = ufUpper.length === 2 ? ufUpper : (estadoParaUF[ufUpper] || \"\");\nconst UF_ID = ufSigla ? (ufMap[ufSigla] ?? null) : null;\n\n// ===============================\n// 3) PROFISSÃO: frase -> categoria\n// ===============================\nconst profissionalMap = {\n  \"Médico\": 2,\n  \"Medico\": 2,\n  \"Fisioterapeuta\": 3,\n  \"Enfermeiro\": 4,\n  \"Nutricionista\": 5,\n  \"Outro\": 6\n};\n\nconst profBruto = String(body.Profissional || \"\").trim();\n\n// normaliza casos tipo \"Sou Médico\"\nlet profNorm = profBruto\n  .replace(/^sou\\s+/i, \"\")      // remove \"Sou \"\n  .replace(/^eu\\s+sou\\s+/i, \"\") // remove \"Eu sou \"\n  .trim();\n\n// padroniza alguns sinônimos comuns\nif (/medic/i.test(profNorm)) profNorm = \"Médico\";\nif (/fisio/i.test(profNorm)) profNorm = \"Fisioterapeuta\";\nif (/enferm/i.test(profNorm)) profNorm = \"Enfermeiro\";\nif (/nutri/i.test(profNorm)) profNorm = \"Nutricionista\";\n\nconst Profissional_ID = profissionalMap[profNorm] ?? null;\n\n// ===============================\n// 4) RETORNO\n// ===============================\nreturn [{\n  json: {\n    telefoneFormatado: cleaned,\n    ufTextoRecebido: ufBruto,\n    ufSigla,\n    UF_ID,\n    profissaoTextoRecebido: profBruto,\n    profNorm,\n    Profissional_ID,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "ed92ef3f-5441-4390-9531-3c77f8d6003f",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fb59dae5-0111-412e-8e34-7ee57c42583f",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body['Nome completo'] }}",
+              "type": "string"
+            },
+            {
+              "id": "daab8f75-4c69-4fd9-a513-b3c08f95c108",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body['E-mail'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9ccdbebc-68f0-4e25-aea6-9c3ea0c62be3",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "17ecdd99-7ee2-4273-85a8-67b18ab3fdba",
+              "name": "Profissão",
+              "value": "={{ $json.Profissional_ID }}",
+              "type": "string"
+            },
+            {
+              "id": "ae097603-6a48-4dc5-bdfd-eb75acdfdd13",
+              "name": "CRM",
+              "value": "={{ $('Webhook').item.json.body.CRM }}",
+              "type": "string"
+            },
+            {
+              "id": "a617ee9c-8215-4d38-bf7b-5fe935583c02",
+              "name": "UF",
+              "value": "={{ $json.UF_ID }}",
+              "type": "string"
+            },
+            {
+              "id": "d16163d5-3054-44f8-9924-b2693a84701b",
+              "name": "Mensagem",
+              "value": "={{ $('Webhook').item.json.body['Mensagem (opcional)'] }}",
+              "type": "string"
+            },
+            {
+              "id": "68820f39-5dc4-40ea-8126-d59e93e2ecb2",
+              "name": "utm source",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "2ab1166e-93f8-466c-a2cf-25e3635f86f1",
+              "name": "utm medium",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "4081a115-1b1b-4f8c-accf-d1368c71bf5c",
+              "name": "utm campaign",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "af7b7b66-81ea-4929-b9fb-c8991b1b57a1",
+              "name": "utm content",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "7748377c-a3f3-4d7f-92f8-0984f76616c5",
+              "name": "utm term",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "d9af02b2-75cc-4fa5-90d1-9bd032492587",
+              "name": "Data",
+              "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        -112
+      ],
+      "id": "86535cee-5005-4c85-b38d-f0cd1babc3f0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        -112
+      ],
+      "id": "628f02a1-39ae-447b-a081-9d2363df8e3d",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=1764680190#gid=1764680190",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2027659463,
+          "mode": "list",
+          "cachedResultName": "[Filtro] Pipeline ESPECIALIZAÇÃO 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=2027659463"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}",
+            "UF": "={{ $json.UF }}",
+            "Profissão": "={{ $json['Profissão'] }}",
+            "Mensagem": "={{ $json.Mensagem }}",
+            "utm source": "={{ $json['utm source'] }}",
+            "utm medium": "={{ $json['utm medium'] }}",
+            "utm campaign": "={{ $json['utm campaign'] }}",
+            "utm content": "={{ $json['utm content'] }}",
+            "utm term": "={{ $json['utm term'] }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UF",
+              "displayName": "UF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Profissão",
+              "displayName": "Profissão",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mensagem",
+              "displayName": "Mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm source",
+              "displayName": "utm source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm medium",
+              "displayName": "utm medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm campaign",
+              "displayName": "utm campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm content",
+              "displayName": "utm content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm term",
+              "displayName": "utm term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        992,
+        -192
+      ],
+      "id": "9f3fcc9e-3d21-4f0b-9321-177d50b2c9e1",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.pipedrive.com/v1/personFields?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        912,
+        272
+      ],
+      "id": "181c9375-8a11-47ba-a4ee-f9cc9cea1954",
+      "name": "HTTP Pipedrive Pegar campos"
+    },
+    {
+      "parameters": {
+        "url": "https://api.pipedrive.com/v1/stages?pipeline_id=196&api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1136,
+        272
+      ],
+      "id": "8dd28ae7-62f6-46bd-b28c-f64c5f53e04d",
+      "name": "HTTP Pipedrive Pegar aba"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pipedrive.com/v1/persons?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"name\": \"{{ $json.Nome }}\",\n    \"email\": \"{{ $json.Email }}\",\n    \"phone\": \"{{ $json.Telefone }}\",\n\n    \"487088fb302d80a85669079afe41a91a21fd45ff\": \"{{ $json.CRM }}\",\n    \"f77f5009ce48d7b62427c2d0961522f1830eb66e\": \"{{ $json.UF }}\",\n    \"334747750ddbc82c2010b5a75da2d82b3bf71783\": \"{{ $json['Profissão'] }}\",\n\n    \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n    \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n    \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n    \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n    \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\",\n\n    \"a58c7a5981502e45f08c88ae54379fb16387547f\": \"{{ $json['utm source'] }}\",\n    \"53e2271622f39f32eecdb9e3c746fd69630e7366\": \"{{ $json.Mensagem }}\"\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        880,
+        -16
+      ],
+      "id": "0ef4a87f-3f36-4913-aebe-1c0a40360992",
+      "name": "HTTP Pipedrive Criar Person"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pipedrive.com/v1/deals?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"title\": \"[Neg Turma 57 2026] - {{ $('Edit Fields').item.json.Nome }}\",\n    \"person_id\": \"{{ $json.data.id }}\",\n    \"pipeline_id\": 196,\n    \"stage_id\": 1496\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1088,
+        -16
+      ],
+      "id": "b09ac80c-bb67-4be8-b20b-6434f6fc9345",
+      "name": "HTTP Pipedrive Criar Deal"
+    },
+    {
+      "parameters": {
+        "content": "##Apoio##\nDescobre os campos e o stage id",
+        "height": 224,
+        "width": 480
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        864,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "317d2580-d560-4c1f-aaa9-4d836834ebb2",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhook2025.faondigital.com.br/webhook/lp-lista-de-interesse-pos-2026",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "ping",
+              "value": "ok"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        496,
+        288
+      ],
+      "id": "a9fe6da8-cd2e-498b-ae3a-ffb3dad6476b",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Pipedrive Criar Person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Criar Person": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pipedrive Criar Deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Criar Deal": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.9; https://center-ao.com.br",
+            "content-length": "371",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "45.126.210.82",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "45.126.210.82"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Nome completo": "Letícia Piazzetta",
+            "E-mail": "leticia@faondigital.com.br",
+            "Telefone": "+5554991635474",
+            "Profissional": "Sou Médico",
+            "CRM": "12121",
+            "UF do CRM": "Acre",
+            "Mensagem (opcional)": "",
+            "No Label field_fa88c18": "",
+            "utm_source": "",
+            "utm_campaign": "",
+            "utm_content": "",
+            "utm_medium": "",
+            "utm_term": "",
+            "data": "15/12/2025",
+            "form_id": "590f2c7",
+            "form_name": "Lista de espera - Turma 2026 - Pós acupuntura médica"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/teste",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "ef74ffb2-06ef-485e-b2ba-cdde00747734",
+  "activeVersionId": "ef74ffb2-06ef-485e-b2ba-cdde00747734",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-14T22:30:02.173Z",
+      "createdAt": "2025-12-14T22:30:02.173Z",
+      "role": "workflow:owner",
+      "workflowId": "iwunDHPHDPFzEpf3",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-15T15:00:43.583Z",
+    "createdAt": "2025-12-15T15:00:43.583Z",
+    "versionId": "ef74ffb2-06ef-485e-b2ba-cdde00747734",
+    "workflowId": "iwunDHPHDPFzEpf3",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "teste",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          256,
+          -16
+        ],
+        "id": "ba58349f-1f36-4e7f-b8bb-4897c65ff729",
+        "name": "Webhook",
+        "webhookId": "8ff61db6-ece2-4802-97c3-7585d59c5c80"
+      },
+      {
+        "parameters": {
+          "jsCode": "// ===============================\n// 1) TELEFONE\n// ===============================\nconst input = $input.first().json;\nconst body = input.body || {};\n\nconst rawPhone = String(body.Telefone || '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // ok\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  cleaned = '';\n}\n\n// ===============================\n// 2) UF: Nome do estado -> Sigla\n// ===============================\nconst estadoParaUF = {\n  \"ACRE\": \"AC\",\n  \"ALAGOAS\": \"AL\",\n  \"AMAPÁ\": \"AP\",\n  \"AMAPA\": \"AP\",\n  \"AMAZONAS\": \"AM\",\n  \"BAHIA\": \"BA\",\n  \"CEARÁ\": \"CE\",\n  \"CEARA\": \"CE\",\n  \"DISTRITO FEDERAL\": \"DF\",\n  \"ESPÍRITO SANTO\": \"ES\",\n  \"ESPIRITO SANTO\": \"ES\",\n  \"GOIÁS\": \"GO\",\n  \"GOIAS\": \"GO\",\n  \"MARANHÃO\": \"MA\",\n  \"MARANHAO\": \"MA\",\n  \"MATO GROSSO\": \"MT\",\n  \"MATO GROSSO DO SUL\": \"MS\",\n  \"MINAS GERAIS\": \"MG\",\n  \"PARÁ\": \"PA\",\n  \"PARA\": \"PA\",\n  \"PARAÍBA\": \"PB\",\n  \"PARAIBA\": \"PB\",\n  \"PARANÁ\": \"PR\",\n  \"PARANA\": \"PR\",\n  \"PERNAMBUCO\": \"PE\",\n  \"PIAUÍ\": \"PI\",\n  \"PIAUI\": \"PI\",\n  \"RIO DE JANEIRO\": \"RJ\",\n  \"RIO GRANDE DO NORTE\": \"RN\",\n  \"RIO GRANDE DO SUL\": \"RS\",\n  \"RONDÔNIA\": \"RO\",\n  \"RONDONIA\": \"RO\",\n  \"RORAIMA\": \"RR\",\n  \"SANTA CATARINA\": \"SC\",\n  \"SÃO PAULO\": \"SP\",\n  \"SAO PAULO\": \"SP\",\n  \"SERGIPE\": \"SE\",\n  \"TOCANTINS\": \"TO\"\n};\n\n// ✅ IDs REAIS do seu campo \"UF do CRM\" (enum)\nconst ufMap = {\n  \"AC\": 6050,\n  \"AL\": 6051,\n  \"AP\": 6052,\n  \"AM\": 6053,\n  \"BA\": 6054,\n  \"CE\": 6055,\n  \"DF\": 6056,\n  \"ES\": 6057,\n  \"GO\": 6058,\n  \"MA\": 6059,\n  \"MT\": 6060,\n  \"MS\": 6061,\n  \"MG\": 6062,\n  \"PA\": 6063,\n  \"PB\": 6064,\n  \"PR\": 6065,\n  \"PE\": 6066,\n  \"PI\": 6067,\n  \"RJ\": 6068,\n  \"RN\": 6069,\n  \"RS\": 6070,\n  \"RO\": 6071,\n  \"RR\": 6072,\n  \"SC\": 6073,\n  \"SP\": 6074,\n  \"SE\": 6075,\n  \"TO\": 6076\n};\n\n// pega UF do CRM como veio (estado por extenso ou sigla)\nconst ufBruto = String(body[\"UF do CRM\"] || \"\").trim();\nconst ufUpper = ufBruto.toUpperCase();\n\n// se já veio \"RJ\", usa; se veio \"Rio de Janeiro\", converte pra \"RJ\"\nconst ufSigla = ufUpper.length === 2 ? ufUpper : (estadoParaUF[ufUpper] || \"\");\nconst UF_ID = ufSigla ? (ufMap[ufSigla] ?? null) : null;\n\n// ===============================\n// 3) PROFISSÃO: frase -> categoria\n// ===============================\nconst profissionalMap = {\n  \"Médico\": 2,\n  \"Medico\": 2,\n  \"Fisioterapeuta\": 3,\n  \"Enfermeiro\": 4,\n  \"Nutricionista\": 5,\n  \"Outro\": 6\n};\n\nconst profBruto = String(body.Profissional || \"\").trim();\n\n// normaliza casos tipo \"Sou Médico\"\nlet profNorm = profBruto\n  .replace(/^sou\\s+/i, \"\")      // remove \"Sou \"\n  .replace(/^eu\\s+sou\\s+/i, \"\") // remove \"Eu sou \"\n  .trim();\n\n// padroniza alguns sinônimos comuns\nif (/medic/i.test(profNorm)) profNorm = \"Médico\";\nif (/fisio/i.test(profNorm)) profNorm = \"Fisioterapeuta\";\nif (/enferm/i.test(profNorm)) profNorm = \"Enfermeiro\";\nif (/nutri/i.test(profNorm)) profNorm = \"Nutricionista\";\n\nconst Profissional_ID = profissionalMap[profNorm] ?? null;\n\n// ===============================\n// 4) RETORNO\n// ===============================\nreturn [{\n  json: {\n    telefoneFormatado: cleaned,\n    ufTextoRecebido: ufBruto,\n    ufSigla,\n    UF_ID,\n    profissaoTextoRecebido: profBruto,\n    profNorm,\n    Profissional_ID,\n  }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          448,
+          -112
+        ],
+        "id": "ed92ef3f-5441-4390-9531-3c77f8d6003f",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "fb59dae5-0111-412e-8e34-7ee57c42583f",
+                "name": "Nome",
+                "value": "={{ $('Webhook').item.json.body['Nome completo'] }}",
+                "type": "string"
+              },
+              {
+                "id": "daab8f75-4c69-4fd9-a513-b3c08f95c108",
+                "name": "Email",
+                "value": "={{ $('Webhook').item.json.body['E-mail'] }}",
+                "type": "string"
+              },
+              {
+                "id": "9ccdbebc-68f0-4e25-aea6-9c3ea0c62be3",
+                "name": "Telefone",
+                "value": "={{ $json.telefoneFormatado }}",
+                "type": "string"
+              },
+              {
+                "id": "17ecdd99-7ee2-4273-85a8-67b18ab3fdba",
+                "name": "Profissão",
+                "value": "={{ $json.Profissional_ID }}",
+                "type": "string"
+              },
+              {
+                "id": "ae097603-6a48-4dc5-bdfd-eb75acdfdd13",
+                "name": "CRM",
+                "value": "={{ $('Webhook').item.json.body.CRM }}",
+                "type": "string"
+              },
+              {
+                "id": "a617ee9c-8215-4d38-bf7b-5fe935583c02",
+                "name": "UF",
+                "value": "={{ $json.UF_ID }}",
+                "type": "string"
+              },
+              {
+                "id": "d16163d5-3054-44f8-9924-b2693a84701b",
+                "name": "Mensagem",
+                "value": "={{ $('Webhook').item.json.body['Mensagem (opcional)'] }}",
+                "type": "string"
+              },
+              {
+                "id": "68820f39-5dc4-40ea-8126-d59e93e2ecb2",
+                "name": "utm source",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "2ab1166e-93f8-466c-a2cf-25e3635f86f1",
+                "name": "utm medium",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "4081a115-1b1b-4f8c-accf-d1368c71bf5c",
+                "name": "utm campaign",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "af7b7b66-81ea-4929-b9fb-c8991b1b57a1",
+                "name": "utm content",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "7748377c-a3f3-4d7f-92f8-0984f76616c5",
+                "name": "utm term",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "d9af02b2-75cc-4fa5-90d1-9bd032492587",
+                "name": "Data",
+                "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          656,
+          -112
+        ],
+        "id": "86535cee-5005-4c85-b38d-f0cd1babc3f0",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1392,
+          -112
+        ],
+        "id": "628f02a1-39ae-447b-a081-9d2363df8e3d",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=1764680190#gid=1764680190",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 2027659463,
+            "mode": "list",
+            "cachedResultName": "[Filtro] Pipeline ESPECIALIZAÇÃO 2026",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=2027659463"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}",
+              "UF": "={{ $json.UF }}",
+              "Profissão": "={{ $json['Profissão'] }}",
+              "Mensagem": "={{ $json.Mensagem }}",
+              "utm source": "={{ $json['utm source'] }}",
+              "utm medium": "={{ $json['utm medium'] }}",
+              "utm campaign": "={{ $json['utm campaign'] }}",
+              "utm content": "={{ $json['utm content'] }}",
+              "utm term": "={{ $json['utm term'] }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "UF",
+                "displayName": "UF",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Profissão",
+                "displayName": "Profissão",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Mensagem",
+                "displayName": "Mensagem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm source",
+                "displayName": "utm source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm medium",
+                "displayName": "utm medium",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm campaign",
+                "displayName": "utm campaign",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm content",
+                "displayName": "utm content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm term",
+                "displayName": "utm term",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          992,
+          -192
+        ],
+        "id": "9f3fcc9e-3d21-4f0b-9321-177d50b2c9e1",
+        "name": "Append or update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "https://api.pipedrive.com/v1/personFields?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          912,
+          272
+        ],
+        "id": "181c9375-8a11-47ba-a4ee-f9cc9cea1954",
+        "name": "HTTP Pipedrive Pegar campos"
+      },
+      {
+        "parameters": {
+          "url": "https://api.pipedrive.com/v1/stages?pipeline_id=196&api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1136,
+          272
+        ],
+        "id": "8dd28ae7-62f6-46bd-b28c-f64c5f53e04d",
+        "name": "HTTP Pipedrive Pegar aba"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pipedrive.com/v1/persons?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"name\": \"{{ $json.Nome }}\",\n    \"email\": \"{{ $json.Email }}\",\n    \"phone\": \"{{ $json.Telefone }}\",\n\n    \"487088fb302d80a85669079afe41a91a21fd45ff\": \"{{ $json.CRM }}\",\n    \"f77f5009ce48d7b62427c2d0961522f1830eb66e\": \"{{ $json.UF }}\",\n    \"334747750ddbc82c2010b5a75da2d82b3bf71783\": \"{{ $json['Profissão'] }}\",\n\n    \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n    \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n    \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n    \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n    \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\",\n\n    \"a58c7a5981502e45f08c88ae54379fb16387547f\": \"{{ $json['utm source'] }}\",\n    \"53e2271622f39f32eecdb9e3c746fd69630e7366\": \"{{ $json.Mensagem }}\"\n  }",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          880,
+          -16
+        ],
+        "id": "0ef4a87f-3f36-4913-aebe-1c0a40360992",
+        "name": "HTTP Pipedrive Criar Person"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pipedrive.com/v1/deals?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"title\": \"[Neg Turma 57 2026] - {{ $('Edit Fields').item.json.Nome }}\",\n    \"person_id\": \"{{ $json.data.id }}\",\n    \"pipeline_id\": 196,\n    \"stage_id\": 1496\n  }",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1088,
+          -16
+        ],
+        "id": "b09ac80c-bb67-4be8-b20b-6434f6fc9345",
+        "name": "HTTP Pipedrive Criar Deal"
+      },
+      {
+        "parameters": {
+          "content": "##Apoio##\nDescobre os campos e o stage id",
+          "height": 224,
+          "width": 480
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          864,
+          224
+        ],
+        "typeVersion": 1,
+        "id": "317d2580-d560-4c1f-aaa9-4d836834ebb2",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://webhook2025.faondigital.com.br/webhook/lp-lista-de-interesse-pos-2026",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "ping",
+                "value": "ok"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "fullResponse": true
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          496,
+          288
+        ],
+        "id": "a9fe6da8-cd2e-498b-ae3a-ffb3dad6476b",
+        "name": "HTTP Request"
+      }
+    ],
+    "connections": {
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Append or update row in sheet",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTTP Pipedrive Criar Person",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Append or update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Criar Person": {
+        "main": [
+          [
+            {
+              "node": "HTTP Pipedrive Criar Deal",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Criar Deal": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
