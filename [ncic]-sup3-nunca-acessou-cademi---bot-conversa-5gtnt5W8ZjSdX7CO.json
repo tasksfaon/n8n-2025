@@ -1,0 +1,290 @@
+{
+  "updatedAt": "2025-05-13T15:03:17.982Z",
+  "createdAt": "2025-03-17T14:52:19.157Z",
+  "id": "5gtnt5W8ZjSdX7CO",
+  "name": "[NCIC] SUP3 Nunca Acessou Cademi - Bot Conversa",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ncic-sup3-nunca-acessou",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -380,
+        0
+      ],
+      "id": "d4dec1e4-ef90-40ce-ac46-5dbf0f6945ee",
+      "name": "Webhook",
+      "webhookId": "349f519e-7c2e-4453-a944-4f6ff8297f6e"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2e8e29d3-2dbd-4a56-991b-ed0aee9f64ad",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.event.usuario.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "f5391b8c-7879-463b-ba42-a5c72f36a648",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.event.usuario.email }}",
+              "type": "string"
+            },
+            {
+              "id": "c221ec8b-923d-41e4-8bc9-ffcfd16c79ab",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "286809e2-2cdf-4d1b-bb92-05bd8e9e801a",
+              "name": "Acesso",
+              "value": "={{ $('Webhook').item.json.event.usuario.ultimo_acesso_em }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "cd71c877-7170-4914-b09e-05e8c0315d54",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/130652/VmPnH4guIckA/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        700,
+        -80
+      ],
+      "id": "5e3d5106-8e2c-4dac-baf1-7faa64d85a36",
+      "name": "HTTP Botconversa"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém os dados do nó webhook\nconst items = $input.all();\n\nreturn items.map(item => {\n    let phone = item.json.event?.usuario?.celular || \"\";\n\n    // Verifica se já está no formato 55DDDTelefone\n    const regex = /^55\\d{2}\\d{8,9}$/;\n    if (!regex.test(phone)) {\n        // Remove caracteres não numéricos\n        const phoneClean = phone.replace(/\\D/g, \"\");\n\n        // Se tiver 10 ou 11 dígitos (DDD + telefone), adiciona 55\n        if (phoneClean.length === 10 || phoneClean.length === 11) {\n            phone = \"55\" + phoneClean;\n        }\n    }\n\n    // Retorna apenas o telefone formatado\n    return { json: { phone } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5f78b108-4fcc-4cbf-8312-a1b32e5d2110",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1fbd762a-d68b-4de5-b4d1-8c4fbe099c8e",
+              "leftValue": "={{ $json.Acesso }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "edbc6789-6b64-409a-92a5-04b096f2a1ef",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        860,
+        20
+      ],
+      "id": "7665b302-d129-4cf0-80c4-59c77cc3a55d",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "days"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -180,
+        0
+      ],
+      "id": "ef208936-7e0e-4d0e-9498-c6a90c649300",
+      "name": "Wait",
+      "webhookId": "48b5b52e-0a3c-4dd5-b4a5-b5da87548195"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Botconversa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "event_id": "01664950-b5fc-4d03-b8d0-b6d0576c3ae8",
+          "event_type": "usuario.criado",
+          "event": {
+            "usuario": {
+              "id": 123,
+              "nome": "Isabella Teste",
+              "email": "bellasimaia@gmail.com",
+              "doc": "123.123.123-12",
+              "celular": "31984617540",
+              "login_auto": "http://membros.cademi.com.br/auth/login?crstk=",
+              "criado_em": null,
+              "ultimo_acesso_em": null
+            }
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "c4b933e5-43df-469c-b34f-97cd86c8306c",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-17T14:52:19.157Z",
+      "createdAt": "2025-03-17T14:52:19.157Z",
+      "role": "workflow:owner",
+      "workflowId": "5gtnt5W8ZjSdX7CO",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
