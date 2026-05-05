@@ -1,0 +1,404 @@
+{
+  "updatedAt": "2025-11-11T01:41:29.451Z",
+  "createdAt": "2025-11-10T23:38:55.594Z",
+  "id": "dkwhZFfhlm36tHjF",
+  "name": "[Agrotalento] Pago",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "63cc58f5-fdb0-43b2-8795-de11e6613433",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8ebd36c4-b172-4b52-9a42-a68960a9324f",
+      "name": "Webhook",
+      "webhookId": "63cc58f5-fdb0-43b2-8795-de11e6613433"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bc50640b-753c-4254-8351-7bd2311e8948",
+              "leftValue": "={{ $json.body.payment.description }}",
+              "rightValue": "AgroTalento",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2e44ed12-33e2-48d4-a074-22979449d975",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fbd24f41-c0c8-4faa-bf37-a2e1ecc1ca70",
+              "name": "custumer",
+              "value": "={{ $('Webhook').item.json.body.payment.customer }}",
+              "type": "string"
+            },
+            {
+              "id": "5698566f-518f-4fc3-8cf9-69db0cb1d0f4",
+              "name": "id",
+              "value": "={{ $('Webhook').item.json.body.payment.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "77754390-a52a-4c6f-b8b7-7232e7414cca",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.asaas.com/api/v3/customers/{{ $json.custumer }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization:",
+              "value": "Bearer"
+            },
+            {
+              "name": "Content-Type:",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "e659e13d-a2c0-4e54-b091-4c676cbc8164",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Asaas_Prod/3.0",
+            "content-length": "1443",
+            "accept": "application/json",
+            "accept-encoding": "gzip",
+            "cache-control": "no-cache",
+            "content-type": "application/json",
+            "pragma": "no-cache",
+            "traceparent": "00-6912866c00000000642e22952c784ccb-4327c3254fccc405-00",
+            "tracestate": "dd=s:0;p:4327c3254fccc405;t.tid:6912866c00000000",
+            "x-datadog-parent-id": "4839050889652913157",
+            "x-datadog-sampling-priority": "0",
+            "x-datadog-tags": "_dd.p.tid=6912866c00000000",
+            "x-datadog-trace-id": "7218745276813036747",
+            "x-forwarded-for": "54.94.183.101",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "54.94.183.101"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "evt_15e444ff9b9ab9ec29294aa1abe68025&1120810711",
+            "event": "PAYMENT_CONFIRMED",
+            "dateCreated": "2025-11-10 21:42:18",
+            "payment": {
+              "object": "payment",
+              "id": "pay_ujzio7c4s3juwbyd",
+              "dateCreated": "2025-11-10",
+              "customer": "cus_000146528052",
+              "installment": "6dd84752-da2c-44a9-ba1f-baa944b8432d",
+              "checkoutSession": null,
+              "paymentLink": "xzwcppe4r36o81g3",
+              "value": 342.71,
+              "netValue": 333.12,
+              "originalValue": null,
+              "interestValue": null,
+              "description": "Parcela 12 de 12. Super Black Friday AgroTalento (parcelado em 12x de R$ 1.999,25 no cartão)",
+              "billingType": "CREDIT_CARD",
+              "confirmedDate": "2025-11-10",
+              "creditCard": {
+                "creditCardNumber": "4113",
+                "creditCardBrand": "VISA"
+              },
+              "pixTransaction": null,
+              "status": "CONFIRMED",
+              "dueDate": "2026-10-10",
+              "originalDueDate": "2026-10-10",
+              "paymentDate": null,
+              "clientPaymentDate": "2025-11-10",
+              "installmentNumber": 12,
+              "invoiceUrl": "https://www.asaas.com/i/ujzio7c4s3juwbyd",
+              "invoiceNumber": "676287355",
+              "externalReference": null,
+              "deleted": false,
+              "anticipated": false,
+              "anticipable": false,
+              "creditDate": "2026-11-30",
+              "estimatedCreditDate": "2026-11-30",
+              "transactionReceiptUrl": "https://www.asaas.com/comprovantes/6794691745607273",
+              "nossoNumero": null,
+              "bankSlipUrl": null,
+              "lastInvoiceViewedDate": null,
+              "lastBankSlipViewedDate": null,
+              "discount": {
+                "value": 0,
+                "limitDate": null,
+                "dueDateLimitDays": 0,
+                "type": "FIXED"
+              },
+              "fine": {
+                "value": 0,
+                "type": "FIXED"
+              },
+              "interest": {
+                "value": 0,
+                "type": "PERCENTAGE"
+              },
+              "postalService": false,
+              "escrow": null,
+              "refunds": null
+            }
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/63cc58f5-fdb0-43b2-8795-de11e6613433",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "ddc6c067-d459-4426-8e49-ef726b8ab3f6",
+  "activeVersionId": "ddc6c067-d459-4426-8e49-ef726b8ab3f6",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-11-10T23:38:55.594Z",
+      "createdAt": "2025-11-10T23:38:55.594Z",
+      "role": "workflow:owner",
+      "workflowId": "dkwhZFfhlm36tHjF",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "ddc6c067-d459-4426-8e49-ef726b8ab3f6",
+    "workflowId": "dkwhZFfhlm36tHjF",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "63cc58f5-fdb0-43b2-8795-de11e6613433",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "8ebd36c4-b172-4b52-9a42-a68960a9324f",
+        "name": "Webhook",
+        "webhookId": "63cc58f5-fdb0-43b2-8795-de11e6613433"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "bc50640b-753c-4254-8351-7bd2311e8948",
+                "leftValue": "={{ $json.body.payment.description }}",
+                "rightValue": "AgroTalento",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          208,
+          0
+        ],
+        "id": "2e44ed12-33e2-48d4-a074-22979449d975",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "fbd24f41-c0c8-4faa-bf37-a2e1ecc1ca70",
+                "name": "custumer",
+                "value": "={{ $('Webhook').item.json.body.payment.customer }}",
+                "type": "string"
+              },
+              {
+                "id": "5698566f-518f-4fc3-8cf9-69db0cb1d0f4",
+                "name": "id",
+                "value": "={{ $('Webhook').item.json.body.payment.id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          416,
+          -96
+        ],
+        "id": "77754390-a52a-4c6f-b8b7-7232e7414cca",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "url": "=https://api.asaas.com/api/v3/customers/{{ $json.custumer }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization:",
+                "value": "Bearer"
+              },
+              {
+                "name": "Content-Type:",
+                "value": "application/json"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          624,
+          -96
+        ],
+        "id": "e659e13d-a2c0-4e54-b091-4c676cbc8164",
+        "name": "HTTP Request"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
