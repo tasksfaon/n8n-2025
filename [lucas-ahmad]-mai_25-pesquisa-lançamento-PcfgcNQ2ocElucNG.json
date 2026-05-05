@@ -1,0 +1,1018 @@
+{
+  "updatedAt": "2025-04-09T16:49:59.759Z",
+  "createdAt": "2025-04-01T12:56:01.771Z",
+  "id": "PcfgcNQ2ocElucNG",
+  "name": "[Lucas Ahmad] Mai_25 Pesquisa Lançamento",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ahmad-pesquisa",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        40,
+        -20
+      ],
+      "id": "eb6452d4-2ddd-4e20-b5db-9e658311a370",
+      "name": "Webhook",
+      "webhookId": "e982c5b6-fb4b-405e-8e9b-40207c125789"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "83277332-65a6-4c8c-8d2f-723a252e43dd",
+              "name": "Data",
+              "value": "={{ new Date().toLocaleDateString(\"pt-BR\") }}",
+              "type": "string"
+            },
+            {
+              "id": "e73eda67-7a8d-4d2e-9d7c-b0dd95542533",
+              "name": "Nome",
+              "value": "={{ $json.body.respondent.answers['Nome completo'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f675bfca-063f-4469-ac87-c0d844c60350",
+              "name": "Email",
+              "value": "={{ $json.body.respondent.answers['Seu melhor e-mail:'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f8bc0cb2-7675-4be0-acf1-1c22e46cc4ec",
+              "name": "Telefone",
+              "value": "={{ $json.body.respondent.raw_answers[2].answer.country }}{{ $json.body.respondent.raw_answers[2].answer.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "6d7c9309-319d-43f4-b54c-171e6f6b0efd",
+              "name": "CNPJ",
+              "value": "={{ $json.body.respondent.answers['CNPJ da empresa'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b3abba49-f5f5-4fdc-969d-6138bafd26d4",
+              "name": "Valor dívida",
+              "value": "={{ $json.body.respondent.answers['Qual o valor aproximado da dívida tributária da empresa?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3ea93d67-a8e0-4d72-88a3-ed4c5320c5b7",
+              "name": "Resolver",
+              "value": "={{ $json.body.respondent.answers['Sua empresa já tentou alguma estratégia para resolver essa dívida?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f895a160-9e83-40a7-9153-573a25b39051",
+              "name": "Desafio",
+              "value": "={{ $json.body.respondent.answers['Qual o principal desafio que você enfrenta hoje com essa dívida?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3c2439a9-bff4-430e-894e-e7cddd9183f3",
+              "name": "Motivo ",
+              "value": "={{ $json.body.respondent.answers['Por que você ainda não conseguiu resolver essa situação?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5a8372f5-caec-42c5-8101-f126034428dd",
+              "name": "Tempo",
+              "value": "={{ $json.body.respondent.answers['Em quanto tempo você gostaria de resolver esse problema?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "0968a0b1-fe7b-46ab-aa5d-1210a6ccf744",
+              "name": "Pergunta",
+              "value": "={{ $json.body.respondent.answers['Se pudesse tomar um café com o Dr. Lucas hoje, o que perguntaria?'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        -20
+      ],
+      "id": "0814530e-ea14-468b-9401-e3325779ba06",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/18VbprzYVBpomeZbDdB9pZ96ewASlxIT0c90KsGMFKqg/edit?gid=1551883637#gid=1551883637",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1551883637,
+          "mode": "list",
+          "cachedResultName": "Pesquisa",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18VbprzYVBpomeZbDdB9pZ96ewASlxIT0c90KsGMFKqg/edit#gid=1551883637"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Email": "={{ $json.Email }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "CNPJ": "={{ $json.CNPJ }}",
+            "Valor Dívida": "={{ $json['Valor dívida'] }}",
+            "Resolver": "={{ $json.Resolver }}",
+            "Desafio": "={{ $json.Desafio }}",
+            "Motivo": "={{ $json['Motivo '] }}",
+            "Tempo": "={{ $json.Tempo }}",
+            "Pergunta": "={{ $json.Pergunta }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CNPJ",
+              "displayName": "CNPJ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Valor Dívida",
+              "displayName": "Valor Dívida",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resolver",
+              "displayName": "Resolver",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Desafio",
+              "displayName": "Desafio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Motivo",
+              "displayName": "Motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tempo",
+              "displayName": "Tempo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pergunta",
+              "displayName": "Pergunta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Source",
+              "displayName": "Utm Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm medium",
+              "displayName": "Utm medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Campaign",
+              "displayName": "Utm Campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm content ",
+              "displayName": "Utm content ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm term",
+              "displayName": "Utm term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        -20
+      ],
+      "id": "d5eb8ae8-631a-4134-888c-9c6ffc728d6e",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        900,
+        -20
+      ],
+      "id": "9fee7a80-f298-4102-8cdf-1b5f21b6287b",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/c0ee0b83-e038-4db7-9798-17dd31b807c7",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "CNPJ",
+              "value": "={{ $json.CNPJ }}"
+            },
+            {
+              "name": "Dívida",
+              "value": "={{ $json['Valor Dívida'] }}"
+            },
+            {
+              "name": "Resolver",
+              "value": "={{ $json.Resolver }}"
+            },
+            {
+              "name": "Desafio",
+              "value": "={{ $json.Desafio }}"
+            },
+            {
+              "name": "Motivo",
+              "value": "={{ $json.Motivo }}"
+            },
+            {
+              "name": "Tempo",
+              "value": "={{ $json.Tempo }}"
+            },
+            {
+              "name": "Pergunta",
+              "value": "={{ $json.Pergunta }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        700,
+        -20
+      ],
+      "id": "5c70b233-9046-4c75-834f-83fc2e24975d",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "GuzzleHttp/7",
+            "content-length": "2713",
+            "content-type": "application/json",
+            "traceparent": "00-67ebe544000000008003ba3a3a5db00d-82b2ca6d6f00e853-01",
+            "tracestate": "dd=p:82b2ca6d6f00e853;t.dm:-1",
+            "x-datadog-parent-id": "9417812342147704915",
+            "x-datadog-sampling-priority": "1",
+            "x-datadog-tags": "_dd.p.tid=67ebe54400000000,_dd.p.dm=-1",
+            "x-datadog-trace-id": "9224421221034995725",
+            "x-forwarded-for": "18.232.52.85",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "18.232.52.85",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "form": {
+              "form_name": "A Virada Tributária",
+              "form_id": "zsEne4EH"
+            },
+            "respondent": {
+              "status": "completed",
+              "date": "2025-04-01 13:07:41",
+              "score": null,
+              "respondent_id": "384f5f87-6d86-4ab6-a688-e0f8f0eb2819",
+              "answers": {
+                "Nome completo": "Teste",
+                "Seu melhor e-mail:": "isa_simaia@hotmail.com",
+                "WhatsApp com DDD:": "55 31984617540",
+                "CNPJ da empresa": "42.941.285/0001-05",
+                "Qual o valor aproximado da dívida tributária da empresa?": "Entre R$ 2 milhões e R$ 6,9 milhões",
+                "Sua empresa já tentou alguma estratégia para resolver essa dívida?": "Sim, com o contador",
+                "Qual o principal desafio que você enfrenta hoje com essa dívida?": "Meu contador não sabe como resolver",
+                "Por que você ainda não conseguiu resolver essa situação?": "teste",
+                "Em quanto tempo você gostaria de resolver esse problema?": "Dentro dos próximos 30 dias",
+                "Se pudesse tomar um café com o Dr. Lucas hoje, o que perguntaria?": "teste"
+              },
+              "raw_answers": [
+                {
+                  "question": {
+                    "question_title": "Nome completo",
+                    "question_id": "c5a25b409cd5",
+                    "question_type": "name"
+                  },
+                  "answer": "Teste"
+                },
+                {
+                  "question": {
+                    "question_title": "Seu melhor e-mail:",
+                    "question_id": "x3hgmqowk31k",
+                    "question_type": "email"
+                  },
+                  "answer": "isa_simaia@hotmail.com"
+                },
+                {
+                  "question": {
+                    "question_title": "WhatsApp com DDD:",
+                    "question_id": "xpcvj3rceseg",
+                    "question_type": "phone"
+                  },
+                  "answer": {
+                    "country": "55",
+                    "phone": "31984617540"
+                  }
+                },
+                {
+                  "question": {
+                    "question_title": "CNPJ da empresa",
+                    "question_id": "xngyqypj9l",
+                    "question_type": "text"
+                  },
+                  "answer": "42.941.285/0001-05"
+                },
+                {
+                  "question": {
+                    "question_title": "Qual o valor aproximado da dívida tributária da empresa?",
+                    "question_id": "xeji14b7ui7n",
+                    "question_type": "radio"
+                  },
+                  "answer": [
+                    "Entre R$ 2 milhões e R$ 6,9 milhões"
+                  ]
+                },
+                {
+                  "question": {
+                    "question_title": "Sua empresa já tentou alguma estratégia para resolver essa dívida?",
+                    "question_id": "x3a7ds9qhxzx",
+                    "question_type": "radio"
+                  },
+                  "answer": [
+                    "Sim, com o contador"
+                  ]
+                },
+                {
+                  "question": {
+                    "question_title": "Qual o principal desafio que você enfrenta hoje com essa dívida?",
+                    "question_id": "xocc8k4in98n",
+                    "question_type": "radio"
+                  },
+                  "answer": [
+                    "Meu contador não sabe como resolver"
+                  ]
+                },
+                {
+                  "question": {
+                    "question_title": "Por que você ainda não conseguiu resolver essa situação?",
+                    "question_id": "xceknz51r7xm",
+                    "question_type": "text"
+                  },
+                  "answer": "teste"
+                },
+                {
+                  "question": {
+                    "question_title": "Em quanto tempo você gostaria de resolver esse problema?",
+                    "question_id": "xs81tqpqafmi",
+                    "question_type": "radio"
+                  },
+                  "answer": [
+                    "Dentro dos próximos 30 dias"
+                  ]
+                },
+                {
+                  "question": {
+                    "question_title": "Se pudesse tomar um café com o Dr. Lucas hoje, o que perguntaria?",
+                    "question_id": "x1p4j48ibvjz",
+                    "question_type": "textarea"
+                  },
+                  "answer": "teste"
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ahmad-pesquisa",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "f13df970-3045-4676-b93d-247899551d9f",
+  "activeVersionId": "f13df970-3045-4676-b93d-247899551d9f",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-04-01T12:56:01.771Z",
+      "createdAt": "2025-04-01T12:56:01.771Z",
+      "role": "workflow:owner",
+      "workflowId": "PcfgcNQ2ocElucNG",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "f13df970-3045-4676-b93d-247899551d9f",
+    "workflowId": "PcfgcNQ2ocElucNG",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "ahmad-pesquisa",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          40,
+          -20
+        ],
+        "id": "eb6452d4-2ddd-4e20-b5db-9e658311a370",
+        "name": "Webhook",
+        "webhookId": "e982c5b6-fb4b-405e-8e9b-40207c125789"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "83277332-65a6-4c8c-8d2f-723a252e43dd",
+                "name": "Data",
+                "value": "={{ new Date().toLocaleDateString(\"pt-BR\") }}",
+                "type": "string"
+              },
+              {
+                "id": "e73eda67-7a8d-4d2e-9d7c-b0dd95542533",
+                "name": "Nome",
+                "value": "={{ $json.body.respondent.answers['Nome completo'] }}",
+                "type": "string"
+              },
+              {
+                "id": "f675bfca-063f-4469-ac87-c0d844c60350",
+                "name": "Email",
+                "value": "={{ $json.body.respondent.answers['Seu melhor e-mail:'] }}",
+                "type": "string"
+              },
+              {
+                "id": "f8bc0cb2-7675-4be0-acf1-1c22e46cc4ec",
+                "name": "Telefone",
+                "value": "={{ $json.body.respondent.raw_answers[2].answer.country }}{{ $json.body.respondent.raw_answers[2].answer.phone }}",
+                "type": "string"
+              },
+              {
+                "id": "6d7c9309-319d-43f4-b54c-171e6f6b0efd",
+                "name": "CNPJ",
+                "value": "={{ $json.body.respondent.answers['CNPJ da empresa'] }}",
+                "type": "string"
+              },
+              {
+                "id": "b3abba49-f5f5-4fdc-969d-6138bafd26d4",
+                "name": "Valor dívida",
+                "value": "={{ $json.body.respondent.answers['Qual o valor aproximado da dívida tributária da empresa?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "3ea93d67-a8e0-4d72-88a3-ed4c5320c5b7",
+                "name": "Resolver",
+                "value": "={{ $json.body.respondent.answers['Sua empresa já tentou alguma estratégia para resolver essa dívida?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "f895a160-9e83-40a7-9153-573a25b39051",
+                "name": "Desafio",
+                "value": "={{ $json.body.respondent.answers['Qual o principal desafio que você enfrenta hoje com essa dívida?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "3c2439a9-bff4-430e-894e-e7cddd9183f3",
+                "name": "Motivo ",
+                "value": "={{ $json.body.respondent.answers['Por que você ainda não conseguiu resolver essa situação?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "5a8372f5-caec-42c5-8101-f126034428dd",
+                "name": "Tempo",
+                "value": "={{ $json.body.respondent.answers['Em quanto tempo você gostaria de resolver esse problema?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "0968a0b1-fe7b-46ab-aa5d-1210a6ccf744",
+                "name": "Pergunta",
+                "value": "={{ $json.body.respondent.answers['Se pudesse tomar um café com o Dr. Lucas hoje, o que perguntaria?'] }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          260,
+          -20
+        ],
+        "id": "0814530e-ea14-468b-9401-e3325779ba06",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/18VbprzYVBpomeZbDdB9pZ96ewASlxIT0c90KsGMFKqg/edit?gid=1551883637#gid=1551883637",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1551883637,
+            "mode": "list",
+            "cachedResultName": "Pesquisa",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18VbprzYVBpomeZbDdB9pZ96ewASlxIT0c90KsGMFKqg/edit#gid=1551883637"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Email": "={{ $json.Email }}",
+              "Telefone": "={{ $json.Telefone }}",
+              "CNPJ": "={{ $json.CNPJ }}",
+              "Valor Dívida": "={{ $json['Valor dívida'] }}",
+              "Resolver": "={{ $json.Resolver }}",
+              "Desafio": "={{ $json.Desafio }}",
+              "Motivo": "={{ $json['Motivo '] }}",
+              "Tempo": "={{ $json.Tempo }}",
+              "Pergunta": "={{ $json.Pergunta }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone",
+                "displayName": "Telefone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "CNPJ",
+                "displayName": "CNPJ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Valor Dívida",
+                "displayName": "Valor Dívida",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Resolver",
+                "displayName": "Resolver",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Desafio",
+                "displayName": "Desafio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Motivo",
+                "displayName": "Motivo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Tempo",
+                "displayName": "Tempo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Pergunta",
+                "displayName": "Pergunta",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm Source",
+                "displayName": "Utm Source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm medium",
+                "displayName": "Utm medium",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm Campaign",
+                "displayName": "Utm Campaign",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm content ",
+                "displayName": "Utm content ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm term",
+                "displayName": "Utm term",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          480,
+          -20
+        ],
+        "id": "d5eb8ae8-631a-4134-888c-9c6ffc728d6e",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          900,
+          -20
+        ],
+        "id": "9fee7a80-f298-4102-8cdf-1b5f21b6287b",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/c0ee0b83-e038-4db7-9798-17dd31b807c7",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "Nome",
+                "value": "={{ $json.Nome }}"
+              },
+              {
+                "name": "Email",
+                "value": "={{ $json.Email }}"
+              },
+              {
+                "name": "Telefone",
+                "value": "={{ $json.Telefone }}"
+              },
+              {
+                "name": "CNPJ",
+                "value": "={{ $json.CNPJ }}"
+              },
+              {
+                "name": "Dívida",
+                "value": "={{ $json['Valor Dívida'] }}"
+              },
+              {
+                "name": "Resolver",
+                "value": "={{ $json.Resolver }}"
+              },
+              {
+                "name": "Desafio",
+                "value": "={{ $json.Desafio }}"
+              },
+              {
+                "name": "Motivo",
+                "value": "={{ $json.Motivo }}"
+              },
+              {
+                "name": "Tempo",
+                "value": "={{ $json.Tempo }}"
+              },
+              {
+                "name": "Pergunta",
+                "value": "={{ $json.Pergunta }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          700,
+          -20
+        ],
+        "id": "5c70b233-9046-4c75-834f-83fc2e24975d",
+        "name": "HTTP Request"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
