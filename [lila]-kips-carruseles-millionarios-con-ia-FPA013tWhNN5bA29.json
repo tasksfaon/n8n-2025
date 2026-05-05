@@ -1,0 +1,1483 @@
+{
+  "updatedAt": "2025-04-17T16:59:51.106Z",
+  "createdAt": "2025-04-09T14:43:01.550Z",
+  "id": "FPA013tWhNN5bA29",
+  "name": "[Lila] KIPs Carruseles Millionarios con IA",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "0ccc5250-54be-48d2-b418-7643191f00b1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e992f404-b0a7-4c87-9e33-4d64798f5134",
+      "name": "Webhook",
+      "webhookId": "0ccc5250-54be-48d2-b418-7643191f00b1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f6005a28-2aa7-4685-a7c2-37dc8160965b",
+              "name": "Data",
+              "value": "={{ new Date($json.body.approved_date.replace(' ', 'T')).toLocaleDateString('pt-BR') }}",
+              "type": "string"
+            },
+            {
+              "id": "c0d04216-a329-49b8-94c8-87df7f02eb5e",
+              "name": "Produto",
+              "value": "={{ $json.body.Product.product_name }}",
+              "type": "string"
+            },
+            {
+              "id": "efa78c39-6a5f-4798-81fc-900699a78bb8",
+              "name": "Valor",
+              "value": "={{ $json.body.Commissions.charge_amount }}",
+              "type": "string"
+            },
+            {
+              "id": "5f31f704-d22a-4360-9d69-7ce8b5c32b83",
+              "name": "utm_source",
+              "value": "={{ $json.body.TrackingParameters.utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "3b68f7c2-70f0-45fd-8a53-0eb284331373",
+              "name": "utm_medium",
+              "value": "={{ $json.body.TrackingParameters.utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "4556cdbf-a1bd-432d-9279-3ec38eb6d8ea",
+              "name": "utm_campaign",
+              "value": "={{ $json.body.TrackingParameters.utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "f52c4217-47ef-416a-80eb-6e7ab47ea392",
+              "name": "utm_content",
+              "value": "={{ $json.body.TrackingParameters.utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "8f396e2c-cd3e-460a-8cd2-a1a852962b26",
+              "name": "utm_term",
+              "value": "={{ $json.body.TrackingParameters.utm_term }}",
+              "type": "string"
+            },
+            {
+              "id": "2701f5f6-3c19-4133-83ed-5b0e48aaa237",
+              "name": "nome",
+              "value": "={{ $json.body.Customer.full_name }}",
+              "type": "string"
+            },
+            {
+              "id": "09ae643a-82db-4f6b-b823-3ddc74fd92d9",
+              "name": "telefone",
+              "value": "={{ $json.body.Customer.mobile }}",
+              "type": "string"
+            },
+            {
+              "id": "079f03a7-eb8c-49e5-8797-a8ecdeadd4f7",
+              "name": "email",
+              "value": "={{ $json.body.Customer.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "27182614-a7a6-4c95-ac98-b8666d2a4df9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk",
+          "mode": "list",
+          "cachedResultName": "KPI's - CMIA LATAM - LILA INSPIRA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1584162970,
+          "mode": "list",
+          "cachedResultName": "Vendas - Plataforma - CMIA ES",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk/edit#gid=1584162970"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email do aluno": "={{ $json.email }}",
+            "Data (sem horário)": "={{ $json.Data }}",
+            "Produto principal": "={{ $json.Produto }}",
+            "Valor faturado": "={{ $json.Valor }}",
+            "UTM source": "={{ $json.utm_source }}",
+            "UTM campaign": "={{ $json.utm_campaign }}",
+            "Utm Content": "={{ $json.utm_content }}",
+            "Utm Term": "={{ $json.utm_term }}",
+            "Utm Medium": "={{ $json.utm_medium }}",
+            "Nome do aluno": "={{ $json.nome }}",
+            "Telefone": "={{ $json.telefone }}"
+          },
+          "matchingColumns": [
+            "Email do aluno"
+          ],
+          "schema": [
+            {
+              "id": "Data (sem horário)",
+              "displayName": "Data (sem horário)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Produto principal",
+              "displayName": "Produto principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Se teve venda de orderbump, colocar tbm",
+              "displayName": "Se teve venda de orderbump, colocar tbm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Valor faturado",
+              "displayName": "Valor faturado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UTM source",
+              "displayName": "UTM source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UTM campaign",
+              "displayName": "UTM campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Content",
+              "displayName": "Utm Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Term",
+              "displayName": "Utm Term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Medium",
+              "displayName": "Utm Medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome do aluno",
+              "displayName": "Nome do aluno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email do aluno",
+              "displayName": "Email do aluno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        0
+      ],
+      "id": "8f596d2e-bccf-4635-8620-75e8dc88d509",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        660,
+        0
+      ],
+      "id": "d7c895db-967d-47ec-ada3-cd3a2b843f23",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "0ccc5250-54be-48d2-b418-7643191f0210s",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        260
+      ],
+      "id": "1ec9df1c-54a6-4fa5-850a-2427d9bd8e2e",
+      "name": "Webhook1",
+      "webhookId": "0ccc5250-54be-48d2-b418-7643191f00b1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f6005a28-2aa7-4685-a7c2-37dc8160965b",
+              "name": "Data",
+              "value": "={{ $json.formattedDate }}",
+              "type": "string"
+            },
+            {
+              "id": "c0d04216-a329-49b8-94c8-87df7f02eb5e",
+              "name": "Produto",
+              "value": "={{ $('Webhook1').item.json.body.product_name }}",
+              "type": "string"
+            },
+            {
+              "id": "efa78c39-6a5f-4798-81fc-900699a78bb8",
+              "name": "Valor",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "2701f5f6-3c19-4133-83ed-5b0e48aaa237",
+              "name": "nome",
+              "value": "={{ $('Webhook1').item.json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "09ae643a-82db-4f6b-b823-3ddc74fd92d9",
+              "name": "telefone",
+              "value": "={{ $('Webhook1').item.json.body.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "079f03a7-eb8c-49e5-8797-a8ecdeadd4f7",
+              "name": "email",
+              "value": "={{ $('Webhook1').item.json.body.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        260
+      ],
+      "id": "9e2ada32-28fc-4ad2-a615-e629ee7b3b46",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk",
+          "mode": "list",
+          "cachedResultName": "KPI's - CMIA LATAM - LILA INSPIRA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1137225907,
+          "mode": "list",
+          "cachedResultName": "Carrinhos abandonados - Plataforma - CMIA ES",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk/edit#gid=1137225907"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email do aluno": "={{ $json.email }}",
+            "Data (sem horário)": "={{ $json.Data }}",
+            "Produto principal": "={{ $json.Produto }}",
+            "Valor faturado": "={{ $json.Valor }}",
+            "UTM source": "={{ $json.utm_source }}",
+            "UTM campaign": "={{ $json.utm_campaign }}",
+            "Utm Content": "={{ $json.utm_content }}",
+            "Utm Term": "={{ $json.utm_term }}",
+            "Utm Medium": "={{ $json.utm_medium }}",
+            "Nome do aluno": "={{ $json.nome }}",
+            "Telefone": "={{ $json.telefone }}"
+          },
+          "matchingColumns": [
+            "Email do aluno"
+          ],
+          "schema": [
+            {
+              "id": "Data (sem horário)",
+              "displayName": "Data (sem horário)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Produto principal",
+              "displayName": "Produto principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Se teve venda de orderbump, colocar tbm",
+              "displayName": "Se teve venda de orderbump, colocar tbm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Valor faturado",
+              "displayName": "Valor faturado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UTM source",
+              "displayName": "UTM source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UTM campaign",
+              "displayName": "UTM campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Content",
+              "displayName": "Utm Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Term",
+              "displayName": "Utm Term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Medium",
+              "displayName": "Utm Medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome do aluno",
+              "displayName": "Nome do aluno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email do aluno",
+              "displayName": "Email do aluno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        260
+      ],
+      "id": "b3022ce6-1488-4dc7-8094-4180ddc85c35",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        880,
+        260
+      ],
+      "id": "efcbfee8-f66c-42b9-bbec-5742ffcc8a6b",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ Date() }}",
+        "format": "custom",
+        "customFormat": "dd/MM?yyyy",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        140,
+        260
+      ],
+      "id": "56d4e61c-f5c2-4815-bebd-d6053f3d870b",
+      "name": "Date & Time"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/0.23.0",
+            "content-length": "2663",
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "traceparent": "00-165a7ed61cf177bd77d61469dbfc47d7-446bdc614a021828-01",
+            "x-forwarded-for": "34.95.238.190",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "34.95.238.190",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {
+            "signature": "5af51313612645c0234a5f71b5cf1946836a62c6"
+          },
+          "body": {
+            "order_id": "0581dfe6-7368-4de7-85b1-f0372f9b2d5c",
+            "order_ref": "wqrtxoa",
+            "order_status": "paid",
+            "product_type": "membership",
+            "payment_method": "credit_card",
+            "store_id": "CVsiJnYRXQqS47k",
+            "payment_merchant_id": 15457768,
+            "installments": 1,
+            "card_type": "mastercard",
+            "card_last4digits": "6970",
+            "card_rejection_reason": null,
+            "boleto_URL": null,
+            "boleto_barcode": null,
+            "boleto_expiry_date": null,
+            "pix_code": null,
+            "pix_expiration": null,
+            "sale_type": "producer",
+            "created_at": "2025-04-09 18:01",
+            "updated_at": "2025-04-09 18:01",
+            "approved_date": "2025-04-10 18:01",
+            "refunded_at": null,
+            "webhook_event_type": "order_approved",
+            "Product": {
+              "product_id": "216ff784-78c8-41b4-9642-345704a02f9b",
+              "product_name": "Example product"
+            },
+            "Customer": {
+              "full_name": "John Doe",
+              "first_name": "John",
+              "email": "johndoe@example.com",
+              "mobile": "+89856907062",
+              "CPF": "91156860688",
+              "ip": "127.250.222.47",
+              "instagram": "@kiwify",
+              "street": "Rua 1001",
+              "number": "315",
+              "complement": "SL 05",
+              "neighborhood": "Centro",
+              "city": "Balneário Camboriú",
+              "state": "SC",
+              "zipcode": "88330-756"
+            },
+            "Commissions": {
+              "charge_amount": 5100,
+              "product_base_price": 5100,
+              "product_base_price_currency": "BRL",
+              "kiwify_fee": 561,
+              "kiwify_fee_currency": "BRL",
+              "settlement_amount": 5100,
+              "settlement_amount_currency": "BRL",
+              "sale_tax_rate": 0,
+              "sale_tax_amount": 0,
+              "commissioned_stores": [
+                {
+                  "id": "d5ec50a3-4daa-4ccd-8b4f-74b89978b69e",
+                  "type": "producer",
+                  "custom_name": "Example store",
+                  "email": "example@store.domain",
+                  "value": "4539"
+                },
+                {
+                  "id": "8a05fb14-6952-4b0e-95fa-ed9d3b9a2c1b",
+                  "type": "coproducer",
+                  "custom_name": "Example coproducer",
+                  "email": "example@coproducer.domain",
+                  "value": "4539"
+                },
+                {
+                  "id": "ce7137bf-cfde-4576-8748-d1f786f01421",
+                  "type": "affiliate",
+                  "affiliate_id": "npKXmoR",
+                  "custom_name": "Example affiliate",
+                  "email": "example@affiliate.domain",
+                  "value": "4539"
+                }
+              ],
+              "currency": "BRL",
+              "my_commission": 4539,
+              "funds_status": null,
+              "estimated_deposit_date": null,
+              "deposit_date": null
+            },
+            "TrackingParameters": {
+              "src": null,
+              "sck": null,
+              "utm_source": null,
+              "utm_medium": null,
+              "utm_campaign": null,
+              "utm_content": null,
+              "utm_term": null,
+              "s1": null,
+              "s2": null,
+              "s3": null
+            },
+            "Subscription": {
+              "id": "7ae0decc-b484-4e14-8a4c-6035e9da3f6d",
+              "start_date": "2025-04-06T18:01:22.419Z",
+              "next_payment": "2025-04-13T18:01:22.419Z",
+              "status": "active",
+              "plan": {
+                "id": "233c02cc-5e36-472a-bf9a-4d49be6c1a40",
+                "name": "Example plan",
+                "frequency": "weekly",
+                "qty_charges": 0
+              },
+              "charges": {
+                "completed": [
+                  {
+                    "order_id": "0581dfe6-7368-4de7-85b1-f0372f9b2d5c",
+                    "amount": 4539,
+                    "status": "paid",
+                    "installments": 1,
+                    "card_type": "mastercard",
+                    "card_last_digits": "7516",
+                    "card_first_digits": "279576",
+                    "created_at": "2025-04-06T18:01:22.419Z"
+                  }
+                ],
+                "future": [
+                  {
+                    "charge_date": "2025-04-13T18:01:22.419Z"
+                  }
+                ]
+              }
+            },
+            "subscription_id": "7ae0decc-b484-4e14-8a4c-6035e9da3f6d",
+            "access_url": null
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/0ccc5250-54be-48d2-b418-7643191f00b1",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/0.23.0",
+            "content-length": "383",
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "traceparent": "00-90b4c413ef22bc8bf7e42772f4848a8e-9866ea4305326075-01",
+            "x-forwarded-for": "34.95.238.190",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "34.95.238.190",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {
+            "signature": "a5ceede86192f4b75e269b0724fdd545cc913928"
+          },
+          "body": {
+            "checkout_link": "haSFbUQ",
+            "country": "br",
+            "cnpj": "49809245408429",
+            "created_at": "2025-04-14T16:56:41.359Z",
+            "email": "johndoe@example.com",
+            "id": "2c0jvvws3e618k7oaj",
+            "name": "John Doe",
+            "offer_name": null,
+            "phone": "(49) 8490-2694",
+            "product_id": "54cdcdb3-3d54-4d6d-ab33-91a3309699a9",
+            "product_name": "Example product",
+            "status": "abandoned",
+            "store_id": "qMZsmr4uOjjYvtR",
+            "subscription_plan": null
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/0ccc5250-54be-48d2-b418-7643191f0210s",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "891498f3-fc60-474e-b31d-a6e4d4e4e7d8",
+  "activeVersionId": "891498f3-fc60-474e-b31d-a6e4d4e4e7d8",
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2025-04-09T14:43:01.550Z",
+      "createdAt": "2025-04-09T14:43:01.550Z",
+      "role": "workflow:owner",
+      "workflowId": "FPA013tWhNN5bA29",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "891498f3-fc60-474e-b31d-a6e4d4e4e7d8",
+    "workflowId": "FPA013tWhNN5bA29",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "0ccc5250-54be-48d2-b418-7643191f00b1",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "e992f404-b0a7-4c87-9e33-4d64798f5134",
+        "name": "Webhook",
+        "webhookId": "0ccc5250-54be-48d2-b418-7643191f00b1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "f6005a28-2aa7-4685-a7c2-37dc8160965b",
+                "name": "Data",
+                "value": "={{ new Date($json.body.approved_date.replace(' ', 'T')).toLocaleDateString('pt-BR') }}",
+                "type": "string"
+              },
+              {
+                "id": "c0d04216-a329-49b8-94c8-87df7f02eb5e",
+                "name": "Produto",
+                "value": "={{ $json.body.Product.product_name }}",
+                "type": "string"
+              },
+              {
+                "id": "efa78c39-6a5f-4798-81fc-900699a78bb8",
+                "name": "Valor",
+                "value": "={{ $json.body.Commissions.charge_amount }}",
+                "type": "string"
+              },
+              {
+                "id": "5f31f704-d22a-4360-9d69-7ce8b5c32b83",
+                "name": "utm_source",
+                "value": "={{ $json.body.TrackingParameters.utm_source }}",
+                "type": "string"
+              },
+              {
+                "id": "3b68f7c2-70f0-45fd-8a53-0eb284331373",
+                "name": "utm_medium",
+                "value": "={{ $json.body.TrackingParameters.utm_medium }}",
+                "type": "string"
+              },
+              {
+                "id": "4556cdbf-a1bd-432d-9279-3ec38eb6d8ea",
+                "name": "utm_campaign",
+                "value": "={{ $json.body.TrackingParameters.utm_campaign }}",
+                "type": "string"
+              },
+              {
+                "id": "f52c4217-47ef-416a-80eb-6e7ab47ea392",
+                "name": "utm_content",
+                "value": "={{ $json.body.TrackingParameters.utm_content }}",
+                "type": "string"
+              },
+              {
+                "id": "8f396e2c-cd3e-460a-8cd2-a1a852962b26",
+                "name": "utm_term",
+                "value": "={{ $json.body.TrackingParameters.utm_term }}",
+                "type": "string"
+              },
+              {
+                "id": "2701f5f6-3c19-4133-83ed-5b0e48aaa237",
+                "name": "nome",
+                "value": "={{ $json.body.Customer.full_name }}",
+                "type": "string"
+              },
+              {
+                "id": "09ae643a-82db-4f6b-b823-3ddc74fd92d9",
+                "name": "telefone",
+                "value": "={{ $json.body.Customer.mobile }}",
+                "type": "string"
+              },
+              {
+                "id": "079f03a7-eb8c-49e5-8797-a8ecdeadd4f7",
+                "name": "email",
+                "value": "={{ $json.body.Customer.email }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          220,
+          0
+        ],
+        "id": "27182614-a7a6-4c95-ac98-b8666d2a4df9",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk",
+            "mode": "list",
+            "cachedResultName": "KPI's - CMIA LATAM - LILA INSPIRA",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1584162970,
+            "mode": "list",
+            "cachedResultName": "Vendas - Plataforma - CMIA ES",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk/edit#gid=1584162970"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email do aluno": "={{ $json.email }}",
+              "Data (sem horário)": "={{ $json.Data }}",
+              "Produto principal": "={{ $json.Produto }}",
+              "Valor faturado": "={{ $json.Valor }}",
+              "UTM source": "={{ $json.utm_source }}",
+              "UTM campaign": "={{ $json.utm_campaign }}",
+              "Utm Content": "={{ $json.utm_content }}",
+              "Utm Term": "={{ $json.utm_term }}",
+              "Utm Medium": "={{ $json.utm_medium }}",
+              "Nome do aluno": "={{ $json.nome }}",
+              "Telefone": "={{ $json.telefone }}"
+            },
+            "matchingColumns": [
+              "Email do aluno"
+            ],
+            "schema": [
+              {
+                "id": "Data (sem horário)",
+                "displayName": "Data (sem horário)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Produto principal",
+                "displayName": "Produto principal",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Se teve venda de orderbump, colocar tbm",
+                "displayName": "Se teve venda de orderbump, colocar tbm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Valor faturado",
+                "displayName": "Valor faturado",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "UTM source",
+                "displayName": "UTM source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "UTM campaign",
+                "displayName": "UTM campaign",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm Content",
+                "displayName": "Utm Content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm Term",
+                "displayName": "Utm Term",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm Medium",
+                "displayName": "Utm Medium",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome do aluno",
+                "displayName": "Nome do aluno",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email do aluno",
+                "displayName": "Email do aluno",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Telefone",
+                "displayName": "Telefone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          440,
+          0
+        ],
+        "id": "8f596d2e-bccf-4635-8620-75e8dc88d509",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          660,
+          0
+        ],
+        "id": "d7c895db-967d-47ec-ada3-cd3a2b843f23",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "0ccc5250-54be-48d2-b418-7643191f0210s",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -80,
+          260
+        ],
+        "id": "1ec9df1c-54a6-4fa5-850a-2427d9bd8e2e",
+        "name": "Webhook1",
+        "webhookId": "0ccc5250-54be-48d2-b418-7643191f00b1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "f6005a28-2aa7-4685-a7c2-37dc8160965b",
+                "name": "Data",
+                "value": "={{ $json.formattedDate }}",
+                "type": "string"
+              },
+              {
+                "id": "c0d04216-a329-49b8-94c8-87df7f02eb5e",
+                "name": "Produto",
+                "value": "={{ $('Webhook1').item.json.body.product_name }}",
+                "type": "string"
+              },
+              {
+                "id": "efa78c39-6a5f-4798-81fc-900699a78bb8",
+                "name": "Valor",
+                "value": "=",
+                "type": "string"
+              },
+              {
+                "id": "2701f5f6-3c19-4133-83ed-5b0e48aaa237",
+                "name": "nome",
+                "value": "={{ $('Webhook1').item.json.body.name }}",
+                "type": "string"
+              },
+              {
+                "id": "09ae643a-82db-4f6b-b823-3ddc74fd92d9",
+                "name": "telefone",
+                "value": "={{ $('Webhook1').item.json.body.phone }}",
+                "type": "string"
+              },
+              {
+                "id": "079f03a7-eb8c-49e5-8797-a8ecdeadd4f7",
+                "name": "email",
+                "value": "={{ $('Webhook1').item.json.body.email }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          440,
+          260
+        ],
+        "id": "9e2ada32-28fc-4ad2-a615-e629ee7b3b46",
+        "name": "Edit Fields1"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk",
+            "mode": "list",
+            "cachedResultName": "KPI's - CMIA LATAM - LILA INSPIRA",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1137225907,
+            "mode": "list",
+            "cachedResultName": "Carrinhos abandonados - Plataforma - CMIA ES",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vmkLcnX5bHmH0yS0n43DK4U9w5EpSRnMleleApELkZk/edit#gid=1137225907"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email do aluno": "={{ $json.email }}",
+              "Data (sem horário)": "={{ $json.Data }}",
+              "Produto principal": "={{ $json.Produto }}",
+              "Valor faturado": "={{ $json.Valor }}",
+              "UTM source": "={{ $json.utm_source }}",
+              "UTM campaign": "={{ $json.utm_campaign }}",
+              "Utm Content": "={{ $json.utm_content }}",
+              "Utm Term": "={{ $json.utm_term }}",
+              "Utm Medium": "={{ $json.utm_medium }}",
+              "Nome do aluno": "={{ $json.nome }}",
+              "Telefone": "={{ $json.telefone }}"
+            },
+            "matchingColumns": [
+              "Email do aluno"
+            ],
+            "schema": [
+              {
+                "id": "Data (sem horário)",
+                "displayName": "Data (sem horário)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Produto principal",
+                "displayName": "Produto principal",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Se teve venda de orderbump, colocar tbm",
+                "displayName": "Se teve venda de orderbump, colocar tbm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Valor faturado",
+                "displayName": "Valor faturado",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "UTM source",
+                "displayName": "UTM source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "UTM campaign",
+                "displayName": "UTM campaign",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm Content",
+                "displayName": "Utm Content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm Term",
+                "displayName": "Utm Term",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Utm Medium",
+                "displayName": "Utm Medium",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome do aluno",
+                "displayName": "Nome do aluno",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email do aluno",
+                "displayName": "Email do aluno",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Telefone",
+                "displayName": "Telefone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          660,
+          260
+        ],
+        "id": "b3022ce6-1488-4dc7-8094-4180ddc85c35",
+        "name": "Google Sheets1",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          880,
+          260
+        ],
+        "id": "efcbfee8-f66c-42b9-bbec-5742ffcc8a6b",
+        "name": "No Operation, do nothing1"
+      },
+      {
+        "parameters": {
+          "operation": "formatDate",
+          "date": "={{ Date() }}",
+          "format": "custom",
+          "customFormat": "dd/MM?yyyy",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.dateTime",
+        "typeVersion": 2,
+        "position": [
+          140,
+          260
+        ],
+        "id": "56d4e61c-f5c2-4815-bebd-d6053f3d870b",
+        "name": "Date & Time"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook1": {
+        "main": [
+          [
+            {
+              "node": "Date & Time",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets1": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Date & Time": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
