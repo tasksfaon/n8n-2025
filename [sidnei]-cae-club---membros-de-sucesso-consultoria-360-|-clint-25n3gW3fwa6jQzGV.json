@@ -1,0 +1,260 @@
+{
+  "updatedAt": "2026-04-16T11:47:53.634Z",
+  "createdAt": "2026-02-02T13:23:22.294Z",
+  "id": "25n3gW3fwa6jQzGV",
+  "name": "[Sidnei] CAE CLUB - Membros de Sucesso Consultoria 360 | Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-membros-360-ganhou",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5ff30522-b413-4fe7-83da-2ce92f52f95c",
+      "name": "Webhook",
+      "webhookId": "a2464cac-8c5d-4c08-8ada-87ad84ea1b22"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  // ===== TELEFONE =====\n  let telefone = item.json.body.contact_phone || '';\n  telefone = telefone.toString().replace(/\\D/g, '');\n\n  if (telefone.length === 11) {\n    telefone = '55' + telefone;\n  }\n\n  if (telefone.length === 12) {\n    telefone = telefone.slice(0, 4) + '9' + telefone.slice(4);\n  }\n\n  telefone = telefone.slice(0, 13);\n\n  // ===== FUNÇÕES AUX =====\n  const norm = (s) =>\n    (s || '')\n      .toString()\n      .normalize('NFD')\n      .replace(/[\\u0300-\\u036f]/g, '') // remove acentos\n      .toLowerCase()\n      .replace(/\\s+/g, ' ')\n      .trim();\n\n  // ===== POLO (com fallback) =====\n  const poloCompleto =\n    item.json.body.contact_polo ||\n    item.json.body.contact_interesse_polo ||\n    item.json.body.deal_polo ||\n    '';\n\n  let polo = poloCompleto.split(/polo/i).pop().trim();\n  let poloKey = norm(polo);\n\n  // ===== ALIASES / CORREÇÕES =====\n  const aliases = {\n    alphavile: 'alphaville',\n    alpha: 'alphaville',\n    tatuape: 'tatuape',\n    butanta: 'butanta',\n    grandeabc: 'grande abc',\n    granja: 'granja',\n  };\n\n  if (aliases[poloKey]) poloKey = aliases[poloKey];\n\n  // ===== DONO + EMAIL =====\n  let dono = 'Não definido';\n  let email_dono = '';\n\n  const mapaPolos = {\n    Talita: {\n      polos: [\n        'faria lima',\n        'osasco',\n        'grande abc',\n        'granja',\n        'lapa',\n        'campo belo',\n        'mooca',\n        'santo amaro'\n      ],\n      email: 'talita.a.caeclub@gmail.com'\n    },\n    Mateus: {\n      polos: [\n        'butanta',\n        'vila maria',\n        'alphaville',\n        'tatuape',\n        'santos'\n      ],\n      email: 'mateusl.caeclub@gmail.com'\n    }\n  };\n\n  // ===== MATCH EXATO =====\n  for (const nome in mapaPolos) {\n    if (mapaPolos[nome].polos.includes(poloKey)) {\n      dono = nome;\n      email_dono = mapaPolos[nome].email;\n      break;\n    }\n  }\n\n  // ===== MATCH PARCIAL =====\n  if (dono === 'Não definido' && poloKey) {\n    outer: for (const nome in mapaPolos) {\n      for (const poloMapa of mapaPolos[nome].polos) {\n        if (poloKey.includes(poloMapa) || poloMapa.includes(poloKey)) {\n          dono = nome;\n          email_dono = mapaPolos[nome].email;\n          break outer;\n        }\n      }\n    }\n  }\n\n  return {\n    json: {\n      telefone_padronizado: telefone,\n      polo: polo,\n      polo_key: poloKey, // pode remover depois\n      dono: dono,\n      email_dono: email_dono,\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0fe3a4a8-3c1e-4eae-a4ff-b3e104e00151",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "79919450-84f6-448f-925c-b5080e95ba3c",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "6c7863c9-c986-488d-a66b-5fdbf462033c",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "882e9685-720a-4e35-8f0c-77ec79fc39e0",
+              "name": "Telefone",
+              "value": "={{ $json.telefone_padronizado }}",
+              "type": "string"
+            },
+            {
+              "id": "1ebd3875-0b04-4cb2-8545-2d1d46f5306c",
+              "name": "Polo",
+              "value": "={{ $json.polo }}",
+              "type": "string"
+            },
+            {
+              "id": "6f8d3c2b-19f1-4763-beed-7d4b17c64efb",
+              "name": "Dono",
+              "value": "={{ $json.dono }}",
+              "type": "string"
+            },
+            {
+              "id": "081a8ed0-c5a8-46ac-82cd-43e6d1be2a97",
+              "name": "Polo Negócio",
+              "value": "={{ $('Webhook').item.json.body.contact_polo }}",
+              "type": "string"
+            },
+            {
+              "id": "940c821e-0f66-4e61-9387-511d53bb1ff3",
+              "name": "Email Dono",
+              "value": "={{ $json.email_dono }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "bde4fae9-7f81-43e3-9983-3ac7f0d422b4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        864,
+        0
+      ],
+      "id": "ac29577f-0c18-4e19-99d5-b268372cce07",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/6a74492d-b05c-4154-9d2d-3f34a5e56b2c",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Dono",
+              "value": "={{ $json.Dono }}"
+            },
+            {
+              "name": "Email Dono",
+              "value": "={{ $json['Email Dono'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        640,
+        0
+      ],
+      "id": "a622e65c-fb34-4377-a2ec-a33046a8decd",
+      "name": "HTTP Clint"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.13.2",
+            "content-length": "297",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "baggage": "sentry-environment=production,sentry-release=prep-integracoes%401.0.0,sentry-public_key=689c26c6f48a4ae5ae63aaca03684a99,sentry-trace_id=ede68fbce53a4b45859c75289c1cbb5b,sentry-org_id=214542,sentry-transaction=queue-process,sentry-sample_rate=0,sentry-sampled=false,sentry-sample_rand=0.758345,bubblegroup.http.route=workflow%2Fstart,bubblegroup.http.host=app.escoladeimoveis.com.br,bubblegroup.workflow.appname=escoladeimoveis,bubblegroup.workflow.app_version=live,bubblegroup.workflow.situation=page_wf,bubblegroup.workflow.id=bTbOJ,bubblegroup.workflow.event.type=ButtonClicked,bubblegroup.workflow.action.id=bTdTM,bubblegroup.workflow.action.type=apiconnector2-bTbRX.bTdSn,origin=3,name=flows,loc=app.tasks.flows.batch_evaluate_flow_action_evaluations_webhook_send_multibroker__r1,source=klaviyo,bubblegroup.client.version=4bb52803f3958509a77ffc46c326d657da0a5692,bubblegroup.client.commit_timestamp=1769465714000,actorType=user,userId=01CA6WF3X9PYM1ATVXAMJ1ARMA,rootTimestamp=1762200809102,userToken=01K95B70NAFJ04DK4KBVYHGHXN,rootTraceId=b70dac89ed93664fda60d1783e6b30e3,user_agent.origin=web,com.fivetran.utils.static_context_factory.MultiTenantStaticContextFactory_CONTEXT=00592e35-eb6b-4e3f-8be0-5521e868228e",
+            "content-type": "application/json",
+            "traceparent": "00-69822f37000000000c8a67af397d77bd-5e6fb160ea6e21b5-00",
+            "tracestate": "dd=t.tid:69822f3700000000;t.dm:-12;s:-1;p:5e6fb160ea6e21b5",
+            "x-datadog-parent-id": "6804852591788171701",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=69822f3700000000",
+            "x-datadog-trace-id": "903648677522667453",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Jonathan Andre Pires",
+            "contact_email": "jonathanandrepires@gmail.com",
+            "contact_phone": "+5511979866224",
+            "deal_stage": "Agendar Treinamentos",
+            "deal_user": "",
+            "deal_status": "OPEN",
+            "contact_polo": "CAE CLUB - Polo Alphavile",
+            "contact_interesse_polo": "",
+            "deal_polo": "",
+            "deal_user_name": ""
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-membros-360-ganhou",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "a0dff7ac-29ca-4aeb-aafe-18e5c57e8630",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-02T13:23:22.294Z",
+      "createdAt": "2026-02-02T13:23:22.294Z",
+      "role": "workflow:owner",
+      "workflowId": "25n3gW3fwa6jQzGV",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
