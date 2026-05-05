@@ -1,0 +1,582 @@
+{
+  "updatedAt": "2026-04-16T11:54:55.227Z",
+  "createdAt": "2025-07-24T17:26:20.560Z",
+  "id": "qxSQdzGuPMLM3tgN",
+  "name": "[Sidnei] Rotina CAE CLUB EVENTOS - lead não convertido - Clint Sheets",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-cae-lead",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "16826d09-a7bb-4b04-ad44-007df130c2f0",
+      "name": "Webhook",
+      "webhookId": "86243b11-f6d0-4423-89b0-f6cbcad0046a"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o telefone da entrada e transforma em string\nconst rawPhone = String($input.first().json.body.contact_phone || '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        0
+      ],
+      "id": "17679e15-be87-4253-adfa-2e2792479722",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "814012e9-d3fd-4dff-be24-14079154334a",
+              "name": "Lead",
+              "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "7e5c7a5c-fc8c-4818-b4b8-2ddfa542ecec",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "05f96f17-1786-4c71-8437-6ec659a73411",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "17160782-5223-4301-81e6-65626e0f6b25",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "93aa89bc-707a-4fda-b7f4-f06b116985b3",
+              "name": "Dono",
+              "value": "={{ $('Webhook').item.json.body.deal_user_name }}",
+              "type": "string"
+            },
+            {
+              "id": "17daf2a0-1ad6-4fe8-8955-9739ed9e3163",
+              "name": "Segmento",
+              "value": "={{ $('Webhook').item.json.body.organization_segment }}",
+              "type": "string"
+            },
+            {
+              "id": "ca0a0db9-799b-4d57-aa81-c7178547857f",
+              "name": "Status",
+              "value": "Aberto",
+              "type": "string"
+            },
+            {
+              "id": "de32f2cc-51a4-406c-898d-e9ff4edea03f",
+              "name": "Valor",
+              "value": "={{ $('Webhook').item.json.body.deal_value }}",
+              "type": "string"
+            },
+            {
+              "id": "0ccd4259-e71f-4083-83c2-40816179806e",
+              "name": "Polo",
+              "value": "={{ $('Webhook').item.json.body.contact_polo }}",
+              "type": "string"
+            },
+            {
+              "id": "cb7aeb47-e7d8-4dd9-b3ed-244fc38a0258",
+              "name": "utm source",
+              "value": "={{ $('Webhook').item.json.body.contact_utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "479a746c-a47a-444c-bd08-057e8389ab02",
+              "name": "utm medium",
+              "value": "={{ $('Webhook').item.json.body.contact_utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "8885b880-926c-43bd-90a7-4d3cb7b8be4b",
+              "name": "utm content",
+              "value": "={{ $('Webhook').item.json.body.contact_utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "dd0110f7-60fe-45e3-a3dc-aaabff9adf7f",
+              "name": "utm campaign",
+              "value": "={{ $('Webhook').item.json.body.contact_utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "bb14de86-c145-40b9-9b9f-5bc849107df7",
+              "name": "utm term",
+              "value": "={{ $('Webhook').item.json.body.contact_utm_term }}",
+              "type": "string"
+            },
+            {
+              "id": "e2515af7-ed0b-463a-bc99-372f75ea8723",
+              "name": "ID",
+              "value": "={{ $('Webhook').item.json.body.deal_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        0
+      ],
+      "id": "b36a3833-b6f7-4b7e-8816-503daaaf5795",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1GVlV6Hf7QhcdvwBcSjvlGIpWzQUE5LWwHtVI3fMVVfs/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GVlV6Hf7QhcdvwBcSjvlGIpWzQUE5LWwHtVI3fMVVfs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "TELEFONE": "={{ $json.Telefone }}",
+            "EMAIL": "={{ $json.Email }}",
+            "NOME": "={{ $json.Nome }}",
+            "DONO": "={{ $json.Dono }}",
+            "SEGMENTO": "={{ $json.Segmento }}",
+            "LEAD NÃO CONVERTIDO": "={{ $json.Lead }}",
+            "ID": "={{ $json.ID }}"
+          },
+          "matchingColumns": [
+            "EMAIL"
+          ],
+          "schema": [
+            {
+              "id": "DIA",
+              "displayName": "DIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TELEFONE",
+              "displayName": "TELEFONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "NOME",
+              "displayName": "NOME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DONO",
+              "displayName": "DONO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SEGMENTO",
+              "displayName": "SEGMENTO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "VALOR",
+              "displayName": "VALOR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "POLO",
+              "displayName": "POLO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "BASE",
+              "displayName": "BASE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PROSPECÇÃO",
+              "displayName": "PROSPECÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "CONEXÃO",
+              "displayName": "CONEXÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PROPOSTA/NEGOCIAÇÃO",
+              "displayName": "PROPOSTA/NEGOCIAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PENDENTE",
+              "displayName": "PENDENTE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "RE-CONTATO",
+              "displayName": "RE-CONTATO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LEAD NÃO CONVERTIDO",
+              "displayName": "LEAD NÃO CONVERTIDO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FECHAMENTO",
+              "displayName": "FECHAMENTO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "MOTIVO DA PERDA",
+              "displayName": "MOTIVO DA PERDA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "STATUS",
+              "displayName": "STATUS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DATA DO ENCERRAMENTO",
+              "displayName": "DATA DO ENCERRAMENTO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "UTM SOURCE",
+              "displayName": "UTM SOURCE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "UTM MEDIUM",
+              "displayName": "UTM MEDIUM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "UTM CONTENT",
+              "displayName": "UTM CONTENT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "UTM CAMPAIGN",
+              "displayName": "UTM CAMPAIGN",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "UTM TERM",
+              "displayName": "UTM TERM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        620,
+        0
+      ],
+      "id": "852a0233-7f65-4022-abc5-6dbbeb19b68e",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        840,
+        0
+      ],
+      "id": "ac9285a6-c059-4cc8-a907-bafc94ce3f3f",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.9.0",
+            "content-length": "440",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "traceparent": "00-68891a8a00000000673d57cd2eb9d897-103d7cbad14dd09e-00",
+            "tracestate": "dd=t.tid:68891a8a00000000;t.dm:-3;s:-1;p:103d7cbad14dd09e",
+            "x-datadog-parent-id": "1170228620003496094",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=68891a8a00000000",
+            "x-datadog-trace-id": "7439198698249771159",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Isabella Teste",
+            "contact_email": "bellasimaia@gmail.con",
+            "contact_phone": "+5531984617540",
+            "deal_stage": "LEAD Ñ CONVERTIDO",
+            "deal_user": "consultorcaeclub@gmail.com",
+            "deal_status": "OPEN",
+            "organization_segment": "",
+            "deal_user_name": "Consultor Externo",
+            "deal_value": 80,
+            "contact_polo": "CAE CLUB - Polo Lapa",
+            "contact_utm_source": "",
+            "contact_utm_content": "",
+            "contact_utm_medium": "",
+            "contact_utm_campaign": "",
+            "contact_utm_term": ""
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-cae-lead",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "061d5851-0aba-4c39-af8d-a5cfe008c06b",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-07-24T17:26:20.560Z",
+      "createdAt": "2025-07-24T17:26:20.560Z",
+      "role": "workflow:owner",
+      "workflowId": "qxSQdzGuPMLM3tgN",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
