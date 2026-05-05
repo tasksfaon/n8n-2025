@@ -1,0 +1,74 @@
+{
+  "updatedAt": "2026-04-16T11:56:32.348Z",
+  "createdAt": "2025-03-24T19:27:45.957Z",
+  "id": "vyaBXLPSyO3TFVj6",
+  "name": "[Sidnei] entrada na clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-entrou-na-clint",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "85fad98e-27aa-4d63-a044-9aae75fd5b27",
+      "name": "Webhook",
+      "webhookId": "3c05a4e4-9c6f-4ef6-b3e5-8a9656b42a60"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "e353034c-5ea8-4815-9f1b-425118045ca7",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "24c0b571-0b35-40fd-b9e7-e7db69b6e72f",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-24T19:27:45.957Z",
+      "createdAt": "2025-03-24T19:27:45.957Z",
+      "role": "workflow:owner",
+      "workflowId": "vyaBXLPSyO3TFVj6",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
