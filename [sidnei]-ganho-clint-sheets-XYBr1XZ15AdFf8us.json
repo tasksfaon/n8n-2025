@@ -1,0 +1,1408 @@
+{
+  "updatedAt": "2026-04-16T11:57:07.990Z",
+  "createdAt": "2025-03-19T18:04:21.350Z",
+  "id": "XYBr1XZ15AdFf8us",
+  "name": "[Sidnei] Ganho Clint Sheets",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-coquetel-ganho",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "79834515-0866-4e86-bb1a-571ad95634ff",
+      "name": "Webhook",
+      "webhookId": "553c193f-0174-40bb-9412-2dcf45ff01a8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém os dados do nó webhook\nconst items = $input.all();\n\nreturn items.map(item => {\n    let phone = item.json.body?.contact_phone || \"\";\n    let polo = item.json.body?.contact_polo || \"\";\n\n    // Remove caracteres especiais do telefone, mantendo apenas números\n    phone = phone.replace(/[^\\d]/g, \"\"); // Remove tudo que não for número\n\n    // Verifica se já está no formato 55DDDTelefone\n    const regex = /^55\\d{2}\\d{8,9}$/;\n    if (!regex.test(phone)) {\n        // Se tiver 10 ou 11 dígitos (DDD + telefone), adiciona 55\n        if (phone.length === 10 || phone.length === 11) {\n            phone = \"55\" + phone;\n        }\n    }\n\n    // Ajusta o nome do polo, removendo \"CAE CLUB - \" se presente\n    polo = polo.replace(/^CAE CLUB - /i, \"\"); \n\n    // Retorna apenas o telefone e o polo formatados\n    return { json: { phone, polo } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "0645016b-f638-41a2-9239-9409ce81b7ac",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3072988a-3f0f-4459-a5d6-218d5f43ca18",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "c20f4d68-ba32-416e-b2be-49e83b3e0919",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "90e8dc28-7d6b-4179-806c-a3919b182bc7",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "8f3fab65-b6e9-4a1c-bc09-7ffc2949a99b",
+              "name": "Status",
+              "value": "Ganho",
+              "type": "string"
+            },
+            {
+              "id": "543a4462-a1b6-462d-92d9-c41b0e3332dc",
+              "name": "Polo",
+              "value": "={{ $json.polo }}",
+              "type": "string"
+            },
+            {
+              "id": "2adcc879-9023-46af-8c0d-951b158a4cf4",
+              "name": "Negócio",
+              "value": "Coquetel",
+              "type": "string"
+            },
+            {
+              "id": "e072066c-20d1-4a28-a2b1-7b2ae4c3a863",
+              "name": "Plataforma de Pagamento",
+              "value": "={{ $('Webhook').item.json.body.contact_plataforma_pagamento }}",
+              "type": "string"
+            },
+            {
+              "id": "52952c00-9b87-495b-b244-661f163220e0",
+              "name": "Consultor",
+              "value": "={{ $('Webhook').item.json.body.deal_user_name }}",
+              "type": "string"
+            },
+            {
+              "id": "7cb8b30c-ab61-492e-a0ba-dc47ad384567",
+              "name": "Data",
+              "value": "={{ new Date().toLocaleDateString(\"pt-BR\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "ffdcc267-2157-48ea-b90f-9da11106a882",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/19AqeDxaKVFtagPf87wzb4PqbBdL1vzaKrri7hJbItzM/edit?gid=1256989761#gid=1256989761",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1256989761,
+          "mode": "list",
+          "cachedResultName": "Compradores",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19AqeDxaKVFtagPf87wzb4PqbBdL1vzaKrri7hJbItzM/edit#gid=1256989761"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Email": "={{ $json.Email }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "Negócio": "={{ $json['Negócio'] }}",
+            "Polo": "={{ $json.Polo }}",
+            "Status": "={{ $json.Status }}",
+            "Plataforma de Pagamento": "={{ $json['Plataforma de Pagamento'] }}",
+            "Consultor": "={{ $json.Consultor }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Negócio",
+              "displayName": "Negócio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Polo",
+              "displayName": "Polo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Plataforma de Pagamento",
+              "displayName": "Plataforma de Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Consultor",
+              "displayName": "Consultor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        0
+      ],
+      "id": "ae209a4c-d6c4-4638-95d7-3f10a50351d3",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## CAE CLUB EVENTOS - Coquetel",
+        "height": 260,
+        "width": 1100
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -40,
+        -100
+      ],
+      "typeVersion": 1,
+      "id": "15933338-7e18-43b9-a68a-8fde5ff3be4b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "18bc7c4e-8220-48b7-9b94-263f7976589e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-entrada-fraternidade-ganho",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        320
+      ],
+      "id": "1f020125-874f-4bf3-8954-21f02d165a5c",
+      "name": "Webhook1",
+      "webhookId": "553c193f-0174-40bb-9412-2dcf45ff01a8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém os dados do nó webhook\nconst items = $input.all();\n\nreturn items.map(item => {\n    let phone = item.json.body?.contact_phone || \"\";\n    let polo = item.json.body?.contact_polo || \"\";\n    let cpf =  $input.first().json.body.contact_cpf|| \"\";\n\n    // Remove caracteres especiais do telefone, mantendo apenas números\n    phone = phone.replace(/[^\\d]/g, \"\"); // Remove tudo que não for número\n\n    // Verifica se já está no formato 55DDDTelefone\n    const regex = /^55\\d{2}\\d{8,9}$/;\n    if (!regex.test(phone)) {\n        // Se tiver 10 ou 11 dígitos (DDD + telefone), adiciona 55\n        if (phone.length === 10 || phone.length === 11) {\n            phone = \"55\" + phone;\n        }\n    }\n\n    // Ajusta o nome do polo, removendo \"CAE CLUB - \" se presente\n    polo = polo.replace(/^CAE CLUB - /i, \"\"); \n\n    // Formata o CPF como texto puro (remove pontos e traços)\n    cpf = cpf.toString().replace(/[^\\d]/g, \"\");\n\n    // Retorna telefone, polo e CPF\n    return {\n        json: {\n            phone,\n            polo,\n            cpf\n        }\n    };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        320
+      ],
+      "id": "3c0505b7-812e-43b9-8400-d27b04bd5794",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3072988a-3f0f-4459-a5d6-218d5f43ca18",
+              "name": "Nome",
+              "value": "={{ $('Webhook1').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "c20f4d68-ba32-416e-b2be-49e83b3e0919",
+              "name": "Email",
+              "value": "={{ $('Webhook1').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "90e8dc28-7d6b-4179-806c-a3919b182bc7",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "8f3fab65-b6e9-4a1c-bc09-7ffc2949a99b",
+              "name": "Status",
+              "value": "Ganho",
+              "type": "string"
+            },
+            {
+              "id": "543a4462-a1b6-462d-92d9-c41b0e3332dc",
+              "name": "Polo",
+              "value": "={{ $json.polo }}",
+              "type": "string"
+            },
+            {
+              "id": "2adcc879-9023-46af-8c0d-951b158a4cf4",
+              "name": "Negócio",
+              "value": "Entrada Fraternidade",
+              "type": "string"
+            },
+            {
+              "id": "e072066c-20d1-4a28-a2b1-7b2ae4c3a863",
+              "name": "Plataforma de Pagamento",
+              "value": "={{ $('Webhook1').item.json.body.contact_plataforma_pagamento }}",
+              "type": "string"
+            },
+            {
+              "id": "52952c00-9b87-495b-b244-661f163220e0",
+              "name": "Consultor",
+              "value": "={{ $('Webhook1').item.json.body.deal_user_name }}",
+              "type": "string"
+            },
+            {
+              "id": "7cb8b30c-ab61-492e-a0ba-dc47ad384567",
+              "name": "Data",
+              "value": "={{ new Date().toLocaleDateString(\"pt-BR\") }}",
+              "type": "string"
+            },
+            {
+              "id": "3efae6e1-9efb-4681-8637-9c941bef7be5",
+              "name": "cpf",
+              "value": "={{ $json.cpf }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        320
+      ],
+      "id": "bd66fad3-b5bd-4a2c-acb8-d1bfb880d90c",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/19AqeDxaKVFtagPf87wzb4PqbBdL1vzaKrri7hJbItzM/edit?gid=1256989761#gid=1256989761",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1256989761,
+          "mode": "list",
+          "cachedResultName": "Compradores",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19AqeDxaKVFtagPf87wzb4PqbBdL1vzaKrri7hJbItzM/edit#gid=1256989761"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Email": "={{ $json.Email }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "Negócio": "={{ $json['Negócio'] }}",
+            "Polo": "={{ $json.Polo }}",
+            "Status": "={{ $json.Status }}",
+            "Plataforma de Pagamento": "={{ $json['Plataforma de Pagamento'] }}",
+            "Consultor": "={{ $json.Consultor }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Negócio",
+              "displayName": "Negócio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Polo",
+              "displayName": "Polo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Plataforma de Pagamento",
+              "displayName": "Plataforma de Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Consultor",
+              "displayName": "Consultor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mês referencia",
+              "displayName": "Mês referencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Responsavel da venda",
+              "displayName": "Responsavel da venda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        240
+      ],
+      "id": "14526d9a-f669-46c8-86a3-83a784e46d8f",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## ENTRADA FRATERNIDADE",
+        "height": 260,
+        "width": 1100
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -60,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "5d7558b1-83c3-4077-a6d5-d2e730f86d33",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        860,
+        320
+      ],
+      "id": "76bcd867-3518-4227-9746-60d6d6f27d32",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-fraternidade-ganho",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        620
+      ],
+      "id": "9759973a-b4f1-4ecd-9ac1-75cdb91c8c8c",
+      "name": "Webhook2",
+      "webhookId": "553c193f-0174-40bb-9412-2dcf45ff01a8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém os dados do nó webhook\nconst items = $input.all();\n\nreturn items.map(item => {\n    let phone = item.json.body?.contact_phone || \"\";\n    let polo = item.json.body?.contact_polo || \"\";\n\n    // Remove caracteres especiais do telefone, mantendo apenas números\n    phone = phone.replace(/[^\\d]/g, \"\"); // Remove tudo que não for número\n\n    // Verifica se já está no formato 55DDDTelefone\n    const regex = /^55\\d{2}\\d{8,9}$/;\n    if (!regex.test(phone)) {\n        // Se tiver 10 ou 11 dígitos (DDD + telefone), adiciona 55\n        if (phone.length === 10 || phone.length === 11) {\n            phone = \"55\" + phone;\n        }\n    }\n\n    // Ajusta o nome do polo, removendo \"CAE CLUB - \" se presente\n    polo = polo.replace(/^CAE CLUB - /i, \"\"); \n\n    // Retorna apenas o telefone e o polo formatados\n    return { json: { phone, polo } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        620
+      ],
+      "id": "5cafa2ea-5da1-4d72-a663-07ede5a573e3",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3072988a-3f0f-4459-a5d6-218d5f43ca18",
+              "name": "Nome",
+              "value": "={{ $('Webhook2').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "c20f4d68-ba32-416e-b2be-49e83b3e0919",
+              "name": "Email",
+              "value": "={{ $('Webhook2').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "90e8dc28-7d6b-4179-806c-a3919b182bc7",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "8f3fab65-b6e9-4a1c-bc09-7ffc2949a99b",
+              "name": "Status",
+              "value": "Ganho",
+              "type": "string"
+            },
+            {
+              "id": "543a4462-a1b6-462d-92d9-c41b0e3332dc",
+              "name": "Polo",
+              "value": "={{ $json.polo }}",
+              "type": "string"
+            },
+            {
+              "id": "2adcc879-9023-46af-8c0d-951b158a4cf4",
+              "name": "Negócio",
+              "value": "Fraternidade",
+              "type": "string"
+            },
+            {
+              "id": "e072066c-20d1-4a28-a2b1-7b2ae4c3a863",
+              "name": "Plataforma de Pagamento",
+              "value": "={{ $('Webhook2').item.json.body.contact_plataforma_pagamento }}",
+              "type": "string"
+            },
+            {
+              "id": "52952c00-9b87-495b-b244-661f163220e0",
+              "name": "Consultor",
+              "value": "={{ $('Webhook2').item.json.body.deal_user_name }}",
+              "type": "string"
+            },
+            {
+              "id": "7cb8b30c-ab61-492e-a0ba-dc47ad384567",
+              "name": "Data",
+              "value": "={{ new Date().toLocaleDateString(\"pt-BR\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        620
+      ],
+      "id": "377cad78-08bd-4257-8c68-0b4c235f615f",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/19AqeDxaKVFtagPf87wzb4PqbBdL1vzaKrri7hJbItzM/edit?gid=1256989761#gid=1256989761",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1256989761,
+          "mode": "list",
+          "cachedResultName": "Compradores",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19AqeDxaKVFtagPf87wzb4PqbBdL1vzaKrri7hJbItzM/edit#gid=1256989761"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Email": "={{ $json.Email }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "Negócio": "={{ $json['Negócio'] }}",
+            "Polo": "={{ $json.Polo }}",
+            "Status": "={{ $json.Status }}",
+            "Plataforma de Pagamento": "={{ $json['Plataforma de Pagamento'] }}",
+            "Consultor": "={{ $json.Consultor }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Negócio",
+              "displayName": "Negócio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Polo",
+              "displayName": "Polo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Plataforma de Pagamento",
+              "displayName": "Plataforma de Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Consultor",
+              "displayName": "Consultor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mês referencia",
+              "displayName": "Mês referencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Responsavel da venda",
+              "displayName": "Responsavel da venda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        640,
+        620
+      ],
+      "id": "0c314a0a-f3b1-44f9-9d10-fa36788af476",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## FRATERNIDADE",
+        "height": 260,
+        "width": 1100
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -60,
+        520
+      ],
+      "typeVersion": 1,
+      "id": "72457535-60b0-4af7-baef-12f69d4180f2",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        860,
+        620
+      ],
+      "id": "cbf3e56f-bff8-4423-88cd-bc6e688a4d08",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/19AqeDxaKVFtagPf87wzb4PqbBdL1vzaKrri7hJbItzM/edit?gid=1256989761#gid=1256989761",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1738345068,
+          "mode": "list",
+          "cachedResultName": "Compradores Coquetel",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19AqeDxaKVFtagPf87wzb4PqbBdL1vzaKrri7hJbItzM/edit#gid=1738345068"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Email": "={{ $json.Email }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "Negócio": "={{ $json['Negócio'] }}",
+            "Polo": "={{ $json.Polo }}",
+            "Status": "={{ $json.Status }}",
+            "Plataforma de Pagamento": "={{ $json['Plataforma de Pagamento'] }}",
+            "Consultor": "={{ $json.Consultor }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Negócio",
+              "displayName": "Negócio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Polo",
+              "displayName": "Polo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Plataforma de Pagamento",
+              "displayName": "Plataforma de Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Consultor",
+              "displayName": "Consultor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mês referencia",
+              "displayName": "Mês referencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Responsavel da venda",
+              "displayName": "Responsavel da venda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        -140
+      ],
+      "id": "2af47363-37e4-4e49-8022-0330598afef8",
+      "name": "Google Sheets3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit?gid=650737286#gid=650737286",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 650737286,
+          "mode": "list",
+          "cachedResultName": "Lista Geral Membros Fraternidade",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CmJLPR2mO-MwUfugf6kihebBOJbUPdZwUyoGxyEHGZw/edit#gid=650737286"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "cpf": "={{ $json.cpf }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cpf",
+              "displayName": "cpf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        660,
+        400
+      ],
+      "id": "85277df7-816a-4a43-87a0-e9eccb023b87",
+      "name": "Google Sheets4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets4": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.7.9",
+            "content-length": "295",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "traceparent": "00-68011a6a00000000480a3ff018351cdb-196f091a925d7d5b-00",
+            "tracestate": "dd=t.tid:68011a6a00000000;t.dm:-3;s:-1;p:196f091a925d7d5b",
+            "x-datadog-parent-id": "1832693583092481371",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=68011a6a00000000",
+            "x-datadog-trace-id": "5191031820928752859",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Maria Aparecida Gomes Da Silva Oliveira",
+            "contact_email": "cidasgomes72@gmail.com",
+            "contact_phone": "+5511941313009",
+            "deal_stage": "FECHADO",
+            "deal_user": "jeanlaura1313@gmail.com",
+            "deal_status": "WON",
+            "contact_polo": "",
+            "contact_plataforma_pagamento": "",
+            "deal_user_name": "Jean Alves"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-coquetel-ganho",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.7.9",
+            "content-length": "334",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "traceparent": "00-68404f2a000000002f75e6e8ab02be0b-551f24a041738437-00",
+            "tracestate": "dd=t.tid:68404f2a00000000;t.dm:-3;s:-1;p:551f24a041738437",
+            "x-datadog-parent-id": "6133661488213361719",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=68404f2a00000000",
+            "x-datadog-trace-id": "3419893379033644555",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Isabella Teste",
+            "contact_email": "bellasimaia@gmail.con",
+            "contact_phone": "+5531984617540",
+            "deal_stage": "FICHA DE APROVAÇÃO ",
+            "deal_user": "jonathanandrepires@gmail.com",
+            "deal_status": "WON",
+            "contact_plataforma_pagamento": "",
+            "contact_data_de_pagamento": "",
+            "deal_user_name": "Jonathan André",
+            "contact_cpf": "13298886696"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-entrada-fraternidade-ganho",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Webhook2": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.7.9",
+            "content-length": "287",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "traceparent": "00-67db0b82000000003a3bab44e8ba386f-30ffbf132f12dcf5-00",
+            "tracestate": "dd=t.tid:67db0b8200000000;t.dm:-3;s:-1;p:30ffbf132f12dcf5",
+            "x-datadog-parent-id": "3530750721996807413",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=67db0b8200000000",
+            "x-datadog-trace-id": "4196135790276393071",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Teste",
+            "contact_email": "isa_simaia@hotmail.com",
+            "contact_phone": "+5531984617540",
+            "deal_stage": "ENTRADA ",
+            "deal_status": "WON",
+            "contact_plataforma_pagamento": "Herospark",
+            "contact_data_de_pagamento": "",
+            "deal_user": "daiana.viana93@gmail.com",
+            "deal_user_name": "Daiana Viana"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-fraternidade-ganho",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "0eda924f-e463-4816-ad92-b738f429a8c4",
+  "activeVersionId": null,
+  "triggerCount": 3,
+  "shared": [
+    {
+      "updatedAt": "2025-03-19T18:04:21.350Z",
+      "createdAt": "2025-03-19T18:04:21.350Z",
+      "role": "workflow:owner",
+      "workflowId": "XYBr1XZ15AdFf8us",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
