@@ -1,1 +1,1013 @@
-{"fileName":"[geral]-backup-n8n-github-D4h7X1XaggLGCReW.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2026-05-05T21:01:06.742Z",
+  "createdAt": "2025-03-18T14:06:53.034Z",
+  "id": "D4h7X1XaggLGCReW",
+  "name": "[Geral] Backup n8n Github",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2640,
+        -192
+      ],
+      "id": "0e223ad9-bb5a-404d-b379-1572cd6ece85",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "id": "d126fc08-07e3-47a7-8471-3751a1c4f1f3",
+      "name": "Lista workflows N8N",
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        -2416,
+        -192
+      ],
+      "credentials": {
+        "n8nApi": {
+          "id": "u3hn9eyrpj3FW1SE",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2096,
+        -192
+      ],
+      "id": "c46e9774-adb7-4e41-bf54-e0b1b7356c9a",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        -560
+      ],
+      "id": "9a7fa4ac-152d-42b8-8a36-7339cee385fe"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "tasksfaon",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-2025",
+          "mode": "list",
+          "cachedResultName": "n8n-2025",
+          "cachedResultUrl": "https://github.com/tasksfaon/n8n-2025"
+        },
+        "filePath": "={{ $('Code in JavaScript').item.json.fileName }}",
+        "additionalParameters": {
+          "reference": ""
+        }
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        -1616,
+        -176
+      ],
+      "id": "1e1cde5b-8442-40ff-bd52-64b2316b0a9e",
+      "name": "Confere se arquivo existe GitHub",
+      "retryOnFail": false,
+      "webhookId": "d1d45671-3550-4857-8764-b5ffa1811c23",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "PjZC8TTZhjVb4oX3",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Code in JavaScript').item.json.fileName }}",
+              "value2": "={{ $('Confere se arquivo existe GitHub').item.binary.data.fileName }}"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "id": "570cb102-7bd0-4651-ba4a-68607aa6f803",
+      "name": "Separa no if",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -1312,
+        -176
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "tasksfaon",
+          "mode": "list",
+          "cachedResultName": "tasksfaon",
+          "cachedResultUrl": "https://github.com/tasksfaon"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-2025",
+          "mode": "list",
+          "cachedResultName": "n8n-2025",
+          "cachedResultUrl": "https://github.com/tasksfaon/n8n-2025"
+        },
+        "filePath": "={{ $('Code in JavaScript').item.json.fileName }}",
+        "binaryData": true,
+        "commitMessage": "=Backup automático do n8n"
+      },
+      "id": "d0f0d108-e095-416d-991d-101413a5788c",
+      "name": "Atualiza o arquivo no Github",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        -384
+      ],
+      "webhookId": "00eb16a6-e5d2-4946-93da-87d63dee7ef0",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "PjZC8TTZhjVb4oX3",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "tasksfaon",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-2025",
+          "mode": "list",
+          "cachedResultName": "n8n-2025",
+          "cachedResultUrl": "https://github.com/tasksfaon/n8n-2025"
+        },
+        "filePath": "={{ $('Code in JavaScript').item.json.fileName }}",
+        "binaryData": true,
+        "commitMessage": "=Backup automático do n8n"
+      },
+      "id": "1ec998bf-a827-4572-8619-7055634abd47",
+      "name": "Cria um arquivo Github",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        -160
+      ],
+      "webhookId": "30fd100c-a758-47c0-a787-59c86b870a0f",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "PjZC8TTZhjVb4oX3",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1mDlQPPgqta7ejnXa97dN6vnBP-2K16vBvPXD8zLq7vk/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mDlQPPgqta7ejnXa97dN6vnBP-2K16vBvPXD8zLq7vk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nome do Fluxo": "={{ $json.name }}",
+            "Projeto": "={{$json.name.match(/\\[(.*?)\\]/)?.[1] || \"\"}}",
+            "Webhook": "=https://webhook2025.faondigital.com.br/webhook/{{ $json.nodes[1].parameters.path }}",
+            "Fórmulário": "=",
+            "Link n8n": "=https://n8n2025.faondigital.com.br/workflow/{{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Nome do Fluxo"
+          ],
+          "schema": [
+            {
+              "id": "Nome do Fluxo",
+              "displayName": "Nome do Fluxo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Projeto",
+              "displayName": "Projeto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Webhook",
+              "displayName": "Webhook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fórmulário",
+              "displayName": "Fórmulário",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link n8n",
+              "displayName": "Link n8n",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Etapa",
+              "displayName": "Etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1984,
+        -544
+      ],
+      "id": "577b8ff9-7dc1-4834-a576-b26e5e3d29b8",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.item.json;\n\nconst fileName = `${data.name.replace(/\\s+/g, '-').toLowerCase()}-${data.id}.json`;\n\nreturn [\n  {\n    json: {\n      fileName\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1872,
+        -176
+      ],
+      "id": "eaaf0f25-cb4e-4e6b-b8a7-80de450a9555",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $('Loop Over Items').all();\n\n// pega o item correspondente ao índice atual\nconst data = items[$itemIndex].json;\n\n// transforma JSON em string\nconst conteudo = JSON.stringify(data, null, 2);\n\n// nome do arquivo\nconst nome = typeof data.name === 'string' ? data.name : 'sem-nome';\nconst id = data.id ? String(data.id) : Date.now().toString();\n\nconst safeName = nome\n  .trim()\n  .replace(/\\s+/g, '-')\n  .replace(/[^a-zA-Z0-9-_]/g, '')\n  .toLowerCase();\n\nconst fileName = `${safeName}-${id}.json`;\n\nreturn [\n  {\n    json: {\n      fileName\n    },\n    binary: {\n      data: {\n        data: Buffer.from(conteudo).toString('base64'),\n        mimeType: 'application/json',\n        fileName\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1024,
+        -160
+      ],
+      "id": "aafe2236-a5ed-4346-90a9-b5faa19ac2c5",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $('Loop Over Items').all();\n\n// pega o item correspondente ao índice atual\nconst data = items[$itemIndex].json;\n\n// transforma JSON em string\nconst conteudo = JSON.stringify(data, null, 2);\n\n// nome do arquivo\nconst nome = typeof data.name === 'string' ? data.name : 'sem-nome';\nconst id = data.id ? String(data.id) : Date.now().toString();\n\nconst safeName = nome\n  .trim()\n  .replace(/\\s+/g, '-')\n  .replace(/[^a-zA-Z0-9-_]/g, '')\n  .toLowerCase();\n\nconst fileName = `${safeName}-${id}.json`;\n\nreturn [\n  {\n    json: {\n      fileName\n    },\n    binary: {\n      data: {\n        data: Buffer.from(conteudo).toString('base64'),\n        mimeType: 'application/json',\n        fileName\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        -368
+      ],
+      "id": "c50da16a-9127-48e6-8861-88ec55d83936",
+      "name": "Code in JavaScript2"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Lista workflows N8N",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lista workflows N8N": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confere se arquivo existe GitHub": {
+      "main": [
+        [
+          {
+            "node": "Separa no if",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa no if": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza o arquivo no Github": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cria um arquivo Github": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Confere se arquivo existe GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Cria um arquivo Github",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o arquivo no Github",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "d2932d83-3fa0-4666-b7c3-198f9a21b5a9",
+  "activeVersionId": "d2932d83-3fa0-4666-b7c3-198f9a21b5a9",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-18T14:06:53.034Z",
+      "createdAt": "2025-03-18T14:06:53.034Z",
+      "role": "workflow:owner",
+      "workflowId": "D4h7X1XaggLGCReW",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-05-05T21:02:09.121Z",
+    "createdAt": "2026-05-05T21:01:06.743Z",
+    "versionId": "d2932d83-3fa0-4666-b7c3-198f9a21b5a9",
+    "workflowId": "D4h7X1XaggLGCReW",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {}
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -2640,
+          -192
+        ],
+        "id": "0e223ad9-bb5a-404d-b379-1572cd6ece85",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "filters": {},
+          "requestOptions": {}
+        },
+        "id": "d126fc08-07e3-47a7-8471-3751a1c4f1f3",
+        "name": "Lista workflows N8N",
+        "type": "n8n-nodes-base.n8n",
+        "typeVersion": 1,
+        "position": [
+          -2416,
+          -192
+        ],
+        "credentials": {
+          "n8nApi": {
+            "id": "u3hn9eyrpj3FW1SE",
+            "name": "n8n account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -2096,
+          -192
+        ],
+        "id": "c46e9774-adb7-4e41-bf54-e0b1b7356c9a",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me",
+        "typeVersion": 1,
+        "position": [
+          -704,
+          -560
+        ],
+        "id": "9a7fa4ac-152d-42b8-8a36-7339cee385fe"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "file",
+          "operation": "get",
+          "owner": {
+            "__rl": true,
+            "value": "tasksfaon",
+            "mode": "name"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "n8n-2025",
+            "mode": "list",
+            "cachedResultName": "n8n-2025",
+            "cachedResultUrl": "https://github.com/tasksfaon/n8n-2025"
+          },
+          "filePath": "={{ $('Code in JavaScript').item.json.fileName }}",
+          "additionalParameters": {
+            "reference": ""
+          }
+        },
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1,
+        "position": [
+          -1616,
+          -176
+        ],
+        "id": "1e1cde5b-8442-40ff-bd52-64b2316b0a9e",
+        "name": "Confere se arquivo existe GitHub",
+        "retryOnFail": false,
+        "webhookId": "d1d45671-3550-4857-8764-b5ffa1811c23",
+        "credentials": {
+          "githubOAuth2Api": {
+            "id": "PjZC8TTZhjVb4oX3",
+            "name": "GitHub account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{ $('Code in JavaScript').item.json.fileName }}",
+                "value2": "={{ $('Confere se arquivo existe GitHub').item.binary.data.fileName }}"
+              }
+            ]
+          },
+          "combineOperation": "any"
+        },
+        "id": "570cb102-7bd0-4651-ba4a-68607aa6f803",
+        "name": "Separa no if",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          -1312,
+          -176
+        ]
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "file",
+          "operation": "edit",
+          "owner": {
+            "__rl": true,
+            "value": "tasksfaon",
+            "mode": "list",
+            "cachedResultName": "tasksfaon",
+            "cachedResultUrl": "https://github.com/tasksfaon"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "n8n-2025",
+            "mode": "list",
+            "cachedResultName": "n8n-2025",
+            "cachedResultUrl": "https://github.com/tasksfaon/n8n-2025"
+          },
+          "filePath": "={{ $('Code in JavaScript').item.json.fileName }}",
+          "binaryData": true,
+          "commitMessage": "=Backup automático do n8n"
+        },
+        "id": "d0f0d108-e095-416d-991d-101413a5788c",
+        "name": "Atualiza o arquivo no Github",
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1,
+        "position": [
+          -736,
+          -384
+        ],
+        "webhookId": "00eb16a6-e5d2-4946-93da-87d63dee7ef0",
+        "credentials": {
+          "githubOAuth2Api": {
+            "id": "PjZC8TTZhjVb4oX3",
+            "name": "GitHub account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "file",
+          "owner": {
+            "__rl": true,
+            "value": "tasksfaon",
+            "mode": "name"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "n8n-2025",
+            "mode": "list",
+            "cachedResultName": "n8n-2025",
+            "cachedResultUrl": "https://github.com/tasksfaon/n8n-2025"
+          },
+          "filePath": "={{ $('Code in JavaScript').item.json.fileName }}",
+          "binaryData": true,
+          "commitMessage": "=Backup automático do n8n"
+        },
+        "id": "1ec998bf-a827-4572-8619-7055634abd47",
+        "name": "Cria um arquivo Github",
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1,
+        "position": [
+          -736,
+          -160
+        ],
+        "webhookId": "30fd100c-a758-47c0-a787-59c86b870a0f",
+        "credentials": {
+          "githubOAuth2Api": {
+            "id": "PjZC8TTZhjVb4oX3",
+            "name": "GitHub account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1mDlQPPgqta7ejnXa97dN6vnBP-2K16vBvPXD8zLq7vk/edit?gid=0#gid=0",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mDlQPPgqta7ejnXa97dN6vnBP-2K16vBvPXD8zLq7vk/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Nome do Fluxo": "={{ $json.name }}",
+              "Projeto": "={{$json.name.match(/\\[(.*?)\\]/)?.[1] || \"\"}}",
+              "Webhook": "=https://webhook2025.faondigital.com.br/webhook/{{ $json.nodes[1].parameters.path }}",
+              "Fórmulário": "=",
+              "Link n8n": "=https://n8n2025.faondigital.com.br/workflow/{{ $json.id }}"
+            },
+            "matchingColumns": [
+              "Nome do Fluxo"
+            ],
+            "schema": [
+              {
+                "id": "Nome do Fluxo",
+                "displayName": "Nome do Fluxo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Projeto",
+                "displayName": "Projeto",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Webhook",
+                "displayName": "Webhook",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Fórmulário",
+                "displayName": "Fórmulário",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Link n8n",
+                "displayName": "Link n8n",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Etapa",
+                "displayName": "Etapa",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          -1984,
+          -544
+        ],
+        "id": "577b8ff9-7dc1-4834-a576-b26e5e3d29b8",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const data = $input.item.json;\n\nconst fileName = `${data.name.replace(/\\s+/g, '-').toLowerCase()}-${data.id}.json`;\n\nreturn [\n  {\n    json: {\n      fileName\n    }\n  }\n];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1872,
+          -176
+        ],
+        "id": "eaaf0f25-cb4e-4e6b-b8a7-80de450a9555",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "jsCode": "const items = $('Loop Over Items').all();\n\n// pega o item correspondente ao índice atual\nconst data = items[$itemIndex].json;\n\n// transforma JSON em string\nconst conteudo = JSON.stringify(data, null, 2);\n\n// nome do arquivo\nconst nome = typeof data.name === 'string' ? data.name : 'sem-nome';\nconst id = data.id ? String(data.id) : Date.now().toString();\n\nconst safeName = nome\n  .trim()\n  .replace(/\\s+/g, '-')\n  .replace(/[^a-zA-Z0-9-_]/g, '')\n  .toLowerCase();\n\nconst fileName = `${safeName}-${id}.json`;\n\nreturn [\n  {\n    json: {\n      fileName\n    },\n    binary: {\n      data: {\n        data: Buffer.from(conteudo).toString('base64'),\n        mimeType: 'application/json',\n        fileName\n      }\n    }\n  }\n];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1024,
+          -160
+        ],
+        "id": "aafe2236-a5ed-4346-90a9-b5faa19ac2c5",
+        "name": "Code in JavaScript1"
+      },
+      {
+        "parameters": {
+          "jsCode": "const items = $('Loop Over Items').all();\n\n// pega o item correspondente ao índice atual\nconst data = items[$itemIndex].json;\n\n// transforma JSON em string\nconst conteudo = JSON.stringify(data, null, 2);\n\n// nome do arquivo\nconst nome = typeof data.name === 'string' ? data.name : 'sem-nome';\nconst id = data.id ? String(data.id) : Date.now().toString();\n\nconst safeName = nome\n  .trim()\n  .replace(/\\s+/g, '-')\n  .replace(/[^a-zA-Z0-9-_]/g, '')\n  .toLowerCase();\n\nconst fileName = `${safeName}-${id}.json`;\n\nreturn [\n  {\n    json: {\n      fileName\n    },\n    binary: {\n      data: {\n        data: Buffer.from(conteudo).toString('base64'),\n        mimeType: 'application/json',\n        fileName\n      }\n    }\n  }\n];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -992,
+          -368
+        ],
+        "id": "c50da16a-9127-48e6-8861-88ec55d83936",
+        "name": "Code in JavaScript2"
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Lista workflows N8N",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lista workflows N8N": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Confere se arquivo existe GitHub": {
+        "main": [
+          [
+            {
+              "node": "Separa no if",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Separa no if": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Code in JavaScript1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualiza o arquivo no Github": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cria um arquivo Github": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Confere se arquivo existe GitHub",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript1": {
+        "main": [
+          [
+            {
+              "node": "Cria um arquivo Github",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript2": {
+        "main": [
+          [
+            {
+              "node": "Atualiza o arquivo no Github",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": "Version d2932d83",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}
