@@ -1,1 +1,109 @@
-{"fileName":"[interno]-notificação-de-erro-slack-C0JGoY8oqU3Vhsgx.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2025-04-09T17:06:46.336Z",
+  "createdAt": "2025-03-18T14:27:21.558Z",
+  "id": "C0JGoY8oqU3Vhsgx",
+  "name": "[Interno] Notificação de Erro Slack",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fc0551fc-a263-4bd4-b6b6-2a81cf3e8d9c",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C087V81P8LD",
+          "mode": "list",
+          "cachedResultName": "notificaçoes"
+        },
+        "text": "=Olá   \nErro no workflow:  {{ $json.workflow.name }}    \n{{ $json.execution.url }}   \nMessagem:  {{ $json.execution.error.message }}   \nÚltimo módulo executado :  {{ $json.execution.lastNodeExecuted }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        220,
+        0
+      ],
+      "id": "b485babb-7ad7-4538-b34b-df10d8615b06",
+      "name": "Slack",
+      "webhookId": "9dfcb3be-2355-4073-adca-63fc4f52d1c7",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "HWkknERDJsuI0Mjb",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "a0f4f5e0-9aa3-4c17-b1c3-5e4ec0581670",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "4ba7ee2b-2688-4ebe-84ca-1647cccc1d80",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-03-18T14:27:21.558Z",
+      "createdAt": "2025-03-18T14:27:21.558Z",
+      "role": "workflow:owner",
+      "workflowId": "C0JGoY8oqU3Vhsgx",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
