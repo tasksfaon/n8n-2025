@@ -1,0 +1,256 @@
+{
+  "updatedAt": "2026-04-16T11:47:00.698Z",
+  "createdAt": "2026-03-10T15:25:41.874Z",
+  "id": "Yu16ntjFGjoGLa0z",
+  "name": "[Sidnei] Fraternidade Consultoria 360 | Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "917c9969-bc0e-4579-b746-fe20f60e3c03",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -144,
+        -64
+      ],
+      "id": "d7c65063-475d-49ef-a167-fd168d0ab82f",
+      "name": "Webhook",
+      "webhookId": "917c9969-bc0e-4579-b746-fe20f60e3c03"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =========================\n// FUNÇÃO NORMALIZADORA\n// =========================\nconst norm = (s) =>\n  (s || \"\")\n    .toString()\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .toLowerCase()\n    .replace(/\\s+/g, \" \")\n    .trim();\n\n\n// =========================\n// TELEFONE\n// =========================\nlet telefone = $json.body.contact_phone || \"\";\ntelefone = telefone.replace(/\\D/g, \"\");\n\nif (telefone.startsWith(\"55\") && telefone.length > 11) {\n  telefone = telefone.substring(2);\n}\n\nif (telefone.length === 10) {\n  const ddd = telefone.substring(0, 2);\n  const numero = telefone.substring(2);\n  telefone = ddd + \"9\" + numero;\n}\n\nif (telefone.length === 11) {\n  telefone = \"55\" + telefone;\n}\n\n\n// =========================\n// MEMBRO\n// =========================\nlet nomeOriginal = $json.body.deal_user_name || \"\";\nlet nomeKey = norm(nomeOriginal);\n\nlet email_membro = \"Não encontrado\";\n\n\n// =========================\n// BASE MEMBROS\n// =========================\nconst membros = {\n  \"kauan matheus\": \"kaua.caeclub@gmail.com\",\n  \"erika adm\": \"maria.victoria@caeclub.com.br\",\n  \"leticia piazzetta\": \"letty.piazzetta@gmail.com\",\n  \"caroline fernandes\": \"carolineprado2017@icloud.com\",\n  \"mateus laurentino\": \"mateusl.caeclub@gmail.com\",\n  \"alice theophilo pereira\": \"alicetheophilope@gmail.com\",\n  \"beatriz adriany\": \"biahadriany@gmail.com\",\n  \"jessica miranda\": \"contato@caesaopaulo.com.br\",\n  \"jonathan andre\": \"jonathanandrepires@gmail.com\",\n  \"heloiza ciocheti martins\": \"heloizaciocheti15@gmail.com\",\n  \"talita artacho\": \"talita.a.caeclub@gmail.com\",\n  \"beatriz foresto\": \"bia.caeclub@gmail.com\"\n};\n\n\n// =========================\n// ALIASES\n// =========================\nconst aliases = {\n  \"jonatan\": \"jonathan andre\",\n  \"jonathan\": \"jonathan andre\",\n  \"jonathan pires\": \"jonathan andre\",\n  \"kaua\": \"kauan matheus\",\n  \"erika\": \"erika adm\",\n  \"leticia\": \"leticia piazzetta\",\n  \"caroline\": \"caroline fernandes\",\n  \"mateus\": \"mateus laurentino\",\n  \"alice\": \"alice theophilo pereira\",\n  \"jessica\": \"jessica miranda\",\n  \"heloiza\": \"heloiza ciocheti martins\",\n  \"talita\": \"talita artacho\"\n};\n\nif (aliases[nomeKey]) {\n  nomeKey = aliases[nomeKey];\n}\n\n\n// =========================\n// POLO (VINDO DO WEBHOOK)\n// =========================\nlet polos = $('Webhook').item.json.body.contact_interesse_polo || [];\n\nlet polosTexto = norm(polos.join(\" \"));\n\n\n// =========================\n// DETECÇÃO POR POLO\n// =========================\nconst regioesTalita = [\n  \"faria lima\",\n  \"osasco\",\n  \"grande abc\",\n  \"granja\",\n  \"lapa\",\n  \"campo belo\",\n  \"mooca\",\n  \"santo amaro\"\n];\n\nconst regioesMateus = [\n  \"butanta\",\n  \"vila maria\",\n  \"alphaville\",\n  \"tatuape\",\n  \"santos\"\n];\n\nif (regioesTalita.some(r => polosTexto.includes(r))) {\n  nomeKey = \"talita artacho\";\n}\n\nif (regioesMateus.some(r => polosTexto.includes(r))) {\n  nomeKey = \"mateus laurentino\";\n}\n\n\n// =========================\n// MATCH EXATO\n// =========================\nif (membros[nomeKey]) {\n  email_membro = membros[nomeKey];\n}\n\n\n// =========================\n// MATCH PARCIAL\n// =========================\nif (email_membro === \"Não encontrado\" && nomeKey) {\n  for (const nomeBase in membros) {\n    if (\n      nomeBase.includes(nomeKey) ||\n      nomeKey.includes(nomeBase)\n    ) {\n      email_membro = membros[nomeBase];\n      break;\n    }\n  }\n}\n\n\n// =========================\n// RETORNO\n// =========================\nreturn [\n  {\n    json: {\n      telefone_formatado: telefone,\n      membro_nome_detectado: nomeKey,\n      email_membro: email_membro,\n      polos_detectados: polosTexto\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        -64
+      ],
+      "id": "9a0a4716-2472-4f16-843f-8a9b5f915061",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f6486870-0d98-4536-b7ef-9ce391ec213a",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "c994d8ff-ab5e-4fed-b61b-b00539713714",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "486d76fd-9efd-4174-90da-b25a286015ae",
+              "name": "Telefone",
+              "value": "={{ $json.telefone_formatado }}",
+              "type": "string"
+            },
+            {
+              "id": "eae097f3-dd9f-4dd0-a838-4197eebc8b19",
+              "name": "Polo",
+              "value": "={{ $('Webhook').item.json.body.contact_interesse_polo[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "e1e8ed92-c3c8-442e-87e4-833498b754a0",
+              "name": "Vendedor",
+              "value": "={{ $json.email_membro }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        -64
+      ],
+      "id": "24ee0bf6-e668-4003-92c5-7a6d1ff5d91e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        688,
+        -64
+      ],
+      "id": "7b01f1b4-a67d-40d8-b527-a6b22c718b4f",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/d079d1df-a1c1-4d55-bbf8-3db1ba70d33e",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Vendedor",
+              "value": "={{ $json.Vendedor }}"
+            },
+            {
+              "name": "Polo",
+              "value": "={{ $json.Polo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        -64
+      ],
+      "id": "1d3d44b2-7d1d-4669-980b-db190e9d91b3",
+      "name": "HTTP Clint Consultoria 360"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint Consultoria 360",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Consultoria 360": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.13.4",
+            "content-length": "359",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "baggage": "sentry-trace_id=2af9603ddf534b44b968e25f3e403f0c,sentry-sample_rate=0,sentry-transaction=queue-process,sentry-public_key=943206222a3db90a292f22d119bec999,sentry-org_id=214542,sentry-environment=production,sentry-sampled=false,sentry-sample_rand=0.803414,sentry-release=c684bcc0a01a070287329c276c76fb7a75214f87,bubblegroup.http.route=workflow%2Fstart,bubblegroup.http.host=app.escoladeimoveis.com.br,bubblegroup.workflow.appname=escoladeimoveis,bubblegroup.workflow.app_version=live,bubblegroup.workflow.situation=page_wf,bubblegroup.workflow.id=bTdNR,bubblegroup.workflow.event.type=ButtonClicked,bubblegroup.workflow.action.id=bTdNk,bubblegroup.workflow.action.type=apiconnector2-bTbRX.bTbSe,origin=3,name=flows,loc=app.tasks.flows.batch_evaluate_flow_action_evaluations_webhook_send_multibroker__r2,source=klaviyo,bubblegroup.client.version=19dd5d29f893e7b7c5a33ffca171dfe8ef030c0c,bubblegroup.client.commit_timestamp=1771454152000,actorType=user,userId=01CA6WF3X9PYM1ATVXAMJ1ARMA,rootTimestamp=1762200809102,userToken=01K95B70NAFJ04DK4KBVYHGHXN,rootTraceId=b70dac89ed93664fda60d1783e6b30e3,user_agent.origin=web,com.fivetran.utils.static_context_factory.MultiTenantStaticContextFactory_CONTEXT=00592e35-eb6b-4e3f-8be0-5521e868228e",
+            "content-type": "application/json",
+            "traceparent": "00-69b027e7000000003221982c6443de9b-66ce2091a6b6b39e-00",
+            "tracestate": "dd=t.tid:69b027e700000000;t.dm:-12;s:-1;p:66ce2091a6b6b39e",
+            "x-datadog-parent-id": "7407894247010382750",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=69b027e700000000",
+            "x-datadog-trace-id": "3612335692556000923",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "teste ee",
+            "contact_email": "ste@gmail.com.br",
+            "contact_phone": "+5531984617540",
+            "deal_stage": "FINANCEIRO/VENDA CONCLUÍDA",
+            "deal_user": "alicetheophilope@gmail.com",
+            "deal_status": "WON",
+            "contact_polo": "Santos",
+            "contact_interesse_polo": [
+              "CAE CLUB - Polo Tatuapé"
+            ],
+            "deal_polo": "",
+            "deal_user_name": "Alice Theophilo Pereira ",
+            "contact_convidado": ""
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/novo-fraternidade-360-cs",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "b347da9e-5949-4bed-ad78-f719179f0b82",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-10T15:25:41.874Z",
+      "createdAt": "2026-03-10T15:25:41.874Z",
+      "role": "workflow:owner",
+      "workflowId": "Yu16ntjFGjoGLa0z",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
