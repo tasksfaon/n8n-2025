@@ -1,0 +1,1138 @@
+{
+  "updatedAt": "2025-11-25T14:59:51.806Z",
+  "createdAt": "2025-11-25T00:35:34.625Z",
+  "id": "t6cvbM48mv12rrWK",
+  "name": "Personalized Cold Email Writer",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        368
+      ],
+      "id": "22553b11-42a8-47ac-8988-1c9223bc683a",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "links",
+              "cssSelector": "a",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {
+          "trimValues": true,
+          "cleanUpText": true
+        }
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        432,
+        144
+      ],
+      "id": "22c27b7a-09bf-4f1b-a0e3-a672e78a7f8c",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "links",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        112,
+        592
+      ],
+      "id": "34b843ad-9fca-4b0a-8226-c1aef2648384",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.links }}",
+        "options": {}
+      },
+      "id": "8b70c619-7f7e-4c6c-8fa9-a527ebb419fb",
+      "name": "Request web page for URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        752,
+        352
+      ],
+      "typeVersion": 4.2,
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data ? $json.data : \"<div>empty</div>\" }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        912,
+        352
+      ],
+      "id": "02bd7e95-42d5-4d3f-a442-76170ce079d6",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're a helpful, intelligent website scraping assistant.",
+              "role": "system"
+            },
+            {
+              "content": "You're provided a Markdown scrape of a website page. Your task is to provide a two-paragraph abstract of what this page is about.\n\nReturn in this JSON format:\n\n{\"abstract\":\"your abstract goes here\"}\n\nRules:\n- Your extract should be comprehensive—similar level of detail as an abstract to a published paper.\n- Use a straightforward, spartan tone of voice.\n- If it's empty, just say \"no content\"."
+            },
+            {
+              "content": "={{ $json.data }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        1200,
+        224
+      ],
+      "id": "ad2f063b-9f3d-4ded-ad74-893565fe5a4d",
+      "name": "Summarize Website Page",
+      "credentials": {
+        "openAiApi": {
+          "id": "euQRnhQqhy07ZDcm",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        432,
+        592
+      ],
+      "id": "27e52aba-c348-4d4f-bec4-51e275026f52",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['organization_website_url'] }}",
+        "options": {
+          "allowUnauthorizedCerts": false,
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "2329a4f7-a418-4ee1-a9fe-627ad782275c",
+      "name": "Scrape Home",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        272,
+        144
+      ],
+      "executeOnce": false,
+      "typeVersion": 4.2,
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message.content.abstract"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        224
+      ],
+      "id": "b113236d-e821-4188-a38a-93d55e5e2aa5",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're a helpful, intelligent sales assistant.",
+              "role": "system"
+            },
+            {
+              "content": "=You're provided a Markdown scrape of a fashion brand's website. Your task is to provide a two-paragraph abstract of what this page is about. Return in this JSON format: {\"abstract\":\"your abstract goes here\"}\nRules:\n•⁠  ⁠Your extract should be comprehensive—similar level of detail as an abstract to a published paper.\n•⁠  ⁠Use a straightforward, spartan tone of voice.\n•⁠  ⁠If it's empty, just say \"no content\".\nWe just scraped a series of web pages for a fashion brand. Your task is to take their summaries and turn them into catchy, personalized openers for a cold DM campaign to imply that the rest of the campaign is personalized.\nYou'll return your icebreakers in the following JSON format:\n{\"icebreaker\":\"Hey {name}. Just came across {brandName} while researching brands in the {niche} space and got impressed by {specificObservation}.\\n\\nFor the past 5 years I've worked exclusively with fashion brands on Google Ads (brands like Iorane, Naah Store, Zaleski Dream) and saw massive scaling potential with {brandName}.\\n\\nThat's why I created this entire analysis for you. 16 pages covering CRO improvements, Google Ads strategies, and Q4 opportunities specifically for your brand.\\n\\nI wouldn't have spent hours putting together a full dossier if I didn't genuinely see this working. Check it out and let me know your thoughts.\"}\nContext about our agency: We work exclusively with fashion DTC brands on Google Ads. Nothing else, just fashion. We've helped brands like Ookioh, Oya Femtech, Omika, Pilot and Powell, and Alysson Eastman scale profitably through our fashion-proven Google Ads framework.\nOur typical results:\n•⁠  ⁠Alysson Eastman: $142K revenue in 30 days with 3.3x ROAS\n•⁠  ⁠Pilot & Powell: $92K revenue with 3.45x ROAS while decreasing CPA by 22%\n•⁠  ⁠Zaleski: $57K with 4.86x ROAS\nWe specialize in helping fashion brands who either struggle to scale Google Ads beyond branded terms or haven't tapped into Google Ads potential yet (46% of fashion searches happen on Google).\nRules:\n•⁠  ⁠Write in a spartan/laconic tone of voice.\n•⁠  ⁠Make sure to use the above format when constructing your icebreakers. We wrote it this way on purpose.\n•⁠  ⁠Shorten the brand name wherever possible (say \"Leo Lin\" instead of \"Leo Lin Official\", \"Cara Cara\" instead of \"Cara Cara Collection\").\n•⁠  ⁠Do the same with locations if relevant.\n•⁠  ⁠For your variables, focus on small, non-obvious things about their brand to paraphrase. The idea is to make people think we really dove deep into their website and Instagram.\n•⁠  ⁠Do not say cookie-cutter stuff like \"Love your website!\" or \"Love your aesthetic!\".\n•⁠  ⁠Focus on specific observations like: their use of prints/patterns, how they position in their niche, specific collections, design approach, fabric choices, brand storytelling, or unique selling angle.\n•⁠  ⁠Do not use hyphens and emojis.\n•⁠  ⁠The {specificObservation} should feel genuine and show you actually looked at their website, not generic fashion compliments.\nThe observations should be about the website and CRO ideas, here it is examples of good specific observations:\n•⁠  ⁠“Main CTA is the most visually prominent element with clear action-oriented copy”\n•⁠  ⁠“Progress bar clearly shows distance to free shipping threshold in cart”\n•⁠  ⁠“Product images support smooth zoom functionality on mobile devices”\n•⁠  ⁠“Search bar provides relevant auto-suggestions and category filtering while typing”\n•⁠  ⁠“Customer reviews display verified buyer badges with authentic product photos”\n•⁠  ⁠“Urgency triggers effectively communicate scarcity (limited stock, viewing count, timers)”\nNever talks about products, here it is examples of bad observations to avoid:\n•⁠  ⁠\"your beautiful website\"\n•⁠  ⁠\"your amazing products\"\n•⁠  ⁠\"your great brand\"\n•⁠  ⁠\"your stunning designs\"\n“designs that reflects real bodies”"
+            },
+            {
+              "content": "=Profile: Aina Rakotoarinaly, CEO founder - Maki Agency / Ti'bouffe, Maki agency, outsourcing/offshoring, Antananarivo, Madagascar\n\nWebsite: \n\nThis webpage presents Maki Agency, a professional digital outsourcing company based in Madagascar that specializes in tailored web development, integration, design, SEO, content creation, community management, and more. The agency offers a range of white-label and dedicated resource solutions, targeting businesses that wish to outsource various digital projects. Maki Agency emphasizes its team's versatile technical expertise across major web technologies, including CSS, HTML, JQuery, WordPress, PHP, WooCommerce, Laravel, and Odoo. The company positions itself as an ideal partner for comprehensive digital support, ensuring that client's digital and branding needs are met through experienced personnel and rigorous project management.\\n\\nThe website details the specific services provided, such as graphic and web design (logos, banners, retouching), web integration (landing pages, newsletters, site layouts), development (showcase sites, e-commerce, intranets, bespoke applications, maintenance), content writing (SEO-optimized texts, articles, product sheets, social media posts), search engine optimization (audits, optimizations, submissions), and social media management. The agency highlights its strengths in quality of work, experience, and discretion, especially in white-label arrangements. Visitors are encouraged to contact Maki Agency for new or existing projects, and convenient contact options (phone, QR codes, social media, chat) are provided for initiating discussions.\n\nThis page presents Maki Agency, a Madagascar-based digital agency specializing in web outsourcing and subcontracting services. The agency emphasizes its experience and dedicated team capable of handling diverse digital tasks such as web development, design, SEO, content writing, integration, community management, and maintenance. Maki Agency offers both white-label and dedicated resource solutions for clients seeking to externalize parts of their workflow to a specialized offshore partner. The descriptions highlight the agency's proficiency in popular web technologies, frameworks, and CMS platforms (such as HTML, CSS, PHP, WordPress, Laravel, WooCommerce, and Odoo), as well as its ability to execute projects ranging from landing pages, e-commerce platforms, and intranets to detailed graphic design and content creation.\\n\\nThe site underscores Maki Agency's core values and competitive advantages, such as meticulous attention to detail, experienced professionals, creativity, discretion, and a client-focused approach. It provides detailed breakdowns of service offerings, ranging from graphic materials (logos, flyers, banners), technical integration, app and website development, staff outsourcing (developers, designers, writers), SEO strategies, community management, and digital content production. Contact details and multiple avenues for communication (phone, WhatsApp, Skype, QR codes) are prominently featured, along with encouragements for clients to reach out for consultations or ongoing projects requiring outsourcing. The agency also highlights its longevity and adaptability in the digital sector, supporting clients across various industries and digital competencies"
+            },
+            {
+              "content": "{\"icebreaker\":\"Hey Aina,\\n\\nLove what you're doing at Maki. Also doing some outsourcing right now, wanted to run something by you.\\n\\nSo I hope you'll forgive me, but I creeped you/Maki quite a bit. I know that discretion is important to you guys (or at least I'm assuming this given the part on your website about white-labelling your services) and I put something together a few months ago that I think could help. To make a long story short, it's an outreach system that uses AI to find people hiring website devs. Then pitches them with templates (actually makes them a white-labelled demo website). Costs just a few cents to run, very high converting, and I think it's in line with Maki's emphasis on scalability.\"}",
+              "role": "assistant"
+            },
+            {
+              "content": "=Profile: {{ $node[\"Get Search URL\"].json.first_name }} {{ $node[\"Get Search URL\"].json.last_name }} {{ $node[\"Get Search URL\"].json.headline }}\n\nWebsite: {{ $json.abstract.join(\"/n\") }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        1200,
+        448
+      ],
+      "id": "56f09f1b-ecd6-4ac0-8eec-1cf50e9b86f2",
+      "name": "Generate Multiline Icebreaker",
+      "credentials": {
+        "openAiApi": {
+          "id": "euQRnhQqhy07ZDcm",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1z4_JWLSsO7V_2U9duotxaCXdhcDACwFLWtKkX9KRxOY",
+          "mode": "list",
+          "cachedResultName": "Marketing Companies (AUS)(Fully verified)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1z4_JWLSsO7V_2U9duotxaCXdhcDACwFLWtKkX9KRxOY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1034888960,
+          "mode": "list",
+          "cachedResultName": "Marketing Companies (AUS)(Fully verified)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1z4_JWLSsO7V_2U9duotxaCXdhcDACwFLWtKkX9KRxOY/edit#gid=1034888960"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "="
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        112,
+        144
+      ],
+      "id": "b6bdd8fd-c85b-4aae-a7af-2c374b724a11",
+      "name": "Get Search URL",
+      "executeOnce": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "40fd7130-c65d-4826-a713-ecca24d23b07",
+              "name": "links",
+              "value": "={{ $json.links }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        432,
+        368
+      ],
+      "id": "982223e3-c1ed-4678-baa5-0a267afdada8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Get base URL from previous node (make sure it's executed!)\nconst BASE_URL_RAW = $('Get Search URL').first().json.organization_website_url?.trim();\nif (!BASE_URL_RAW) {\n  throw new Error(\"Missing organization_website_url from 'Code1' node.\");\n}\n\nconst BASE_URL = BASE_URL_RAW.replace(/\\/$/, \"\"); // remove trailing slash\n\nconst getHostname = (url) => {\n  return url\n    .replace(/^https?:\\/\\//, \"\")\n    .replace(/^www\\./, \"\")\n    .split(\"/\")[0];\n};\n\nconst baseHostname = getHostname(BASE_URL);\n\n// Initialize result\nconst seen = new Set();\nconst updatedItems = [\n  { json: { links: `${BASE_URL}/` } }\n];\nseen.add(`${BASE_URL}/`);\n\nitems.forEach((item) => {\n  const link = item?.json?.links;\n  if (typeof link !== \"string\") return;\n\n  const cleanLink = link.trim().toLowerCase();\n\n  const isAnchor = cleanLink.startsWith(\"#\");\n  const isMailOrPhone = cleanLink.startsWith(\"mailto:\") || cleanLink.startsWith(\"tel:\");\n  const isEmpty = cleanLink === \"\" || cleanLink === \"#\" || cleanLink === \"#.\";\n  const isSocial = [\n    \"facebook.com\", \"instagram.com\", \"linkedin.com\", \"twitter.com\",\n    \"youtube.com\", \"tiktok.com\", \"pinterest.com\", \"snapchat.com\"\n  ].some(domain => cleanLink.includes(domain));\n\n  if (isAnchor || isMailOrPhone || isEmpty || isSocial) return;\n\n  let fullUrl = null;\n\n  if (cleanLink.startsWith(\"http://\") || cleanLink.startsWith(\"https://\")) {\n    const linkHostname = getHostname(cleanLink);\n    if (linkHostname !== baseHostname) return;\n\n    // Extract path manually\n    const pathParts = cleanLink.split(linkHostname);\n    const path = pathParts[1]?.split(/[?#]/)[0] || \"/\";\n    const cleanPath = path.endsWith(\"/\") && path !== \"/\" ? path.slice(0, -1) : path;\n\n    fullUrl = `${BASE_URL}${cleanPath}`;\n  } else if (cleanLink.startsWith(\"/\")) {\n    const cleanPath = cleanLink.endsWith(\"/\") && cleanLink !== \"/\" ? cleanLink.slice(0, -1) : cleanLink;\n    fullUrl = `${BASE_URL}${cleanPath}`;\n  }\n\n  if (fullUrl && !seen.has(fullUrl)) {\n    seen.add(fullUrl);\n    updatedItems.push({ json: { links: fullUrl } });\n  }\n});\n\nreturn updatedItems;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        592
+      ],
+      "id": "ae9b36f2-1945-477f-968e-2efee70d0020",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1z4_JWLSsO7V_2U9duotxaCXdhcDACwFLWtKkX9KRxOY",
+          "mode": "list",
+          "cachedResultName": "Marketing Companies (AUS)(Fully verified)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1z4_JWLSsO7V_2U9duotxaCXdhcDACwFLWtKkX9KRxOY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1034888960,
+          "mode": "list",
+          "cachedResultName": "Marketing Companies (AUS)(Fully verified)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1z4_JWLSsO7V_2U9duotxaCXdhcDACwFLWtKkX9KRxOY/edit#gid=1034888960"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "IceBreaker": "={{ $json.message.content.icebreaker }}",
+            "Status": "Done",
+            "linkedin_url": "={{ $node[\"Get Search URL\"].json.linkedin_url}}"
+          },
+          "matchingColumns": [
+            "linkedin_url"
+          ],
+          "schema": [
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "personal_email",
+              "displayName": "personal_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "organization_website_url",
+              "displayName": "organization_website_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "IceBreaker",
+              "displayName": "IceBreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "headline",
+              "displayName": "headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company LinkedIn URL",
+              "displayName": "Company LinkedIn URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "organization_phone",
+              "displayName": "organization_phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization_postal_code",
+              "displayName": "organization_postal_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization_primary_domain",
+              "displayName": "organization_primary_domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization_raw_address",
+              "displayName": "organization_raw_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "photo_url",
+              "displayName": "photo_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "seniority",
+              "displayName": "seniority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "twitter_url",
+              "displayName": "twitter_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "domain",
+              "displayName": "domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "overall_score",
+              "displayName": "overall_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1520,
+        448
+      ],
+      "id": "89d655b1-484f-4f7f-9ed7-91f2aab70e99",
+      "name": "Google Sheets"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1z4_JWLSsO7V_2U9duotxaCXdhcDACwFLWtKkX9KRxOY",
+          "mode": "list",
+          "cachedResultName": "Marketing Companies (AUS)(Fully verified)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1z4_JWLSsO7V_2U9duotxaCXdhcDACwFLWtKkX9KRxOY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1034888960,
+          "mode": "list",
+          "cachedResultName": "Marketing Companies (AUS)(Fully verified)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1z4_JWLSsO7V_2U9duotxaCXdhcDACwFLWtKkX9KRxOY/edit#gid=1034888960"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Error",
+            "linkedin_url": "={{ $('Get Search URL').item.json.linkedin_url }}"
+          },
+          "matchingColumns": [
+            "linkedin_url"
+          ],
+          "schema": [
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "personal_email",
+              "displayName": "personal_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization_website_url",
+              "displayName": "organization_website_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IceBreaker",
+              "displayName": "IceBreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "headline",
+              "displayName": "headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company LinkedIn URL",
+              "displayName": "Company LinkedIn URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization_phone",
+              "displayName": "organization_phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization_postal_code",
+              "displayName": "organization_postal_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization_primary_domain",
+              "displayName": "organization_primary_domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "organization_raw_address",
+              "displayName": "organization_raw_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "photo_url",
+              "displayName": "photo_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "seniority",
+              "displayName": "seniority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "twitter_url",
+              "displayName": "twitter_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "domain",
+              "displayName": "domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "overall_score",
+              "displayName": "overall_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        272,
+        368
+      ],
+      "id": "49f348a6-6114-4f76-a267-5635a785ae3a",
+      "name": "Google Sheets1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0f0accc3-f769-43ee-9d8c-350748f3edfb",
+              "leftValue": "={{ $json.links }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        112,
+        368
+      ],
+      "id": "c6e31f35-2f17-41de-9dee-691aa3a4f1df",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "content": "# Step-1\n## Search website & find all pages on their website",
+        "height": 840,
+        "width": 600,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "5a8a17f8-64c0-414a-ae86-0786605b9fd9",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Step-2 \n## Visit each page & convert html to text",
+        "height": 840,
+        "width": 420,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        672,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "36d8bd80-37a1-40f0-a9b1-912c80c14fb3",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Step-3\n## Summarize each page & generate icebreaker",
+        "height": 840,
+        "width": 580,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "69d0c781-2e62-45c0-95cf-52d5112ad77b",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Search URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request web page for URL": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Summarize Website Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Website Page": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Request web page for URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Home": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Generate Multiline Icebreaker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Multiline Icebreaker": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Search URL": {
+      "main": [
+        [
+          {
+            "node": "Scrape Home",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Get Search URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Get Search URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "826b8387-aab1-4ac4-b850-d92b44fe413b",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-25T00:35:34.625Z",
+      "createdAt": "2025-11-25T00:35:34.625Z",
+      "role": "workflow:owner",
+      "workflowId": "t6cvbM48mv12rrWK",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
