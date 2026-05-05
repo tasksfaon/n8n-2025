@@ -1,0 +1,405 @@
+{
+  "updatedAt": "2026-04-16T19:23:08.674Z",
+  "createdAt": "2025-05-09T20:15:54.982Z",
+  "id": "Y5Uuj6OoBgHXrKbX",
+  "name": "[sidney] cae cademy lp e clint",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cae-academi-clint-lp",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "65e40aa8-bae0-42ad-83ae-c3942c065be4",
+      "name": "Webhook",
+      "webhookId": "a36dc5dd-cb13-4de7-a996-47c09793f5a8"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\n\n// Extrai nome e e-mail diretamente\nconst nome = body.input_text;\nconst email = body.email;\n\n// Formata telefone no padrão 55DDDTelefone\nlet telefone = body.phone || '';\ntelefone = telefone.replace(/\\D/g, ''); // Remove tudo que não for número\nif (telefone.startsWith('55')) {\n  telefone = telefone;\n} else if (telefone.length === 11) {\n  telefone = '55' + telefone;\n} else if (telefone.length === 13 && telefone.startsWith('550')) {\n  telefone = telefone.replace(/^550/, '55');\n}\n\nreturn [\n  {\n    json: {\n      nome: nome,\n      email: email,\n      telefone: telefone,\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "2321edd2-4c30-41e3-985c-25aa98fc8859",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e3b7870b-c8e6-49c1-a90f-1da0270ebc6c",
+              "name": "Nome",
+              "value": "={{ $json.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "130c62d4-4fcf-48b0-a2ae-4b82e7bfdf7c",
+              "name": "Email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "24dcba61-5c0c-4642-b4c4-3b9809f98f6c",
+              "name": "Telefone",
+              "value": "={{ $json.telefone }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "54b2e755-805f-4f05-bb2d-0287aa644e36",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/66f5599b-4592-46c7-a1e2-218dd07a8fe5",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "fdf51668-073c-418a-88af-9810e4bea3a3",
+      "name": "HTTP Clint"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "f3eaaf8a-b2eb-4cd5-bb21-b7f4a5e8ceea",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.7.2; https://caeclub.com.br",
+            "content-length": "719",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/json",
+            "x-forwarded-for": "177.154.191.146",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "177.154.191.146"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "input_text": "Isabella Teste",
+            "email": "isa_simaia@hotmail.com",
+            "phone": "+5511998455767",
+            "_fluentform_24_fluentformnonce": "5f21a54df7",
+            "__submission": {
+              "id": "2165",
+              "form_id": "24",
+              "serial_number": "3",
+              "source_url": "https://caeclub.com.br/cae-academy-formacao-de-embaixadores/",
+              "user_id": "0",
+              "status": "unread",
+              "is_favourite": "0",
+              "browser": "Chrome",
+              "device": "Apple",
+              "ip": "189.79.18.105",
+              "city": null,
+              "country": null,
+              "payment_status": null,
+              "payment_method": null,
+              "payment_type": null,
+              "currency": null,
+              "payment_total": null,
+              "total_paid": null,
+              "created_at": "2025-05-11 22:38:15",
+              "updated_at": "2025-05-11 22:38:15",
+              "user_inputs": {
+                "input_text": "José Marinho",
+                "email": "jose.marinhof@hotmail.com",
+                "phone": "+5511998455767"
+              }
+            }
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/cae-academi-clint-lp",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "fd909c7b-6827-4f3a-b1b7-555f5919e997",
+  "activeVersionId": "fd909c7b-6827-4f3a-b1b7-555f5919e997",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-05-09T20:15:54.982Z",
+      "createdAt": "2025-05-09T20:15:54.982Z",
+      "role": "workflow:owner",
+      "workflowId": "Y5Uuj6OoBgHXrKbX",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-16T19:23:46.184Z",
+    "createdAt": "2026-04-16T19:23:08.676Z",
+    "versionId": "fd909c7b-6827-4f3a-b1b7-555f5919e997",
+    "workflowId": "Y5Uuj6OoBgHXrKbX",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "cae-academi-clint-lp",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "65e40aa8-bae0-42ad-83ae-c3942c065be4",
+        "name": "Webhook",
+        "webhookId": "a36dc5dd-cb13-4de7-a996-47c09793f5a8"
+      },
+      {
+        "parameters": {
+          "jsCode": "const body = $input.first().json.body;\n\n// Extrai nome e e-mail diretamente\nconst nome = body.input_text;\nconst email = body.email;\n\n// Formata telefone no padrão 55DDDTelefone\nlet telefone = body.phone || '';\ntelefone = telefone.replace(/\\D/g, ''); // Remove tudo que não for número\nif (telefone.startsWith('55')) {\n  telefone = telefone;\n} else if (telefone.length === 11) {\n  telefone = '55' + telefone;\n} else if (telefone.length === 13 && telefone.startsWith('550')) {\n  telefone = telefone.replace(/^550/, '55');\n}\n\nreturn [\n  {\n    json: {\n      nome: nome,\n      email: email,\n      telefone: telefone,\n    }\n  }\n];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "2321edd2-4c30-41e3-985c-25aa98fc8859",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e3b7870b-c8e6-49c1-a90f-1da0270ebc6c",
+                "name": "Nome",
+                "value": "={{ $json.nome }}",
+                "type": "string"
+              },
+              {
+                "id": "130c62d4-4fcf-48b0-a2ae-4b82e7bfdf7c",
+                "name": "Email",
+                "value": "={{ $json.email }}",
+                "type": "string"
+              },
+              {
+                "id": "24dcba61-5c0c-4642-b4c4-3b9809f98f6c",
+                "name": "Telefone",
+                "value": "={{ $json.telefone }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          440,
+          0
+        ],
+        "id": "54b2e755-805f-4f05-bb2d-0287aa644e36",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/66f5599b-4592-46c7-a1e2-218dd07a8fe5",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "Nome",
+                "value": "={{ $json.Nome }}"
+              },
+              {
+                "name": "Email",
+                "value": "={{ $json.Email }}"
+              },
+              {
+                "name": "Telefone",
+                "value": "={{ $json.Telefone }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          660,
+          0
+        ],
+        "id": "fdf51668-073c-418a-88af-9810e4bea3a3",
+        "name": "HTTP Clint"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          880,
+          0
+        ],
+        "id": "f3eaaf8a-b2eb-4cd5-bb21-b7f4a5e8ceea",
+        "name": "No Operation, do nothing"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "HTTP Clint",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Clint": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": "Version fd909c7b",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
