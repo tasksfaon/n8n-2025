@@ -1,0 +1,328 @@
+{
+  "updatedAt": "2026-03-24T11:52:23.404Z",
+  "createdAt": "2025-07-08T13:50:18.884Z",
+  "id": "KpnilAsjshRuzAgQ",
+  "name": "[Ana Camargo] WVI compra Aprovada Hotmart",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ana-wvi-ca-hot",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        440
+      ],
+      "id": "2205c4f1-ec0a-4d32-8ed0-74d7d781ff8c",
+      "name": "Webhook",
+      "webhookId": "5c23b492-7f36-4296-a072-c14776262507"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone = $input.first().json.body.data.buyer.checkout_phone|| \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 10 dígitos começando com 9)\n  if (parseInt(ddd) >= 30 && numero.length === 10 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        440
+      ],
+      "id": "6af80aec-21a5-40a9-8265-b685b9bfc22f",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50e85938-5f93-4e68-8023-d1e348cc59ea",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.name }}",
+              "type": "string"
+            },
+            {
+              "id": "683fdbc9-ad30-4919-8081-053bc1487df3",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.email }}",
+              "type": "string"
+            },
+            {
+              "id": "f8a97570-39fd-4e8f-9c40-53bc95ae9310",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "883f841d-62bc-4540-9c05-3a17bee936a0",
+              "name": "Data Lead",
+              "value": "={{    new Date().getDate().toString().padStart(2, '0') + '/' +   (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +   new Date().getFullYear() + ' ' +   new Date().getHours().toString().padStart(2, '0') + ':' +   new Date().getMinutes().toString().padStart(2, '0') }}",
+              "type": "string"
+            },
+            {
+              "id": "0f65db0e-ab76-4689-a79b-d9300d726a57",
+              "name": "Produto",
+              "value": "={{ $('Webhook').item.json.body.data.product }}",
+              "type": "string"
+            },
+            {
+              "id": "35eed777-dc61-4e08-a7b7-2609d96c790b",
+              "name": "Oferta",
+              "value": "={{ $('Webhook').item.json.body.data.purchase.offer.code }}",
+              "type": "string"
+            },
+            {
+              "id": "fba99838-56c1-4aa4-9ecf-8b4dae91ffd1",
+              "name": "Order bump",
+              "value": "={{ $('Webhook').item.json.body.data.purchase.order_bump.is_order_bump }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        140,
+        440
+      ],
+      "id": "20e8460b-8655-410c-9bb4-f31a5f421c5c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        720,
+        460
+      ],
+      "id": "140cb0f8-9783-4947-9235-7105e5623d64",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "18201332-f994-4f54-a4c7-2036ec8bf51d",
+              "leftValue": "={{ $json.Produto }}",
+              "rightValue": "Workshop loja infantil - semestre de ouro",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        440
+      ],
+      "id": "c6d55211-068f-4d63-8693-52d8dd9c9b5b",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Jodd HTTP",
+            "content-length": "1550",
+            "content-type": "application/json",
+            "x-forwarded-for": "3.237.36.71",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-hotmart-hottok": "9AReypNTcGMr9aPCPGSI80hQDonoKF1908707",
+            "x-real-ip": "3.237.36.71",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "data": {
+              "product": {
+                "has_co_production": false,
+                "name": "Workshop loja infantil - semestre de ouro",
+                "warranty_date": "2025-07-16T00:00:00Z",
+                "is_physical_product": false,
+                "id": 5834628,
+                "ucode": "e7b63d52-e5ec-4891-9fec-a215bd5f0a68"
+              },
+              "commissions": [
+                {
+                  "currency_value": "BRL",
+                  "source": "MARKETPLACE",
+                  "value": 0.2
+                },
+                {
+                  "currency_value": "BRL",
+                  "source": "PRODUCER",
+                  "value": 0.8
+                }
+              ],
+              "purchase": {
+                "original_offer_price": {
+                  "currency_value": "BRL",
+                  "value": 1
+                },
+                "subscription_anticipation_purchase": false,
+                "checkout_country": {
+                  "iso": "BR",
+                  "name": "Brasil"
+                },
+                "order_bump": {
+                  "is_order_bump": false
+                },
+                "approved_date": 1752070567000,
+                "offer": {
+                  "code": "z10dvtto",
+                  "coupon_code": "LEONARDO"
+                },
+                "is_funnel": true,
+                "order_date": 1752070564000,
+                "price": {
+                  "currency_value": "BRL",
+                  "value": 1
+                },
+                "payment": {
+                  "installments_number": 1,
+                  "type": "CREDIT_CARD"
+                },
+                "full_price": {
+                  "currency_value": "BRL",
+                  "value": 1
+                },
+                "business_model": "I",
+                "invoice_by": "HOTMART",
+                "transaction": "HP0790303976",
+                "status": "APPROVED"
+              },
+              "affiliates": [
+                {
+                  "affiliate_code": "",
+                  "name": ""
+                }
+              ],
+              "producer": {
+                "legal_nature": "Pessoa Jurídica",
+                "document": "43704696000140",
+                "name": "Mvl digital ltda"
+              },
+              "buyer": {
+                "address": {
+                  "zipcode": "18530000",
+                  "country": "Brasil",
+                  "address": "rua luiz medeiros de barros  52",
+                  "city": "tiete",
+                  "state": "SP",
+                  "neighborhood": "terra nova",
+                  "complement": "",
+                  "country_iso": "BR"
+                },
+                "document": "43688088867",
+                "name": "leonardo servelin pizzol",
+                "last_name": "pizzol",
+                "first_name": "Leonardo",
+                "email": "leo.pizzol@hotmail.com",
+                "document_type": "CPF"
+              }
+            },
+            "id": "5eb1fb20-572e-4e1a-a639-dae993fe65e3",
+            "creation_date": 1752070572031,
+            "event": "PURCHASE_APPROVED",
+            "version": "2.0.0"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-wvi-ca-hot",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "7f6a4587-bfd1-4220-9650-d1ca22b3167d",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-07-08T13:50:18.884Z",
+      "createdAt": "2025-07-08T13:50:18.884Z",
+      "role": "workflow:owner",
+      "workflowId": "KpnilAsjshRuzAgQ",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
