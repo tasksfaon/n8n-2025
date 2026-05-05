@@ -1,0 +1,458 @@
+{
+  "updatedAt": "2026-04-16T11:45:30.353Z",
+  "createdAt": "2026-01-13T17:35:58.643Z",
+  "id": "Snj1QJ7UrmxijGVX",
+  "name": "[Sidnei] Inicio fluxo Omie",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Obtém todos os itens de entrada\nconst items = $input.all();\n\nreturn items.map(item => {\n  const body = item.json.body || {};\n\n  const paymentMethod = body.payment_method || '';\n  const paymentDateRaw = body.payment_date;\n\n  // Se não existir data de pagamento, retorna sem calcular\n  if (!paymentDateRaw) {\n    return {\n      json: {\n        ...item.json,\n        data_do_recebimento: null,\n      }\n    };\n  }\n\n  // Converte a data base\n  const paymentDate = new Date(paymentDateRaw);\n\n  let daysToAdd = 0;\n\n  // Regras de negócio\n  if (paymentMethod === 'credit_card') {\n    daysToAdd = 30;\n  } else if (paymentMethod === 'pix') {\n    daysToAdd = 2;\n  } else if (paymentMethod === 'boleto') {\n    daysToAdd = 2;\n  }\n\n  // Cria nova data\n  const recebimentoDate = new Date(paymentDate);\n  recebimentoDate.setDate(recebimentoDate.getDate() + daysToAdd);\n\n  // Formata para DD/MM/YYYY\n  const day = String(recebimentoDate.getDate()).padStart(2, '0');\n  const month = String(recebimentoDate.getMonth() + 1).padStart(2, '0');\n  const year = recebimentoDate.getFullYear();\n\n  const formattedDate = `${day}/${month}/${year}`;\n\n  return {\n    json: {\n      ...item.json,\n      data_do_recebimento: formattedDate\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "90d24a11-16e8-4bda-b32b-079979ee506b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "693f7243-ac95-4724-99e3-5aa7b28d4118",
+              "name": "Nome",
+              "value": "={{ $json.body.buyer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "1febc34f-07c4-4d1b-8df8-338748ffb349",
+              "name": "ID do pagamento",
+              "value": "={{ $json.body.payment_id }}",
+              "type": "number"
+            },
+            {
+              "id": "db2b1a42-0254-4ca2-82f6-d58b61746bd3",
+              "name": "Email",
+              "value": "={{ $json.body.buyer_email }}",
+              "type": "string"
+            },
+            {
+              "id": "1b480228-15b4-4482-8593-c46b51399359",
+              "name": "Telefone",
+              "value": "={{ $json.body.buyer_phone }}",
+              "type": "string"
+            },
+            {
+              "id": "a818c4f5-88f1-4f28-9771-f105669b887c",
+              "name": "Data do pagamento",
+              "value": "={{ new Date($json.body.payment_date).toLocaleDateString('pt-BR') }}",
+              "type": "string"
+            },
+            {
+              "id": "4123c447-ba14-46d3-87d8-9f54fdf9806c",
+              "name": "Data do recebimento",
+              "value": "={{ $json.data_do_recebimento }}",
+              "type": "string"
+            },
+            {
+              "id": "113c62ae-667a-4e9a-b6d8-be346e4956b2",
+              "name": "CPF",
+              "value": "={{ $json.body.buyer_document_id }}",
+              "type": "string"
+            },
+            {
+              "id": "44eadd07-9715-490c-aaed-2fad3430a47c",
+              "name": "Preço",
+              "value": "={{ $json.body['offer_price | divided_by: 100.00'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a7056584-12c0-49a0-a369-865d1ee204bc",
+              "name": "Metodo de pagamento",
+              "value": "={{ $json.body.payment_method }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "5abd53ba-ebaa-4834-a35a-5a378908f164",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.payment_method }}",
+                    "rightValue": "pixcredit_cardbank_slip",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "51f7faf8-459c-4470-a603-293c70cca999"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Pix"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "77303eb2-147e-4225-8c37-4d8bb4702eeb",
+                    "leftValue": "={{ $('Webhook').item.json.body.payment_method }}",
+                    "rightValue": "credit_card",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cartão"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9ccb6766-36bf-481e-8f69-4a9a6c16f26f",
+                    "leftValue": "={{ $('Webhook').item.json.body.payment_method }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Boleto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        624,
+        -16
+      ],
+      "id": "5b330b07-e639-4771-a6bb-a20d7bb60bd1",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        -112
+      ],
+      "id": "2227b1dd-8fc2-4396-8853-32c46b4bce44",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "9241a11e-b120-4080-8d2d-5cc5adbe1d12",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e0aed8ce-641a-4ac4-b44f-d0342e6c5c7c",
+      "name": "Webhook",
+      "webhookId": "9241a11e-b120-4080-8d2d-5cc5adbe1d12"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://hooks.pluga.co/v2/webhooks/MTcxMDcyNjIwODA2ODk5MTIyODNUMTc3NjE5MTg0Mg",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "buyer_name",
+              "value": "={{ $('Edit Fields').item.json.Nome }}"
+            },
+            {
+              "name": "buyer_email",
+              "value": "={{ $('Edit Fields').item.json.Email }}"
+            },
+            {
+              "name": "buyer_phone",
+              "value": "={{ $('Edit Fields').item.json.Telefone }}"
+            },
+            {
+              "name": "payment_date",
+              "value": "={{ $('Edit Fields').item.json['Data do pagamento'] }}"
+            },
+            {
+              "name": "product_name",
+              "value": "={{ $('Webhook').item.json.body.product_name }}"
+            },
+            {
+              "name": "buyer_document_id",
+              "value": "={{ $('Edit Fields').item.json.CPF }}"
+            },
+            {
+              "name": "offer_price",
+              "value": "={{ $json['Preço'] }}"
+            },
+            {
+              "name": "=payment_method",
+              "value": "={{ $('Edit Fields').item.json['Metodo de pagamento'] }}"
+            },
+            {
+              "name": "recebimento",
+              "value": "={{ $('Edit Fields').item.json['Data do recebimento'] }}"
+            },
+            {
+              "name": "pagamento",
+              "value": "={{ $('Edit Fields').item.json['Data do pagamento'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        944,
+        -144
+      ],
+      "id": "746b922e-7beb-4975-8cfb-60d82ceb4bb6",
+      "name": "HTTP Request",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://s22.chatguru.app/api/v1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/x-www-form-urlencoded"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "message_send"
+            },
+            {
+              "name": "text",
+              "value": "teesssste"
+            },
+            {
+              "name": "key",
+              "value": "6C3QXCM6I58IKECWGQNTS3AYNV4U5ZFO55ZZPDBCF3BLGY3Q2YGEGDDN4MPNS5B9"
+            },
+            {
+              "name": "account_id",
+              "value": "6818aa44fb6fa14e75e84241"
+            },
+            {
+              "name": "phone_id",
+              "value": "692719dfca8a924a8ab746f5"
+            },
+            {
+              "name": "chat_number",
+              "value": "120363376947995842"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        400,
+        -192
+      ],
+      "id": "55a8c340-ca39-40d9-87cb-fcb3e2bbd31d",
+      "name": "HTTP Request1"
+    }
+  ],
+  "connections": {
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "HeroSpark/1.0",
+            "content-length": "376",
+            "baggage": "sentry-trace_id=43c00245f5a04b55bd32726afa57b438,sentry-environment=production,sentry-public_key=b722173edaec94334323db1280f8af27",
+            "content-type": "application/json",
+            "hs-request-id": "10243509",
+            "sentry-trace": "43c00245f5a04b55bd32726afa57b438-84bfa310cd8847ac",
+            "x-forwarded-for": "201.23.24.61",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "201.23.24.61",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "buyer_name": "Thania Christina Hipolito Ferreira",
+            "payment_id": 1944191,
+            "buyer_email": "thaniahipolito@gmail.com",
+            "buyer_phone": "(15) 99168-8175",
+            "payment_date": "2026-02-20T14:57:09.951Z",
+            "product_name": "Coquetel Cae Club -> Sorocaba",
+            "payment_method": "credit_card",
+            "buyer_document_id": "270.274.268-89",
+            "buyer_document_type": "cpf",
+            "offer_price | divided_by: 100.00": 127
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/9241a11e-b120-4080-8d2d-5cc5adbe1d12",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "359d5106-dec5-4fb4-bb19-046aae1ea777",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-13T17:35:58.643Z",
+      "createdAt": "2026-01-13T17:35:58.643Z",
+      "role": "workflow:owner",
+      "workflowId": "Snj1QJ7UrmxijGVX",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
