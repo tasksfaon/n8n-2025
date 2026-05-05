@@ -1,0 +1,456 @@
+{
+  "updatedAt": "2026-03-24T11:52:30.837Z",
+  "createdAt": "2025-04-14T14:26:03.851Z",
+  "id": "5oQtAYR8bdzSb5KU",
+  "name": "[Ana Camargo] Vendas Hotmart Sheets",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ana-vendas-hot",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "82afc404-df3d-44e3-b558-0194a12baf58",
+      "name": "Webhook",
+      "webhookId": "f01f210e-db62-46d6-b4f3-41162d11db42"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Acessa o telefone do caminho correto\nlet telefoneRaw = $input.first().json.body?.data?.buyer?.checkout_phone || '';\n\n// Remove todos os caracteres que não são dígitos\nlet telefoneLimpo = telefoneRaw.replace(/\\D/g, '');\n\n// Remove código do país duplicado se já estiver presente\nif (telefoneLimpo.length > 11 && telefoneLimpo.startsWith('55')) {\n  telefoneLimpo = telefoneLimpo.slice(2);\n} else if (telefoneLimpo.length > 11) {\n  telefoneLimpo = telefoneLimpo.slice(-11);\n}\n\n// Extrai DDD e número\nconst ddd = telefoneLimpo.slice(0, 2);\nconst numero = telefoneLimpo.slice(2);\n\n// Retorna no formato 55DDDTelefone\nconst telefoneFormatado = `55${ddd}${numero}`;\n\n// Acessa o valor do produto\nlet valorProduto =  $input.first().json.body.data.purchase.price.value|| 0;\n\n// Formata o valor no formato R$ XX,XX\nlet valorFormatado = `${Number(valorProduto).toFixed(2).replace('.', ',')}`;\n\n// Retorna o resultado\nreturn [\n  {\n    json: {\n      telefoneFormatado,\n      valorFormatado\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "eb3a3a40-55ef-4adf-be41-89602926bf0d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f7b3dfcc-386b-4d70-bb41-82719a65dd15",
+              "name": "Data",
+              "value": "={{ \n  new Date().getDate().toString().padStart(2, '0') + '/' +\n  (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +\n  new Date().getFullYear() + ' ' +\n  new Date().getHours().toString().padStart(2, '0') + ':' +\n  new Date().getMinutes().toString().padStart(2, '0')\n}}",
+              "type": "string"
+            },
+            {
+              "id": "f58c72fe-0407-4d86-8722-ba202b45f254",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.name }}",
+              "type": "string"
+            },
+            {
+              "id": "6d764bdf-fb25-4990-b3f0-c53f56b0e807",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.email }}",
+              "type": "string"
+            },
+            {
+              "id": "1b452731-7dfd-49fc-b222-c58cc8511140",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "65c3640d-a6df-481a-b507-b59dfe822909",
+              "name": "cpf",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.document }}",
+              "type": "string"
+            },
+            {
+              "id": "6d6bf4ce-ae46-4702-9063-20a4d85f2127",
+              "name": "Valor",
+              "value": "={{ $json.valorFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "e5ce4a8f-a864-4df2-b579-6b4cc760f5d0",
+              "name": "Moeda",
+              "value": "={{ $('Webhook').item.json.body.data.purchase.price.currency_value }}",
+              "type": "string"
+            },
+            {
+              "id": "e6c73a13-28fe-455d-a617-10b18e7527e0",
+              "name": "Forma de Pagamento",
+              "value": "={{ $('Webhook').item.json.body.data.purchase.payment.type }}",
+              "type": "string"
+            },
+            {
+              "id": "b7a73d6f-ae33-45d0-91d6-494f5b08d0ed",
+              "name": "Link",
+              "value": "={{ $('Webhook').item.json.body.data.purchase.sckPaymentLink }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        0
+      ],
+      "id": "10bc4236-95f3-43fd-9ec2-69e20d939586",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1KL9k1BnYW8aM9UAoacMjwlrVkCH5K219tkMm5_JiN9U/edit?gid=1437276314#gid=1437276314",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1437276314,
+          "mode": "list",
+          "cachedResultName": "Vendas - AUTOMACAO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KL9k1BnYW8aM9UAoacMjwlrVkCH5K219tkMm5_JiN9U/edit#gid=1437276314"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nome": "={{ $json.Nome }}",
+            "Email": "={{ $json.Email }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "cpf": "={{ $json.cpf }}",
+            "Valor da Compra": "={{ $json.Valor }}",
+            "Forma de Pagamento": "={{ $json['Forma de Pagamento'] }}",
+            "Data": "={{ $json.Data }}",
+            "Moeda": "={{ $json.Moeda }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cpf",
+              "displayName": "cpf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Moeda",
+              "displayName": "Moeda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Valor da Compra",
+              "displayName": "Valor da Compra",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Forma de Pagamento",
+              "displayName": "Forma de Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link do Vendedor",
+              "displayName": "Link do Vendedor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        620,
+        0
+      ],
+      "id": "239b8567-88e8-416f-b499-610c5b2bbbe5",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        840,
+        0
+      ],
+      "id": "ff5c23cc-be69-43a0-92fb-7c2f14a450a0",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Jodd HTTP",
+            "content-length": "1858",
+            "content-type": "application/json",
+            "x-forwarded-for": "34.231.244.133",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-hotmart-hottok": "9AReypNTcGMr9aPCPGSI80hQDonoKF1908707",
+            "x-real-ip": "34.231.244.133",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "data": {
+              "product": {
+                "support_email": "support@hotmart.com.br",
+                "has_co_production": false,
+                "name": "Produto test postback2",
+                "warranty_date": "2017-12-27T00:00:00Z",
+                "id": 0,
+                "ucode": "fb056612-bcc6-4217-9e6d-2a5d1110ac2f"
+              },
+              "commissions": [
+                {
+                  "currency_value": "BRL",
+                  "source": "MARKETPLACE",
+                  "value": 149.5
+                },
+                {
+                  "currency_value": "BRL",
+                  "source": "PRODUCER",
+                  "value": 1350.5
+                }
+              ],
+              "purchase": {
+                "original_offer_price": {
+                  "currency_value": "BRL",
+                  "value": 1500
+                },
+                "checkout_country": {
+                  "iso": "BR",
+                  "name": "Brasil"
+                },
+                "sckPaymentLink": "sckPaymentLinkTest",
+                "order_bump": {
+                  "parent_purchase_transaction": "HP02316330308193",
+                  "is_order_bump": true
+                },
+                "approved_date": 1511783346000,
+                "offer": {
+                  "code": "test",
+                  "coupon_code": "SHHUHA"
+                },
+                "is_funnel": false,
+                "event_tickets": {
+                  "amount": 1744640822234
+                },
+                "order_date": 1511783344000,
+                "price": {
+                  "currency_value": "BRL",
+                  "value": 1500
+                },
+                "payment": {
+                  "installments_number": 12,
+                  "type": "CREDIT_CARD"
+                },
+                "full_price": {
+                  "currency_value": "BRL",
+                  "value": 1500
+                },
+                "business_model": "I",
+                "transaction": "HP16015479281022",
+                "status": "APPROVED"
+              },
+              "affiliates": [
+                {
+                  "affiliate_code": "Q58388177J",
+                  "name": "Affiliate name"
+                }
+              ],
+              "producer": {
+                "legal_nature": "Pessoa Física",
+                "document": "12345678965",
+                "name": "Producer Test Name"
+              },
+              "subscription": {
+                "subscriber": {
+                  "code": "I9OT62C3"
+                },
+                "plan": {
+                  "name": "plano de teste",
+                  "id": 123
+                },
+                "status": "ACTIVE"
+              },
+              "buyer": {
+                "checkout_phone_code": "999999999",
+                "address": {
+                  "zipcode": "38400123",
+                  "country": "Brasil",
+                  "number": "10",
+                  "address": "Avenida Francisco Galassi",
+                  "city": "Uberlândia",
+                  "state": "Minas Gerais",
+                  "neighborhood": "Tubalina",
+                  "complement": "Perto do shopping",
+                  "country_iso": "BR"
+                },
+                "document": "69526128664",
+                "name": "Teste Comprador",
+                "last_name": "Comprador",
+                "checkout_phone": "+55 (31) 9 8461-7540",
+                "first_name": "Teste",
+                "email": "testeComprador271101postman15@example.com",
+                "document_type": "CPF"
+              }
+            },
+            "id": "1edab55f-8f72-4320-9cdc-d05d1c10fee8",
+            "creation_date": 1744640822241,
+            "event": "PURCHASE_APPROVED",
+            "version": "2.0.0"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-vendas-hot",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "ffd3fb02-159b-44b2-b7c3-adb78c645dfc",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-04-14T14:26:03.851Z",
+      "createdAt": "2025-04-14T14:26:03.851Z",
+      "role": "workflow:owner",
+      "workflowId": "5oQtAYR8bdzSb5KU",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
