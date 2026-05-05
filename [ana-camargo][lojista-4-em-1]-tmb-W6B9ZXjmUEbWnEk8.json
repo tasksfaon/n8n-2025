@@ -1,0 +1,1036 @@
+{
+  "updatedAt": "2026-03-24T11:51:32.634Z",
+  "createdAt": "2025-04-11T18:55:35.815Z",
+  "id": "W6B9ZXjmUEbWnEk8",
+  "name": "[Ana Camargo][Lojista 4 em 1]  Tmb",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ana-l43m1-tmb",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3699f9a4-c506-4c90-a3e8-ad690b3b7423",
+      "name": "Webhook",
+      "webhookId": "290f8554-18c2-48f6-9c18-3dbd11a5bf70"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone = item.json.body?.telefones || \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 10 dígitos começando com 9)\n  if (parseInt(ddd) >= 30 && numero.length === 10 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "5168b48f-0290-47de-988a-21ebe90f86b1",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50e85938-5f93-4e68-8023-d1e348cc59ea",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "683fdbc9-ad30-4919-8081-053bc1487df3",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "f8a97570-39fd-4e8f-9c40-53bc95ae9310",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "883f841d-62bc-4540-9c05-3a17bee936a0",
+              "name": "Data Lead",
+              "value": "={{    new Date().getDate().toString().padStart(2, '0') + '/' +   (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +   new Date().getFullYear() + ' ' +   new Date().getHours().toString().padStart(2, '0') + ':' +   new Date().getMinutes().toString().padStart(2, '0') }}",
+              "type": "string"
+            },
+            {
+              "id": "41497430-0ce0-466a-b136-25eb3d9b138d",
+              "name": "Utm Source",
+              "value": "={{ $('Webhook').item.json.body.utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "a6e1bf87-5c16-4f18-8d2f-4b7bcc1e934e",
+              "name": "Utm Medium",
+              "value": "={{ $('Webhook').item.json.body.utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "4970d5fa-0866-4253-9dac-1f3128605f4d",
+              "name": "Utm Campaign",
+              "value": "={{ $('Webhook').item.json.body.utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "37d743f3-e639-4041-80b1-cdf5b51535ab",
+              "name": "Utm Content",
+              "value": "={{ $('Webhook').item.json.body.utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "b235d9b7-1986-4fda-af0f-ff908ffb10d6",
+              "name": "Utm Term",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "5c499d40-676e-46c4-b78b-7a4fd35723a3",
+              "name": "Valor Principal",
+              "value": "={{ $('Webhook').item.json.body.valor_principal }}",
+              "type": "string"
+            },
+            {
+              "id": "6ea9fe37-7672-4b03-b149-68fabad1dce0",
+              "name": "Parcelas",
+              "value": "={{ $('Webhook').item.json.body.parcelas }}",
+              "type": "string"
+            },
+            {
+              "id": "5481f1a6-2b68-4e0d-aa53-36622f065a7d",
+              "name": "Valor entrada",
+              "value": "={{ $('Webhook').item.json.body.valor_entrada }}",
+              "type": "string"
+            },
+            {
+              "id": "cc950497-6e51-40cd-9591-a7d3122c0841",
+              "name": "Valor Parcela",
+              "value": "={{ $('Webhook').item.json.body.valor_parcela }}",
+              "type": "string"
+            },
+            {
+              "id": "42166ae2-ac00-44c8-9ed3-48dfa1dfa771",
+              "name": "Produto",
+              "value": "={{ $('Webhook').item.json.body.lancamento }}",
+              "type": "string"
+            },
+            {
+              "id": "516e26eb-9ad4-4ce9-a538-ef58c9f821df",
+              "name": "Documento",
+              "value": "={{ $('Webhook').item.json.body.documento }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "9455cd0b-2522-49bc-82f0-49b842551bad",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1EY28xJJ2X4MMHzzGzYRORiqPOxI_sa9JMMOdhqyQSPM/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 262319812,
+          "mode": "list",
+          "cachedResultName": "Lojista 4 em 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EY28xJJ2X4MMHzzGzYRORiqPOxI_sa9JMMOdhqyQSPM/edit#gid=262319812"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json['Data Lead'] }}",
+            "Nome": "={{ $json.Nome }}",
+            "Documento": "={{ $json.Documento }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "Utm Source": "={{ $json['Utm Source'] }}",
+            "Produto": "={{ $json.Produto }}",
+            "Utm Campaign": "={{ $json['Utm Campaign'] }}",
+            "Utm Medium": "={{ $json['Utm Medium'] }}",
+            "Utm Content": "={{ $json['Utm Content'] }}",
+            "Utm Term": "={{ $json['Utm Term'] }}",
+            "Valor Principal": "={{ $json['Valor Principal'] }}",
+            "Valor entrada": "={{ $json['Valor entrada'] }}",
+            "Valor Parcela": "={{ $json['Valor Parcela'] }}",
+            "Parcelas": "={{ $json.Parcelas }}",
+            "Status": "Entrada"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Documento",
+              "displayName": "Documento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Produto",
+              "displayName": "Produto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Source",
+              "displayName": "Utm Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Campaign",
+              "displayName": "Utm Campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Medium",
+              "displayName": "Utm Medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Content",
+              "displayName": "Utm Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Term",
+              "displayName": "Utm Term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Valor Principal",
+              "displayName": "Valor Principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Valor entrada",
+              "displayName": "Valor entrada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Valor Parcela",
+              "displayName": "Valor Parcela",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Parcelas",
+              "displayName": "Parcelas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Parcelas Atual",
+              "displayName": "Parcelas Atual",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Parcelas restantes",
+              "displayName": "Parcelas restantes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status Parcela",
+              "displayName": "Status Parcela",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        0
+      ],
+      "id": "e2e1b995-2a77-4ec3-93a4-6013bcfb89f0",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "eb5f7f91-2563-4bbe-911e-12d708c35f7e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ana-l4em1-tmb-at",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        220
+      ],
+      "id": "879da643-1ac0-4682-b7b2-052a97bc4a39",
+      "name": "Webhook1",
+      "webhookId": "8bd3170f-23a3-4c43-aab1-4c84f7766cfe"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50e85938-5f93-4e68-8023-d1e348cc59ea",
+              "name": "Nome",
+              "value": "={{ $json.body.dados.cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "683fdbc9-ad30-4919-8081-053bc1487df3",
+              "name": "Email",
+              "value": "={{ $json.body.dados.cliente_email }}",
+              "type": "string"
+            },
+            {
+              "id": "f8a97570-39fd-4e8f-9c40-53bc95ae9310",
+              "name": "Telefone",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "516e26eb-9ad4-4ce9-a538-ef58c9f821df",
+              "name": "Documento",
+              "value": "={{ $json.body.dados.cliente_documento }}",
+              "type": "string"
+            },
+            {
+              "id": "883f841d-62bc-4540-9c05-3a17bee936a0",
+              "name": "Data Lead",
+              "value": "={{    new Date().getDate().toString().padStart(2, '0') + '/' +   (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +   new Date().getFullYear() + ' ' +   new Date().getHours().toString().padStart(2, '0') + ':' +   new Date().getMinutes().toString().padStart(2, '0') }}",
+              "type": "string"
+            },
+            {
+              "id": "42166ae2-ac00-44c8-9ed3-48dfa1dfa771",
+              "name": "Produto",
+              "value": "={{ $json.body.dados.produto }}",
+              "type": "string"
+            },
+            {
+              "id": "6ea9fe37-7672-4b03-b149-68fabad1dce0",
+              "name": "Parcelas",
+              "value": "={{ $json.body.dados.parcela }}",
+              "type": "string"
+            },
+            {
+              "id": "05efc23a-b5d7-4196-aaf1-450bdbbc8571",
+              "name": "Status",
+              "value": "={{ $json.body.dados.status_financeiro }}",
+              "type": "string"
+            },
+            {
+              "id": "8cd0dd01-0a48-4a52-92c7-147fac5fca63",
+              "name": "Status Parcela",
+              "value": "={{ $json.body.dados.status_pagamento }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        220
+      ],
+      "id": "b28d649c-1023-4d0c-8b2b-0a837de39db1",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1EY28xJJ2X4MMHzzGzYRORiqPOxI_sa9JMMOdhqyQSPM/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 262319812,
+          "mode": "list",
+          "cachedResultName": "Lojista 4 em 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EY28xJJ2X4MMHzzGzYRORiqPOxI_sa9JMMOdhqyQSPM/edit#gid=262319812"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json['Data Lead'] }}",
+            "Nome": "={{ $json.Nome }}",
+            "Documento": "={{ $json.Documento }}",
+            "Produto": "={{ $json.Produto }}",
+            "Parcelas Atual": "={{ $json.Parcelas }}",
+            "Status Parcela": "={{ $json['Status Parcela'] }}",
+            "Status": "={{ $json.Status }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Documento",
+              "displayName": "Documento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Produto",
+              "displayName": "Produto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Source",
+              "displayName": "Utm Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Utm Campaign",
+              "displayName": "Utm Campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Utm Medium",
+              "displayName": "Utm Medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Utm Content",
+              "displayName": "Utm Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Utm Term",
+              "displayName": "Utm Term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valor Principal",
+              "displayName": "Valor Principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valor entrada",
+              "displayName": "Valor entrada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valor Parcela",
+              "displayName": "Valor Parcela",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Parcelas",
+              "displayName": "Parcelas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Parcelas Atual",
+              "displayName": "Parcelas Atual",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Parcelas restantes",
+              "displayName": "Parcelas restantes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status Parcela",
+              "displayName": "Status Parcela",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        220
+      ],
+      "id": "b39223f8-a2ac-4060-b7ca-46ba32d8597a",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        900,
+        220
+      ],
+      "id": "e6bf926a-e4c6-4009-b747-baca13cf62e0",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/041170f6-24cf-42c6-80d1-8a3f7952d00f",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Valor",
+              "value": "={{ $json['Valor Principal'] }}"
+            },
+            {
+              "name": "Produto",
+              "value": "={{ $json.Produto }}"
+            },
+            {
+              "name": "utm source",
+              "value": "={{ $json['Utm Source'] }}"
+            },
+            {
+              "name": "utm campaign",
+              "value": "={{ $json['Utm Campaign'] }}"
+            },
+            {
+              "name": "utm medium",
+              "value": "={{ $json['Utm Medium'] }}"
+            },
+            {
+              "name": "utm content",
+              "value": "={{ $json['Utm Content'] }}"
+            },
+            {
+              "name": "utm term",
+              "value": "={{ $json['Utm Term'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        0
+      ],
+      "id": "9d574a7a-bada-4737-9f54-36ec1631ea54",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "RestSharp/110.2.0.0",
+            "content-length": "1707",
+            "accept": "application/json, text/json, text/x-json, text/javascript, application/xml, text/xml",
+            "accept-encoding": "gzip, deflate, br",
+            "content-type": "application/json",
+            "request-context": "appId=cid-v1:42d00957-0bbe-4ab5-9766-9a7336e6e9eb",
+            "request-id": "|a35dbe3546d7c6ce689121c8b5af463b.4aa3b8a58fef82f6.",
+            "traceparent": "00-a35dbe3546d7c6ce689121c8b5af463b-4aa3b8a58fef82f6-00",
+            "x-forwarded-for": "40.122.152.175",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "40.122.152.175"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "produtor": "Ana Laura Camargo",
+            "lancamento": "Instagram vendedor",
+            "provedor_negociado": null,
+            "pedido": 10,
+            "status_pedido": "Efetivado",
+            "cliente": "Leticia Piazzeta",
+            "documento": "28132722990",
+            "email": "bellasimaia@gmail.com",
+            "valor_principal": 249.9,
+            "parcelas": 12,
+            "valor_entrada": 83.3,
+            "valor_parcela": 83.3,
+            "valor_total": 249.9,
+            "taxa_administracao": 21,
+            "criado_em": "2025-04-08T14:37:51.6245784-03:00",
+            "data_efetivado": "2025-04-08T14:37:51.6243198-03:00",
+            "titulo": "Teste",
+            "code": "X9O44AZ0",
+            "endereco_completo": "Avenida Cassiano Ricardo, 319  - São José dos Campos/SP CEP: 12246-870 BR",
+            "telefones": "5531984617540",
+            "telefone_ativo": "5531984617540",
+            "lancamento_id": 10549,
+            "id_externo": null,
+            "risco_compartilhado_em": null,
+            "avalista_nome": null,
+            "avalista_telefone": null,
+            "avalista_email": null,
+            "avalista_documento": null,
+            "avalista_data_nascimento": null,
+            "nascimento": "2005-04-08T14:37:51.6249106-03:00",
+            "id": 10,
+            "produtor_id": 3882,
+            "status_financeiro": null,
+            "utm_source": "Teste Utm Source",
+            "utm_medium": "Teste Utm Medium",
+            "utm_content": "Teste Utm Content",
+            "utm_campaign": "Teste Utm Campaign",
+            "melhor_dia_pagamento": 10,
+            "utm_last_source": "Teste Utm Source",
+            "utm_last_medium": "Teste Utm Medium",
+            "utm_last_content": "Teste Utm Content",
+            "utm_last_campaign": "Teste Utm Campaign",
+            "endereco_pais": "BR",
+            "endereco_cep": "12246-870",
+            "endereco_estado": "SP",
+            "endereco_cidade": "São José dos Campos",
+            "endereco_bairro": "Aquarios",
+            "endereco_logradouro": "Avenida Cassiano Ricardo",
+            "endereco_numero": "319",
+            "endereco_complemento": "AP"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-evi0325-downsell-tmb",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "RestSharp/110.2.0.0",
+            "content-length": "598",
+            "accept": "application/json, text/json, text/x-json, text/javascript, application/xml, text/xml",
+            "accept-encoding": "gzip, deflate, br",
+            "content-type": "application/json",
+            "request-context": "appId=cid-v1:42d00957-0bbe-4ab5-9766-9a7336e6e9eb",
+            "request-id": "|3a4975fe7fdde388184d983b6e21e356.1dfc3a95a092f5c2.",
+            "traceparent": "00-3a4975fe7fdde388184d983b6e21e356-1dfc3a95a092f5c2-00",
+            "x-forwarded-for": "40.122.152.175",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "40.122.152.175"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "dados": {
+              "pedido_id": 1,
+              "cliente_documento": "28132722990",
+              "id_externo": "1",
+              "produto": "Instagram vendedor",
+              "parcela": 1,
+              "vencimento_parcela": "2025-05-08T14:50:20.7292518-03:00",
+              "data_pagamento": null,
+              "status_pagamento": "Aguardando Pagamento",
+              "status_financeiro": "Adimplente",
+              "parcela_id": "33z5A222-4a2b-2720-8ehe-doq32b98b4ff",
+              "repasse": 179.55,
+              "modalidade_contrato": "Compartilhado",
+              "cliente": "Leticia Piazzeta",
+              "cliente_email": "bellasimaia@gmail.com",
+              "lancamento_id": 1,
+              "valor_parcela_sem_juros": 100
+            }
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-evi0325-downsell-tmb-atualização",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "601bf374-7739-4886-b217-3838f8fdd9d1",
+  "activeVersionId": null,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2025-04-11T18:55:35.815Z",
+      "createdAt": "2025-04-11T18:55:35.815Z",
+      "role": "workflow:owner",
+      "workflowId": "W6B9ZXjmUEbWnEk8",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
