@@ -1,0 +1,983 @@
+{
+  "updatedAt": "2025-09-18T20:14:16.921Z",
+  "createdAt": "2025-09-18T20:14:16.921Z",
+  "id": "ViLqjO9j0RbWBDRH",
+  "name": "ia com gatilho typeform",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "todo_dia_energia",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('Dados').item.json.remoteJid }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "ultimo_contato",
+              "fieldValue": "={{ $now.minus(3,'hour') }}"
+            },
+            {
+              "fieldId": "lead_name",
+              "fieldValue": "={{ $('Dados').item.json.nome }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        160,
+        176
+      ],
+      "id": "982ed1f9-9f5b-493f-861e-7e0ed01a60f4",
+      "name": "Supabase_ultimo_contato"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "303974ab-9903-4fae-af14-73438a4d98b8",
+              "name": "nome",
+              "value": "={{ $('Webhook').item.json.body.form_response.answers[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "2911e082-e712-4b85-bcf7-611f60d1559f",
+              "name": "remoteJid",
+              "value": "={{ $json.telefone }}",
+              "type": "string"
+            },
+            {
+              "id": "20937be5-8999-4d95-91cb-5aa9490f166c",
+              "name": "date_time",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "95ca6185-7794-4411-82c5-d30676a6ca52",
+              "name": "evo.instance",
+              "value": "=todo_dia_energia",
+              "type": "string"
+            },
+            {
+              "id": "66fcd40d-88da-4117-958d-7b4a29454136",
+              "name": "evo.server_url",
+              "value": "=https://wsapi.tododiaenergia.com.br/",
+              "type": "string"
+            },
+            {
+              "id": "477ee9d8-59d3-4dd4-9eab-038367517cb1",
+              "name": "evo.apikey",
+              "value": "=690D11724576-4999-AB8E-799D8AE326C8",
+              "type": "string"
+            },
+            {
+              "id": "42df93d4-39c2-49ad-9121-eeb926b9edc1",
+              "name": "body.form_response.answers[1].email",
+              "value": "={{ $('Webhook').item.json.body.form_response.answers[1].email }}",
+              "type": "string"
+            },
+            {
+              "id": "980f462f-b457-4aa7-b1b8-0102eca082cb",
+              "name": "body.form_response.hidden.utm_source",
+              "value": "={{ $('Webhook').item.json.body.form_response.hidden.utm_source }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -464,
+        208
+      ],
+      "id": "75336c91-1560-4441-a963-e20fb16fcc2b",
+      "name": "Dados"
+    },
+    {
+      "parameters": {
+        "jsCode": "// AQUI VOCÊ COLOCA SUA VARIÁVEL DO NÚMERO ↓\nlet numeroWhatsApp = $input.first().json.body.form_response.answers[6].phone_number;\n// ────────────────────────────────────────────────────────────────────\n// Remove @s.whatsapp.net, o sinal de + e corrige o formato do celular brasileiro\nlet numero = numeroWhatsApp.replace('@s.whatsapp.net', '').replace('+', '');\n\n// Verifica números brasileiros\nif (numero.startsWith('55')) {\n    if (numero.length === 12) {\n        // Formato: 55 + área (2) + telefone (8) - precisa adicionar o 9\n        let area = numero.substring(2, 4);\n        let telefone = numero.substring(4);\n        numero = '55' + area + '9' + telefone;\n    }\n    else if (numero.length === 13) {\n        // Verifica se o 9 está na posição correta (posição 4)\n        let area = numero.substring(2, 4);\n        let nono_digito = numero.substring(4, 5);\n        \n        // Se não tem o 9 na posição correta, significa que é um número antigo\n        if (nono_digito !== '9') {\n            let telefone = numero.substring(4);\n            numero = '55' + area + '9' + telefone;\n            // Agora ficará com 14 dígitos, vamos truncar para 13\n            numero = numero.substring(0, 13);\n        }\n        // Se já tem o 9, mantém como está\n    }\n}\n\n// Retorna como array de objetos\nreturn [{\n    telefone: numero\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        208
+      ],
+      "id": "41923fd9-fcc2-4d13-8d7b-ba3fd5b52ad8",
+      "name": "limpa_numero"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "todo_dia_energia",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "keyValue": "={{ $json.remoteJid }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        208
+      ],
+      "id": "c4a54641-5cc3-4ea1-b3c4-0633a738a10d",
+      "name": "Supabase",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a5259f34-956e-4443-a173-0f7da524bbbf",
+              "leftValue": "={{ $('Supabase').item.json.whatsapp }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        208
+      ],
+      "id": "d9a5d273-40a6-4032-bccf-409efe74357c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "todo_dia_energia",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('Dados').item.json.remoteJid }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "utm_source",
+              "fieldValue": "={{ $('Dados').item.json.body.form_response.hidden.utm_source }}"
+            },
+            {
+              "fieldId": "follow_number",
+              "fieldValue": "1"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        192
+      ],
+      "id": "fd63a55e-dd94-41ac-8574-520d76aceee6",
+      "name": "Supabase2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        192
+      ],
+      "id": "a5097040-3214-4056-a8e4-c989944c04f8",
+      "name": "No Operation, do nothing5",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wsapi.tododiaenergia.com.br/message/sendText/ana-sdr",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Dados').item.json.evo.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Dados').item.json.remoteJid }}"
+            },
+            {
+              "name": "text",
+              "value": "=Oi {{ $json.lead_name }}! Aqui é a Ana, do time da Fabi Sabatini 💛\n"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        192
+      ],
+      "id": "a0e58995-aa20-47ab-979f-5ed6057872c1",
+      "name": "Enviar Texto1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wsapi.tododiaenergia.com.br/message/sendText/ana-sdr",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Dados').item.json.evo.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Dados').item.json.remoteJid }}"
+            },
+            {
+              "name": "text",
+              "value": "=Vi que você preencheu nosso formulário e imagino que esteja curiosa com o que vem por aí… ✨"
+            },
+            {
+              "name": "delay",
+              "value": "={{ $json.milliseconds }}"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        192
+      ],
+      "id": "642f8765-e863-4d84-9c5a-13ed09dd99b1",
+      "name": "Enviar Texto2"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        192
+      ],
+      "id": "990f25ab-ad2a-40b1-9df8-a5b05f9cb020",
+      "name": "Wait1",
+      "webhookId": "9185dad2-4c22-4e52-af07-1e81b8ff3876",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "content": "## Início\n### Limpa o número de telefone e seta as variáveis",
+        "height": 540,
+        "width": 540
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        16
+      ],
+      "id": "50efde29-da4f-4e0b-a84b-725dd2f68fc6",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Verifica falante\nVerfiica se é um atendente ou a ia que está falando, se for o atendente ele irá susprender as atividades da ia por 15 minutos.",
+        "height": 640,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -112
+      ],
+      "id": "16aaa8ab-5020-40d2-83e9-f5606ce0091c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1328,
+        192
+      ],
+      "id": "92944f2b-3331-425a-914a-8f633043d412",
+      "name": "Wait",
+      "webhookId": "c9e81c42-969b-4a72-9556-84a8097b7a6d"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "41f79cec-3b29-4f16-9b99-0bc0e018a940-type",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -864,
+        208
+      ],
+      "id": "8e213ee8-31d5-4813-81ca-aa6ecfd82868",
+      "name": "Webhook",
+      "webhookId": "41f79cec-3b29-4f16-9b99-0bc0e018a940"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        192
+      ],
+      "id": "b5184052-0a48-4364-b5df-60fc808557fb",
+      "name": "Wait2",
+      "webhookId": "c859ed4a-87ec-49ac-97d0-8528b81b913b",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://wsapi.tododiaenergia.com.br/message/sendText/ana-sdr",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Dados').item.json.evo.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Dados').item.json.remoteJid }}"
+            },
+            {
+              "name": "text",
+              "value": "=Antes de te explicar o próximo passo, queria te conhecer melhor: hoje, qual é o ponto da sua saúde ou do seu corpo que mais tem te incomodado?"
+            },
+            {
+              "name": "delay",
+              "value": "={{ $json.milliseconds }}"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        192
+      ],
+      "id": "8cf13000-a830-4a65-a584-84b1cc6a0325",
+      "name": "Enviar Texto4"
+    },
+    {
+      "parameters": {
+        "tableId": "todo_dia_energia",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "whatsapp",
+              "fieldValue": "={{ $('Dados').item.json.remoteJid }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{ $now.minus(3,\"hour\") }}"
+            },
+            {
+              "fieldId": "lead_name",
+              "fieldValue": "={{ $('Dados').item.json.nome }}"
+            },
+            {
+              "fieldId": "lead_email",
+              "fieldValue": "={{ $('Dados').item.json.body.form_response.answers[1].email }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        160,
+        368
+      ],
+      "id": "75ae03c7-bb06-4bdb-972d-e5ee394d7822",
+      "name": "Create a row"
+    }
+  ],
+  "connections": {
+    "Supabase_ultimo_contato": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "limpa_numero": {
+      "main": [
+        [
+          {
+            "node": "Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Supabase_ultimo_contato",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto2": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Supabase2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "limpa_numero",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto4": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Supabase_ultimo_contato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhooks.tododiaenergia.com.br",
+            "user-agent": "Typeform Webhooks",
+            "content-length": "5517",
+            "accept-encoding": "gzip",
+            "content-type": "application/json",
+            "traceparent": "00-0df87f7a7b2283cc2a2b9c5f836dc3e7-7558c52fac2fd55d-01",
+            "x-forwarded-for": "18.210.136.162",
+            "x-forwarded-host": "webhooks.tododiaenergia.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik_traefik.1",
+            "x-real-ip": "18.210.136.162"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event_id": "01K4WZN9GETWGEZXYGK7GWKQ7W",
+            "event_type": "form_response",
+            "form_response": {
+              "form_id": "DXBgcApo",
+              "token": "a9txxp3fxq3dlba9tgd4fip8ct9nns7t",
+              "landed_at": "2025-09-11T18:12:07Z",
+              "submitted_at": "2025-09-11T18:12:31Z",
+              "hidden": {
+                "utm_source": "outbound"
+              },
+              "calculated": {
+                "score": 63
+              },
+              "variables": [
+                {
+                  "key": "counter_51ba5e01_a1a3_450c_ba34_72d7f322e78d",
+                  "type": "number",
+                  "number": 0
+                },
+                {
+                  "key": "score",
+                  "type": "number",
+                  "number": 63
+                },
+                {
+                  "key": "winning_outcome_id",
+                  "type": "outcome_id",
+                  "outcome_id": "kZru4Fl51or5"
+                }
+              ],
+              "outcome": {
+                "id": "kZru4Fl51or5",
+                "title": "Obrigada pupila!"
+              },
+              "definition": {
+                "id": "DXBgcApo",
+                "title": "Leadscoring",
+                "fields": [
+                  {
+                    "id": "OYP5behejP6T",
+                    "ref": "6abe03fe-8376-40ce-8b37-e188817fa1a7",
+                    "type": "short_text",
+                    "title": "Qual é o seu nome?",
+                    "properties": {}
+                  },
+                  {
+                    "id": "L1tEiXlEeBoZ",
+                    "ref": "70099e8c-4ebe-4743-a0e8-9ed0124c0ec3",
+                    "type": "email",
+                    "title": "Qual o seu email?",
+                    "properties": {}
+                  },
+                  {
+                    "id": "NhAZFQIOpXF0",
+                    "ref": "10640218-5e88-4baf-8d4f-262b70a29f59",
+                    "type": "multiple_choice",
+                    "title": "Qual é a sua idade?",
+                    "properties": {},
+                    "choices": [
+                      {
+                        "id": "081pr6vMMRvY",
+                        "ref": "b4e05763-8143-415a-83f1-b02dd20706f0",
+                        "label": "Menos de 30"
+                      },
+                      {
+                        "id": "TMwL9KcXajF3",
+                        "ref": "a18e5f9f-2333-4aa0-bada-723cec841058",
+                        "label": "30 a 39"
+                      },
+                      {
+                        "id": "BN9tD5py8Lww",
+                        "ref": "b1281291-6e44-4eda-8e29-61fd5a0c2042",
+                        "label": "40 a 49"
+                      },
+                      {
+                        "id": "VXAwDMLLVMlc",
+                        "ref": "1a4fcb26-53f5-4788-8afb-77c0a838ce63",
+                        "label": "50 a 59"
+                      },
+                      {
+                        "id": "2SuErifUBpPF",
+                        "ref": "23b6e80b-8acd-4802-bbc3-2feb3d943693",
+                        "label": "60 a 69"
+                      },
+                      {
+                        "id": "WN4OVIn8AzOw",
+                        "ref": "f3d59cff-694f-4c1e-869a-1a6b17f936a5",
+                        "label": "Masi de 70"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "6BlZ1R0DXYJC",
+                    "ref": "d90e2f40-8cff-47af-8e31-6a3e5d4a7c00",
+                    "type": "opinion_scale",
+                    "title": "De 0 a 10, qual o seu nível de frustração por ainda não ter conseguido resolver o que te incomoda no seu corpo ou na sua saúde? ",
+                    "properties": {}
+                  },
+                  {
+                    "id": "ImBu6CLj1uqu",
+                    "ref": "4c6809d2-28a2-466f-83b3-d4faa9d01384",
+                    "type": "multiple_choice",
+                    "title": "O que te trouxe até a Clínica Fabi Sabatini?",
+                    "properties": {},
+                    "choices": [
+                      {
+                        "id": "bvtRWqJVMZdp",
+                        "ref": "a3da04f6-a636-4d10-9610-5ffe57d03d22",
+                        "label": "Eu sou aluna da Fabi"
+                      },
+                      {
+                        "id": "ifNB9Eche9Ot",
+                        "ref": "d72a2b20-a1f0-423c-8a09-26b634915ca9",
+                        "label": "Indicação"
+                      },
+                      {
+                        "id": "Era6YdLF4Xpj",
+                        "ref": "545a2862-709a-4ba8-b616-991623afd533",
+                        "label": "Instagram"
+                      },
+                      {
+                        "id": "lKrUee4dLQmk",
+                        "ref": "e3993623-06ea-4c11-ba3d-179ba3242921",
+                        "label": "Youtube"
+                      },
+                      {
+                        "id": "x9vpFs75CWp6",
+                        "ref": "7c7fdf0e-60a1-43a7-82bb-39be26aeddd5",
+                        "label": "Anúncio"
+                      },
+                      {
+                        "id": "HXqrcp18vzE7",
+                        "ref": "5548ac6b-ea0a-4d0a-9bd3-a8f89df68d83",
+                        "label": "Outro"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "d2I4Sv15GBbG",
+                    "ref": "6fce2457-8b98-4433-b8f7-5e6ba6495c0c",
+                    "type": "multiple_choice",
+                    "title": "Qual é a sua renda mensal?",
+                    "properties": {},
+                    "choices": [
+                      {
+                        "id": "omLZy06jhfR2",
+                        "ref": "f8a3b67c-109c-44cd-9fe8-d50f9776e1e4",
+                        "label": "Até R$3.000"
+                      },
+                      {
+                        "id": "GBYm6uka6Wz3",
+                        "ref": "8cb52c7e-7cf6-4268-8001-2f540de77559",
+                        "label": "De R$3.000 a R$5.000"
+                      },
+                      {
+                        "id": "a5MZt1lE2yQR",
+                        "ref": "07e6db90-5ec9-4478-a019-2c4fe9ff4300",
+                        "label": "De R$5.000 a R$10.000"
+                      },
+                      {
+                        "id": "FTW2WmE623Uc",
+                        "ref": "5817f72e-b8d9-41e1-a76d-a2ba63dc620d",
+                        "label": "De R$10.000 a R$15.000"
+                      },
+                      {
+                        "id": "xLXBd7pqp1L7",
+                        "ref": "ef09bb41-7820-49e3-b206-9208b0751477",
+                        "label": "De R$15.000 a R$25.000"
+                      },
+                      {
+                        "id": "a3BLxqkq23Nx",
+                        "ref": "b91687c7-5868-477c-b95a-3bc10d0dfa20",
+                        "label": "Mais que R$25.000"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "KgMypJmu5BdN",
+                    "ref": "e1ecc0e0-253d-416a-b096-37e7ce0fa1c8",
+                    "type": "phone_number",
+                    "title": "Qual é o seu WhatsApp?",
+                    "properties": {}
+                  }
+                ],
+                "outcome": {
+                  "variable": "winning_outcome_id",
+                  "choices": [
+                    {
+                      "id": "kZru4Fl51or5",
+                      "ref": "c4c98868-14c3-42d5-ae16-5db474ed0f7e",
+                      "title": "Obrigada pupila!",
+                      "counter_variable": "counter_51ba5e01_a1a3_450c_ba34_72d7f322e78d",
+                      "thankyou_screen_ref": "3cc56dac-4b1a-4d1d-aa09-68a10b8ab584"
+                    }
+                  ]
+                },
+                "endings": [
+                  {
+                    "id": "q6bU8bKUsrky",
+                    "ref": "3cc56dac-4b1a-4d1d-aa09-68a10b8ab584",
+                    "title": "Obrigada pupila!",
+                    "type": "thankyou_screen",
+                    "properties": {
+                      "description": "*Agora é com a gente.*\n\nVamos analisar cada detalhe que você compartilhou e entrar em contato para seguir com o próximo passo.\n\nSua saúde merece mais que tentativas: merece direção, constância e liberdade.\n\n*Olhe seu WhatsApp 😉*",
+                      "button_text": "again",
+                      "show_button": false,
+                      "share_icons": false,
+                      "button_mode": "default_redirect"
+                    }
+                  }
+                ],
+                "settings": {
+                  "partial_responses_to_all_integrations": true
+                }
+              },
+              "answers": [
+                {
+                  "type": "text",
+                  "text": "Fillipi",
+                  "field": {
+                    "id": "OYP5behejP6T",
+                    "type": "short_text",
+                    "ref": "6abe03fe-8376-40ce-8b37-e188817fa1a7"
+                  }
+                },
+                {
+                  "type": "email",
+                  "email": "truppelfernandes@gmail.com",
+                  "field": {
+                    "id": "L1tEiXlEeBoZ",
+                    "type": "email",
+                    "ref": "70099e8c-4ebe-4743-a0e8-9ed0124c0ec3"
+                  }
+                },
+                {
+                  "type": "choice",
+                  "choice": {
+                    "id": "BN9tD5py8Lww",
+                    "label": "40 a 49",
+                    "ref": "b1281291-6e44-4eda-8e29-61fd5a0c2042"
+                  },
+                  "field": {
+                    "id": "NhAZFQIOpXF0",
+                    "type": "multiple_choice",
+                    "ref": "10640218-5e88-4baf-8d4f-262b70a29f59"
+                  }
+                },
+                {
+                  "type": "number",
+                  "number": 7,
+                  "field": {
+                    "id": "6BlZ1R0DXYJC",
+                    "type": "opinion_scale",
+                    "ref": "d90e2f40-8cff-47af-8e31-6a3e5d4a7c00"
+                  }
+                },
+                {
+                  "type": "choice",
+                  "choice": {
+                    "id": "Era6YdLF4Xpj",
+                    "label": "Instagram",
+                    "ref": "545a2862-709a-4ba8-b616-991623afd533"
+                  },
+                  "field": {
+                    "id": "ImBu6CLj1uqu",
+                    "type": "multiple_choice",
+                    "ref": "4c6809d2-28a2-466f-83b3-d4faa9d01384"
+                  }
+                },
+                {
+                  "type": "choice",
+                  "choice": {
+                    "id": "a5MZt1lE2yQR",
+                    "label": "De R$5.000 a R$10.000",
+                    "ref": "07e6db90-5ec9-4478-a019-2c4fe9ff4300"
+                  },
+                  "field": {
+                    "id": "d2I4Sv15GBbG",
+                    "type": "multiple_choice",
+                    "ref": "6fce2457-8b98-4433-b8f7-5e6ba6495c0c"
+                  }
+                },
+                {
+                  "type": "phone_number",
+                  "phone_number": "+5548996654533",
+                  "field": {
+                    "id": "KgMypJmu5BdN",
+                    "type": "phone_number",
+                    "ref": "e1ecc0e0-253d-416a-b096-37e7ce0fa1c8"
+                  }
+                }
+              ],
+              "ending": {
+                "id": "q6bU8bKUsrky",
+                "ref": "3cc56dac-4b1a-4d1d-aa09-68a10b8ab584"
+              }
+            }
+          },
+          "webhookUrl": "https://webhooks.tododiaenergia.com.br/webhook/41f79cec-3b29-4f16-9b99-0bc0e018a940",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "beae12d4-94a7-4d83-b265-2e84c942f9d8",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-18T20:14:16.921Z",
+      "createdAt": "2025-09-18T20:14:16.921Z",
+      "role": "workflow:owner",
+      "workflowId": "ViLqjO9j0RbWBDRH",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
