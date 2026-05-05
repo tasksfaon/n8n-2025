@@ -1,0 +1,1132 @@
+{
+  "updatedAt": "2025-04-18T20:45:08.029Z",
+  "createdAt": "2025-04-18T20:23:55.309Z",
+  "id": "BXQrBdmKm44zgI94",
+  "name": "[Lila] aplicações mentoria",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "725c20b5-0fcc-4119-a1eb-799acd565305",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8af697fd-b7f7-4231-b696-a38caf68169e",
+      "name": "Webhook",
+      "webhookId": "725c20b5-0fcc-4119-a1eb-799acd565305"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "05a5bbef-d16a-46e1-95d2-5b13bf7aefa1",
+              "name": "Seu nome completo",
+              "value": "={{ $json.body[\"Seu nome completo:\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "7a9c3f94-c9f6-4e5a-93c4-2c6d280780d3",
+              "name": "E-mail",
+              "value": "={{ $json.body[\"E-mail:\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "928cbe36-a1d6-4f15-951d-cb968892e569",
+              "name": "Seu WhatsApp",
+              "value": "={{ $json.body[\"Seu WhatsApp\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "086d7b06-497b-42ad-b3c2-b5ea79c45318",
+              "name": "Qual é o seu Instagram",
+              "value": "={{ $json.body[\"Qual é o seu Instagram?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "4409ab62-52ab-4e05-9cff-5a5b41c4a0ca",
+              "name": "Seu faturamento mensal atual tem sido",
+              "value": "={{ $json.body[\"Seu faturamento mensal atual tem sido:\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "id": "830f629e-a902-4dae-8e22-efb362ed8a45",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/c09fa2e2-c350-4cf5-8fb0-41536ed03a35",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json[\"Seu nome completo\"] }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json[\"E-mail\"] }}"
+            },
+            {
+              "name": "Whatsapp",
+              "value": "={{ $json[\"Seu WhatsApp\"] }}"
+            },
+            {
+              "name": "Insta",
+              "value": "={{ $json[\"Qual é o seu Instagram\"] }}"
+            },
+            {
+              "name": "Faturamento",
+              "value": "={{ $json[\"Seu faturamento mensal atual tem sido\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        0
+      ],
+      "id": "9f4e98ce-343b-4538-aad6-61f086e88b12",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        680,
+        0
+      ],
+      "id": "68b9b8c0-fe99-47e3-8a38-6dc7c480fed7",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "725c20b5-0fcc-4119-a1eb-799acd5asad10",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        280
+      ],
+      "id": "01282a08-867f-4756-aeeb-e328a1e8bef2",
+      "name": "Webhook1",
+      "webhookId": "725c20b5-0fcc-4119-a1eb-799acd565305"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "05a5bbef-d16a-46e1-95d2-5b13bf7aefa1",
+              "name": "Seu nome completo",
+              "value": "={{ $json.body[\"Seu nome completo:\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "7a9c3f94-c9f6-4e5a-93c4-2c6d280780d3",
+              "name": "E-mail",
+              "value": "={{ $json.body[\"E-mail:\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "928cbe36-a1d6-4f15-951d-cb968892e569",
+              "name": "Seu WhatsApp",
+              "value": "={{ $json.body[\"Seu WhatsApp\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "086d7b06-497b-42ad-b3c2-b5ea79c45318",
+              "name": "Qual é o seu Instagram",
+              "value": "={{ $json.body[\"Qual é o seu Instagram?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "4409ab62-52ab-4e05-9cff-5a5b41c4a0ca",
+              "name": "Seu faturamento mensal atual tem sido",
+              "value": "={{ $json.body[\"Seu faturamento mensal atual tem sido:\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        280
+      ],
+      "id": "938c792b-1359-4266-8216-d946add43ce7",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/848b6abb-6f84-4414-a219-a24f5f768b5d",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json[\"Seu nome completo\"] }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json[\"E-mail\"] }}"
+            },
+            {
+              "name": "Whatsapp",
+              "value": "={{ $json[\"Seu WhatsApp\"] }}"
+            },
+            {
+              "name": "Insta",
+              "value": "={{ $json[\"Qual é o seu Instagram\"] }}"
+            },
+            {
+              "name": "Faturamento",
+              "value": "={{ $json[\"Seu faturamento mensal atual tem sido\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        280
+      ],
+      "id": "e7a27790-2923-4096-9d72-69925f4ef5bc",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        680,
+        280
+      ],
+      "id": "d09e0a61-7959-4a18-aec9-e440e11df7a6",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "725c20b5-0fcc-4119-a1eb-799acadia9jdiq1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        540
+      ],
+      "id": "0b89e49d-dbfc-4dcb-8b9f-831b65af0af4",
+      "name": "Webhook2",
+      "webhookId": "725c20b5-0fcc-4119-a1eb-799acd565305"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "05a5bbef-d16a-46e1-95d2-5b13bf7aefa1",
+              "name": "Seu nome completo",
+              "value": "={{ $json.body[\"Seu nome completo:\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "7a9c3f94-c9f6-4e5a-93c4-2c6d280780d3",
+              "name": "E-mail",
+              "value": "={{ $json.body[\"E-mail:\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "928cbe36-a1d6-4f15-951d-cb968892e569",
+              "name": "Seu WhatsApp",
+              "value": "={{ $json.body[\"Seu WhatsApp\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "086d7b06-497b-42ad-b3c2-b5ea79c45318",
+              "name": "Qual é o seu Instagram",
+              "value": "={{ $json.body[\"Qual é o seu Instagram?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "4409ab62-52ab-4e05-9cff-5a5b41c4a0ca",
+              "name": "Seu faturamento mensal atual tem sido",
+              "value": "={{ $json.body[\"Seu faturamento mensal atual tem sido:\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        540
+      ],
+      "id": "1b8cc100-91d6-4571-b735-69ed71b67686",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/e97f0671-dd72-4c72-aa83-ae3a09dba3b3",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json[\"Seu nome completo\"] }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json[\"E-mail\"] }}"
+            },
+            {
+              "name": "Whatsapp",
+              "value": "={{ $json[\"Seu WhatsApp\"] }}"
+            },
+            {
+              "name": "Insta",
+              "value": "={{ $json[\"Qual é o seu Instagram\"] }}"
+            },
+            {
+              "name": "Faturamento",
+              "value": "={{ $json[\"Seu faturamento mensal atual tem sido\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        540
+      ],
+      "id": "6f9da0a6-4eaa-4dbb-8aa9-e90cdcf5c773",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        680,
+        540
+      ],
+      "id": "e69ed649-8609-4f1f-9299-057e4f716049",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "content": "Aplicação 6d\n",
+        "height": 180,
+        "width": 1000
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -100,
+        -20
+      ],
+      "typeVersion": 1,
+      "id": "b2ea0708-17d3-4a82-9fdf-abcb9c8a8b66",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Escala\n\n",
+        "height": 180,
+        "width": 1000
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -100,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "3ce1feb7-e4c1-4ca6-b03d-759c8d13e004",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Potencial\n",
+        "height": 180,
+        "width": 1000
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -100,
+        500
+      ],
+      "typeVersion": 1,
+      "id": "f69fac02-d38d-4f17-bca7-6534901465bc",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Mozilla/5.0 (compatible; Google-Apps-Script; beanserver; +https://script.google.com; id: UAEmdDd_VfcV6bXaB6j3YemAm9iXmgOu_gjg)",
+            "content-length": "1067",
+            "accept-encoding": "gzip, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "107.178.224.96",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "107.178.224.96"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "formulario": "Águia Soberana,",
+            "link_formulario": "https://docs.google.com/forms/d/e/1FAIpQLSdUZP7cBUv0MiW5LjT5GjgOW9nlj_FgHqIrgL4tUj8TUXTRjQ/viewform",
+            "Seu nome completo:": "Kezia Silveira ",
+            "E-mail:": "Kekapelomundo@gmail.com",
+            "Seu WhatsApp": "62981122703",
+            "Qual é o seu Instagram?": "Kekapelomundo",
+            "Seu faturamento mensal atual tem sido:": "Eu faturo por expedição e lancei meu primeiro produto digital agora ",
+            "Qual a origem das suas principais vendas hoje?": "Orgânico com audiência fiel",
+            "Quantos produtos você tem hoje ativos? (nomes + tickets)  ": "1-MAVA 997,00",
+            "Qual parte da sua operação você sente que está mais frágil hoje?": "Equipe/processos",
+            "Você já tem upsell, downsell ou order bump estruturado?": "Não",
+            "Qual o seu maior desejo agora com o seu negócio digital?\nEx: liberdade de tempo, estrutura leve, previsibilidade, sair da operação": "Eu quero estruturar a comunidade e cobrar uma mensalidade ",
+            "Se pudesse sair dessa consultoria com um plano claro e simples, o que você mais gostaria de resolver?  ": "Como escalar minha mentoria "
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/725c20b5-0fcc-4119-a1eb-799acd565305",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Mozilla/5.0 (compatible; Google-Apps-Script; beanserver; +https://script.google.com; id: UAEmdDd_VfcV6bXaB6j3YemAm9iXmgOu_gjg)",
+            "content-length": "1067",
+            "accept-encoding": "gzip, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "107.178.224.96",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "107.178.224.96"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "formulario": "Águia Soberana,",
+            "link_formulario": "https://docs.google.com/forms/d/e/1FAIpQLSdUZP7cBUv0MiW5LjT5GjgOW9nlj_FgHqIrgL4tUj8TUXTRjQ/viewform",
+            "Seu nome completo:": "Kezia Silveira ",
+            "E-mail:": "Kekapelomundo@gmail.com",
+            "Seu WhatsApp": "62981122703",
+            "Qual é o seu Instagram?": "Kekapelomundo",
+            "Seu faturamento mensal atual tem sido:": "Eu faturo por expedição e lancei meu primeiro produto digital agora ",
+            "Qual a origem das suas principais vendas hoje?": "Orgânico com audiência fiel",
+            "Quantos produtos você tem hoje ativos? (nomes + tickets)  ": "1-MAVA 997,00",
+            "Qual parte da sua operação você sente que está mais frágil hoje?": "Equipe/processos",
+            "Você já tem upsell, downsell ou order bump estruturado?": "Não",
+            "Qual o seu maior desejo agora com o seu negócio digital?\nEx: liberdade de tempo, estrutura leve, previsibilidade, sair da operação": "Eu quero estruturar a comunidade e cobrar uma mensalidade ",
+            "Se pudesse sair dessa consultoria com um plano claro e simples, o que você mais gostaria de resolver?  ": "Como escalar minha mentoria "
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/725c20b5-0fcc-4119-a1eb-799acd565305",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Webhook2": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Mozilla/5.0 (compatible; Google-Apps-Script; beanserver; +https://script.google.com; id: UAEmdDd_VfcV6bXaB6j3YemAm9iXmgOu_gjg)",
+            "content-length": "1067",
+            "accept-encoding": "gzip, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "107.178.224.96",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "107.178.224.96"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "formulario": "Águia Soberana,",
+            "link_formulario": "https://docs.google.com/forms/d/e/1FAIpQLSdUZP7cBUv0MiW5LjT5GjgOW9nlj_FgHqIrgL4tUj8TUXTRjQ/viewform",
+            "Seu nome completo:": "Kezia Silveira ",
+            "E-mail:": "Kekapelomundo@gmail.com",
+            "Seu WhatsApp": "62981122703",
+            "Qual é o seu Instagram?": "Kekapelomundo",
+            "Seu faturamento mensal atual tem sido:": "Eu faturo por expedição e lancei meu primeiro produto digital agora ",
+            "Qual a origem das suas principais vendas hoje?": "Orgânico com audiência fiel",
+            "Quantos produtos você tem hoje ativos? (nomes + tickets)  ": "1-MAVA 997,00",
+            "Qual parte da sua operação você sente que está mais frágil hoje?": "Equipe/processos",
+            "Você já tem upsell, downsell ou order bump estruturado?": "Não",
+            "Qual o seu maior desejo agora com o seu negócio digital?\nEx: liberdade de tempo, estrutura leve, previsibilidade, sair da operação": "Eu quero estruturar a comunidade e cobrar uma mensalidade ",
+            "Se pudesse sair dessa consultoria com um plano claro e simples, o que você mais gostaria de resolver?  ": "Como escalar minha mentoria "
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/725c20b5-0fcc-4119-a1eb-799acd565305",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "d995df7f-9128-479d-a39f-a4445e2f8c65",
+  "activeVersionId": "d995df7f-9128-479d-a39f-a4445e2f8c65",
+  "triggerCount": 3,
+  "shared": [
+    {
+      "updatedAt": "2025-04-18T20:23:55.309Z",
+      "createdAt": "2025-04-18T20:23:55.309Z",
+      "role": "workflow:owner",
+      "workflowId": "BXQrBdmKm44zgI94",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "d995df7f-9128-479d-a39f-a4445e2f8c65",
+    "workflowId": "BXQrBdmKm44zgI94",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "725c20b5-0fcc-4119-a1eb-799acd565305",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "8af697fd-b7f7-4231-b696-a38caf68169e",
+        "name": "Webhook",
+        "webhookId": "725c20b5-0fcc-4119-a1eb-799acd565305"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "05a5bbef-d16a-46e1-95d2-5b13bf7aefa1",
+                "name": "Seu nome completo",
+                "value": "={{ $json.body[\"Seu nome completo:\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "7a9c3f94-c9f6-4e5a-93c4-2c6d280780d3",
+                "name": "E-mail",
+                "value": "={{ $json.body[\"E-mail:\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "928cbe36-a1d6-4f15-951d-cb968892e569",
+                "name": "Seu WhatsApp",
+                "value": "={{ $json.body[\"Seu WhatsApp\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "086d7b06-497b-42ad-b3c2-b5ea79c45318",
+                "name": "Qual é o seu Instagram",
+                "value": "={{ $json.body[\"Qual é o seu Instagram?\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "4409ab62-52ab-4e05-9cff-5a5b41c4a0ca",
+                "name": "Seu faturamento mensal atual tem sido",
+                "value": "={{ $json.body[\"Seu faturamento mensal atual tem sido:\"] }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          240,
+          0
+        ],
+        "id": "830f629e-a902-4dae-8e22-efb362ed8a45",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/c09fa2e2-c350-4cf5-8fb0-41536ed03a35",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "Nome",
+                "value": "={{ $json[\"Seu nome completo\"] }}"
+              },
+              {
+                "name": "Email",
+                "value": "={{ $json[\"E-mail\"] }}"
+              },
+              {
+                "name": "Whatsapp",
+                "value": "={{ $json[\"Seu WhatsApp\"] }}"
+              },
+              {
+                "name": "Insta",
+                "value": "={{ $json[\"Qual é o seu Instagram\"] }}"
+              },
+              {
+                "name": "Faturamento",
+                "value": "={{ $json[\"Seu faturamento mensal atual tem sido\"] }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          460,
+          0
+        ],
+        "id": "9f4e98ce-343b-4538-aad6-61f086e88b12",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          680,
+          0
+        ],
+        "id": "68b9b8c0-fe99-47e3-8a38-6dc7c480fed7",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "725c20b5-0fcc-4119-a1eb-799acd5asad10",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          280
+        ],
+        "id": "01282a08-867f-4756-aeeb-e328a1e8bef2",
+        "name": "Webhook1",
+        "webhookId": "725c20b5-0fcc-4119-a1eb-799acd565305"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "05a5bbef-d16a-46e1-95d2-5b13bf7aefa1",
+                "name": "Seu nome completo",
+                "value": "={{ $json.body[\"Seu nome completo:\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "7a9c3f94-c9f6-4e5a-93c4-2c6d280780d3",
+                "name": "E-mail",
+                "value": "={{ $json.body[\"E-mail:\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "928cbe36-a1d6-4f15-951d-cb968892e569",
+                "name": "Seu WhatsApp",
+                "value": "={{ $json.body[\"Seu WhatsApp\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "086d7b06-497b-42ad-b3c2-b5ea79c45318",
+                "name": "Qual é o seu Instagram",
+                "value": "={{ $json.body[\"Qual é o seu Instagram?\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "4409ab62-52ab-4e05-9cff-5a5b41c4a0ca",
+                "name": "Seu faturamento mensal atual tem sido",
+                "value": "={{ $json.body[\"Seu faturamento mensal atual tem sido:\"] }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          240,
+          280
+        ],
+        "id": "938c792b-1359-4266-8216-d946add43ce7",
+        "name": "Edit Fields1"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/848b6abb-6f84-4414-a219-a24f5f768b5d",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "Nome",
+                "value": "={{ $json[\"Seu nome completo\"] }}"
+              },
+              {
+                "name": "Email",
+                "value": "={{ $json[\"E-mail\"] }}"
+              },
+              {
+                "name": "Whatsapp",
+                "value": "={{ $json[\"Seu WhatsApp\"] }}"
+              },
+              {
+                "name": "Insta",
+                "value": "={{ $json[\"Qual é o seu Instagram\"] }}"
+              },
+              {
+                "name": "Faturamento",
+                "value": "={{ $json[\"Seu faturamento mensal atual tem sido\"] }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          460,
+          280
+        ],
+        "id": "e7a27790-2923-4096-9d72-69925f4ef5bc",
+        "name": "HTTP Request1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          680,
+          280
+        ],
+        "id": "d09e0a61-7959-4a18-aec9-e440e11df7a6",
+        "name": "No Operation, do nothing1"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "725c20b5-0fcc-4119-a1eb-799acadia9jdiq1",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          540
+        ],
+        "id": "0b89e49d-dbfc-4dcb-8b9f-831b65af0af4",
+        "name": "Webhook2",
+        "webhookId": "725c20b5-0fcc-4119-a1eb-799acd565305"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "05a5bbef-d16a-46e1-95d2-5b13bf7aefa1",
+                "name": "Seu nome completo",
+                "value": "={{ $json.body[\"Seu nome completo:\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "7a9c3f94-c9f6-4e5a-93c4-2c6d280780d3",
+                "name": "E-mail",
+                "value": "={{ $json.body[\"E-mail:\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "928cbe36-a1d6-4f15-951d-cb968892e569",
+                "name": "Seu WhatsApp",
+                "value": "={{ $json.body[\"Seu WhatsApp\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "086d7b06-497b-42ad-b3c2-b5ea79c45318",
+                "name": "Qual é o seu Instagram",
+                "value": "={{ $json.body[\"Qual é o seu Instagram?\"] }}",
+                "type": "string"
+              },
+              {
+                "id": "4409ab62-52ab-4e05-9cff-5a5b41c4a0ca",
+                "name": "Seu faturamento mensal atual tem sido",
+                "value": "={{ $json.body[\"Seu faturamento mensal atual tem sido:\"] }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          240,
+          540
+        ],
+        "id": "1b8cc100-91d6-4571-b735-69ed71b67686",
+        "name": "Edit Fields2"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/e97f0671-dd72-4c72-aa83-ae3a09dba3b3",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "Nome",
+                "value": "={{ $json[\"Seu nome completo\"] }}"
+              },
+              {
+                "name": "Email",
+                "value": "={{ $json[\"E-mail\"] }}"
+              },
+              {
+                "name": "Whatsapp",
+                "value": "={{ $json[\"Seu WhatsApp\"] }}"
+              },
+              {
+                "name": "Insta",
+                "value": "={{ $json[\"Qual é o seu Instagram\"] }}"
+              },
+              {
+                "name": "Faturamento",
+                "value": "={{ $json[\"Seu faturamento mensal atual tem sido\"] }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          460,
+          540
+        ],
+        "id": "6f9da0a6-4eaa-4dbb-8aa9-e90cdcf5c773",
+        "name": "HTTP Request2"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          680,
+          540
+        ],
+        "id": "e69ed649-8609-4f1f-9299-057e4f716049",
+        "name": "No Operation, do nothing2"
+      },
+      {
+        "parameters": {
+          "content": "Aplicação 6d\n",
+          "height": 180,
+          "width": 1000
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -100,
+          -20
+        ],
+        "typeVersion": 1,
+        "id": "b2ea0708-17d3-4a82-9fdf-abcb9c8a8b66",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "Escala\n\n",
+          "height": 180,
+          "width": 1000
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -100,
+          240
+        ],
+        "typeVersion": 1,
+        "id": "3ce1feb7-e4c1-4ca6-b03d-759c8d13e004",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "content": "Potencial\n",
+          "height": 180,
+          "width": 1000
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -100,
+          500
+        ],
+        "typeVersion": 1,
+        "id": "f69fac02-d38d-4f17-bca7-6534901465bc",
+        "name": "Sticky Note2"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook1": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request1": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook2": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields2": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request2": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
