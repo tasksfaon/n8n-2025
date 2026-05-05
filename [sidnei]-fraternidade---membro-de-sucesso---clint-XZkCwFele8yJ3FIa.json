@@ -1,0 +1,262 @@
+{
+  "updatedAt": "2026-04-16T11:56:11.677Z",
+  "createdAt": "2025-07-09T18:43:26.895Z",
+  "id": "XZkCwFele8yJ3FIa",
+  "name": "[Sidnei] Fraternidade - Membro de Sucesso - Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sidnei-fraternidade-ganho",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        260
+      ],
+      "id": "3228adf7-178d-4362-8f0c-fb5b0b10a0a3",
+      "name": "Webhook1",
+      "webhookId": "7db1880f-777e-4172-b2a5-2a32892a70de"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1c3e15b2-e0b7-4c75-81c7-d30cfe1e912b",
+              "name": "nome",
+              "value": "={{ $('Webhook1').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "50433c3d-7299-4e46-8254-4cb9c34a7eb1",
+              "name": "telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "8897d3a4-9025-447e-a763-9eeebe875b82",
+              "name": "email",
+              "value": "={{ $('Webhook1').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "aaca05a3-8670-413b-8d10-1da21ea30cbc",
+              "name": "Polo",
+              "value": "={{ $json.poloPrincipal }}",
+              "type": "string"
+            },
+            {
+              "id": "564ab1f5-63e6-40bc-bd3c-c62753d59eab",
+              "name": "Consultor",
+              "value": "={{ $json.consultor }}",
+              "type": "string"
+            },
+            {
+              "id": "6802b9e8-484a-4d6c-9eb0-7ec285f8d0e0",
+              "name": "Dono Negocio",
+              "value": "={{ $json.consultor_email }}",
+              "type": "string"
+            },
+            {
+              "id": "ffae5ef1-aa16-40ff-92f1-44513dcce66e",
+              "name": "Embaixador",
+              "value": "={{ $json.embaixador }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        260
+      ],
+      "id": "a68fc261-ec7b-4a1b-a991-0440ec9dca9e",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nfunction extrairPolo(texto) {\n  const match = texto.match(/Polo\\s+([A-Za-zÀ-ÿ\\s]+)/i);\n  return match ? match[1].trim() : texto.trim();\n}\n\nfunction escolherAleatorio(lista) {\n  return lista[Math.floor(Math.random() * lista.length)];\n}\n\n// Mapeamento de consultores para e-mails\nconst emailPorConsultor = {\n  'Rodolfo': 'rodolfo.maciel11@yahoo.com.br',\n  'Talita': 'talita.a.caeclub@gmail.com',\n  'Beatriz': 'biahadriany@gmail.com',\n  'Andressa': 'andressa.rodrigues@caeclub.com.br',\n  'Mari': 'mari.fragoso86@gmail.com',\n  'Helo': 'heloizaciocheti15@gmail.com',\n  'João': 'joaopedrolopesmartinscintra@gmail.com',\n  'Jessica': 'contato@caesaopaulo.com.br',\n  'Erika': 'maria.victoria@caeclub.com.br',\n  'Jonathan': 'jonathanandrepires@gmail.com',\n  'Leticia': 'letty.piazzetta@gmail.com',\n  'Juliana': 'ornelesjuliana@gmail.com',\n};\n\nfor (const item of items) {\n  const rawPhone = $input.first().json.body.contact_phone || '';\n  const rawPoloTexto = $input.first().json.body.contact_polo || '';\n\n  // Formatar telefone\n  const onlyNumbers = rawPhone.replace(/\\D/g, '');\n  let formattedPhone = onlyNumbers;\n  if (!formattedPhone.startsWith('55')) {\n    formattedPhone = '55' + formattedPhone.slice(-11);\n  }\n\n  // Extrair polo\n  const polo = extrairPolo(rawPoloTexto).toLowerCase();\n\n  // Determinar consultor e embaixador\n  let consultor = 'Não definido';\n  let embaixador = 'Não definido';\n\n  if (['alphaville', 'tatuapé'].some(p => polo.includes(p))) {\n    consultor = 'Helo';\n    embaixador = 'Sidnei';\n  } else if (['santo amaro', 'campo belo', 'mooca', 'granja viana', 'santos', 'praia grande'].some(p => polo.includes(p))) {\n    consultor = 'Juliana';\n    embaixador = escolherAleatorio(['Rinaldo', 'PH', 'IAGO']);\n  } else if (['butantã', 'faria lima', 'vila maria', 'osasco', 'grande abc', 'lapa'].some(p => polo.includes(p))) {\n    consultor = 'Talita';\n    embaixador = escolherAleatorio(['Charles', 'Bruno Oliveira', 'Bruno Carrera', 'Gisela Vicente']);\n  }\n\n  const consultor_email = emailPorConsultor[consultor] || 'Email não encontrado';\n\n  const poloCapitalizado = polo\n    .split(' ')\n    .map(p => p.charAt(0).toUpperCase() + p.slice(1))\n    .join(' ');\n\n  output.push({\n    json: {\n      telefoneFormatado: formattedPhone,\n      poloPrincipal: poloCapitalizado,\n      consultor,\n      consultor_email,\n      embaixador,\n    },\n  });\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        260
+      ],
+      "id": "dec1b7e5-ee62-45d0-9759-8b1371303f89",
+      "name": "Code1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        920,
+        260
+      ],
+      "id": "96a13749-7a62-4e32-b2cf-56cb0bbf1790",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/eb19401c-7c00-4d29-a11f-cf7c6a5335d0",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.nome }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.telefone }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "name": "Consultor",
+              "value": "={{ $json['Dono Negocio'] }}"
+            },
+            {
+              "name": "Embaixador",
+              "value": "={{ $json.Embaixador }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        260
+      ],
+      "id": "5c4a7dc8-c0fb-4706-915a-6754301938b5",
+      "name": "HTTP Request Clint"
+    }
+  ],
+  "connections": {
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request Clint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.9.0",
+            "content-length": "350",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "traceparent": "00-686ebfb10000000045d501fc135be372-24185cc9791d32dc-00",
+            "tracestate": "dd=t.tid:686ebfb100000000;t.dm:-3;s:-1;p:24185cc9791d32dc",
+            "x-datadog-parent-id": "2600930805196600028",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=686ebfb100000000",
+            "x-datadog-trace-id": "5031930340824572786",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "Isabella Teste",
+            "contact_email": "bellasimaia@gmail.con",
+            "contact_phone": "+5531984617540",
+            "deal_stage": "FINANCEIRO/VENDA CONCLUÍDA",
+            "deal_user": "andressa.rodrigues@caeclub.com.br",
+            "deal_status": "WON",
+            "contact_polo": "CAE CLUB - Polo Lapa",
+            "deal_user_name": "Andressa de Paula",
+            "contact_membro_que_indicou": "",
+            "deal_embaixadorenvoy": ""
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/sidnei-fraternidade-ganho",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "2b20a71c-6610-4f6a-b40c-8993899188a5",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-07-09T18:43:26.895Z",
+      "createdAt": "2025-07-09T18:43:26.895Z",
+      "role": "workflow:owner",
+      "workflowId": "XZkCwFele8yJ3FIa",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
