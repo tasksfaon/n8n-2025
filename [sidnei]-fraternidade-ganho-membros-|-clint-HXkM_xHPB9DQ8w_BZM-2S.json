@@ -1,0 +1,419 @@
+{
+  "updatedAt": "2026-04-16T11:47:12.119Z",
+  "createdAt": "2026-03-10T13:52:18.083Z",
+  "id": "HXkM_xHPB9DQ8w_BZM-2S",
+  "name": "[Sidnei] Fraternidade Ganho Membros | Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "novo-fraternidade-360-cs",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -144,
+        -64
+      ],
+      "id": "4bb71492-fb0c-4f41-b9a3-cffaf3beb225",
+      "name": "Webhook",
+      "webhookId": "57fc08e3-2d7c-4eae-af9f-f71ba4963110"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =========================\n// FUNÇÃO NORMALIZADORA\n// =========================\nconst norm = (s) =>\n  (s || \"\")\n    .toString()\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .toLowerCase()\n    .replace(/\\s+/g, \" \")\n    .trim();\n\n\n// =========================\n// TELEFONE\n// =========================\nlet telefone = $json.body.contact_phone || \"\";\ntelefone = telefone.replace(/\\D/g, \"\");\n\nif (telefone.startsWith(\"55\") && telefone.length > 11) {\n  telefone = telefone.substring(2);\n}\n\nif (telefone.length === 10) {\n  const ddd = telefone.substring(0, 2);\n  const numero = telefone.substring(2);\n  telefone = ddd + \"9\" + numero;\n}\n\nif (telefone.length === 11) {\n  telefone = \"55\" + telefone;\n}\n\n\n// =========================\n// MEMBRO\n// =========================\nlet nomeOriginal = $json.body.deal_user_name || \"\";\nlet nomeKey = norm(nomeOriginal);\n\nlet email_membro = \"Não encontrado\";\n\n\n// =========================\n// BASE MEMBROS\n// =========================\nconst membros = {\n  \"kauan matheus\": \"kaua.caeclub@gmail.com\",\n  \"erika adm\": \"maria.victoria@caeclub.com.br\",\n  \"leticia piazzetta\": \"letty.piazzetta@gmail.com\",\n  \"caroline fernandes\": \"carolineprado2017@icloud.com\",\n  \"mateus laurentino\": \"mateusl.caeclub@gmail.com\",\n  \"alice theophilo pereira\": \"alicetheophilope@gmail.com\",\n  \"beatriz adriany\": \"biahadriany@gmail.com\",\n  \"jessica miranda\": \"contato@caesaopaulo.com.br\",\n  \"jonathan andre\": \"jonathanandrepires@gmail.com\",\n  \"heloiza ciocheti martins\": \"heloizaciocheti15@gmail.com\",\n  \"talita artacho\": \"talita.a.caeclub@gmail.com\",\n  \"beatriz foresto\": \"bia.caeclub@gmail.com\"\n};\n\n\n// =========================\n// ALIASES\n// =========================\nconst aliases = {\n  \"jonatan\": \"jonathan andre\",\n  \"jonathan\": \"jonathan andre\",\n  \"jonathan pires\": \"jonathan andre\",\n  \"kaua\": \"kauan matheus\",\n  \"erika\": \"erika adm\",\n  \"leticia\": \"leticia piazzetta\",\n  \"caroline\": \"caroline fernandes\",\n  \"mateus\": \"mateus laurentino\",\n  \"alice\": \"alice theophilo pereira\",\n  \"jessica\": \"jessica miranda\",\n  \"heloiza\": \"heloiza ciocheti martins\",\n  \"talita\": \"talita artacho\"\n};\n\nif (aliases[nomeKey]) {\n  nomeKey = aliases[nomeKey];\n}\n\n\n// =========================\n// POLO (VINDO DO WEBHOOK)\n// =========================\nlet polos = $('Webhook').item.json.body.contact_interesse_polo || [];\n\nlet polosTexto = norm(polos.join(\" \"));\n\n\n// =========================\n// DETECÇÃO POR POLO\n// =========================\nconst regioesTalita = [\n  \"faria lima\",\n  \"osasco\",\n  \"grande abc\",\n  \"granja\",\n  \"lapa\",\n  \"campo belo\",\n  \"mooca\",\n  \"santo amaro\"\n];\n\nconst regioesMateus = [\n  \"butanta\",\n  \"vila maria\",\n  \"alphaville\",\n  \"tatuape\",\n  \"santos\"\n];\n\nif (regioesTalita.some(r => polosTexto.includes(r))) {\n  nomeKey = \"talita artacho\";\n}\n\nif (regioesMateus.some(r => polosTexto.includes(r))) {\n  nomeKey = \"mateus laurentino\";\n}\n\n\n// =========================\n// MATCH EXATO\n// =========================\nif (membros[nomeKey]) {\n  email_membro = membros[nomeKey];\n}\n\n\n// =========================\n// MATCH PARCIAL\n// =========================\nif (email_membro === \"Não encontrado\" && nomeKey) {\n  for (const nomeBase in membros) {\n    if (\n      nomeBase.includes(nomeKey) ||\n      nomeKey.includes(nomeBase)\n    ) {\n      email_membro = membros[nomeBase];\n      break;\n    }\n  }\n}\n\n\n// =========================\n// RETORNO\n// =========================\nreturn [\n  {\n    json: {\n      telefone_formatado: telefone,\n      membro_nome_detectado: nomeKey,\n      email_membro: email_membro,\n      polos_detectados: polosTexto\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        -64
+      ],
+      "id": "0c0b70e0-6cff-41a2-8873-b15a2dfd8a71",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f6486870-0d98-4536-b7ef-9ce391ec213a",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "c994d8ff-ab5e-4fed-b61b-b00539713714",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "486d76fd-9efd-4174-90da-b25a286015ae",
+              "name": "Telefone",
+              "value": "={{ $json.telefone_formatado }}",
+              "type": "string"
+            },
+            {
+              "id": "eae097f3-dd9f-4dd0-a838-4197eebc8b19",
+              "name": "Polo",
+              "value": "={{ $('Webhook').item.json.body.contact_interesse_polo[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "e1e8ed92-c3c8-442e-87e4-833498b754a0",
+              "name": "Vendedor",
+              "value": "={{ $json.email_membro }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        -64
+      ],
+      "id": "97c3087e-481b-4f10-ab5e-33bfaed4ed1f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        688,
+        -64
+      ],
+      "id": "222564b1-d2a7-4039-9715-71e0a027d985",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/d079d1df-a1c1-4d55-bbf8-3db1ba70d33e",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Vendedor",
+              "value": "={{ $json.Vendedor }}"
+            },
+            {
+              "name": "Polo",
+              "value": "={{ $json.Polo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        -64
+      ],
+      "id": "bb1854d7-8b1e-4b46-b221-5c857e2a63f9",
+      "name": "HTTP Clint Consultoria 360"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/4316b687-cdab-4985-a5b4-bb67385af592",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Vendedor",
+              "value": "={{ $json.Vendedor }}"
+            },
+            {
+              "name": "Polo",
+              "value": "={{ $json.Polo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        -256
+      ],
+      "id": "409c5291-5a1f-4ee1-b46e-eea2f67e5653",
+      "name": "HTTP Clint Membros de Sucesso"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/b574b3bf-b002-451c-bd50-10c5d7c6ee0f",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Vendedor",
+              "value": "={{ $json.Vendedor }}"
+            },
+            {
+              "name": "Polo",
+              "value": "={{ $json.Polo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        128
+      ],
+      "id": "2b20c5e0-05ac-4ed6-94b0-0ab6e15be211",
+      "name": "HTTP Clint Renovações"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/dacea027-642a-4f6a-b71f-491f90fcebce",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Vendedor",
+              "value": "={{ $json.Vendedor }}"
+            },
+            {
+              "name": "Polo",
+              "value": "={{ $json.Polo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        304
+      ],
+      "id": "9c7e448f-c7d0-45fc-b819-d98a09774608",
+      "name": "HTTP Clint Treinamentos"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint Consultoria 360",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Clint Membros de Sucesso",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Clint Renovações",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Clint Treinamentos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Consultoria 360": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Membros de Sucesso": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Renovações": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint Treinamentos": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.13.4",
+            "content-length": "359",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "baggage": "sentry-trace_id=2af9603ddf534b44b968e25f3e403f0c,sentry-sample_rate=0,sentry-transaction=queue-process,sentry-public_key=943206222a3db90a292f22d119bec999,sentry-org_id=214542,sentry-environment=production,sentry-sampled=false,sentry-sample_rand=0.803414,sentry-release=c684bcc0a01a070287329c276c76fb7a75214f87,bubblegroup.http.route=workflow%2Fstart,bubblegroup.http.host=app.escoladeimoveis.com.br,bubblegroup.workflow.appname=escoladeimoveis,bubblegroup.workflow.app_version=live,bubblegroup.workflow.situation=page_wf,bubblegroup.workflow.id=bTdNR,bubblegroup.workflow.event.type=ButtonClicked,bubblegroup.workflow.action.id=bTdNk,bubblegroup.workflow.action.type=apiconnector2-bTbRX.bTbSe,origin=3,name=flows,loc=app.tasks.flows.batch_evaluate_flow_action_evaluations_webhook_send_multibroker__r2,source=klaviyo,bubblegroup.client.version=19dd5d29f893e7b7c5a33ffca171dfe8ef030c0c,bubblegroup.client.commit_timestamp=1771454152000,actorType=user,userId=01CA6WF3X9PYM1ATVXAMJ1ARMA,rootTimestamp=1762200809102,userToken=01K95B70NAFJ04DK4KBVYHGHXN,rootTraceId=b70dac89ed93664fda60d1783e6b30e3,user_agent.origin=web,com.fivetran.utils.static_context_factory.MultiTenantStaticContextFactory_CONTEXT=00592e35-eb6b-4e3f-8be0-5521e868228e",
+            "content-type": "application/json",
+            "traceparent": "00-69b027e7000000003221982c6443de9b-66ce2091a6b6b39e-00",
+            "tracestate": "dd=t.tid:69b027e700000000;t.dm:-12;s:-1;p:66ce2091a6b6b39e",
+            "x-datadog-parent-id": "7407894247010382750",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=69b027e700000000",
+            "x-datadog-trace-id": "3612335692556000923",
+            "x-forwarded-for": "52.200.254.28",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "52.200.254.28"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact_name": "teste ee",
+            "contact_email": "ste@gmail.com.br",
+            "contact_phone": "+5531984617540",
+            "deal_stage": "FINANCEIRO/VENDA CONCLUÍDA",
+            "deal_user": "alicetheophilope@gmail.com",
+            "deal_status": "WON",
+            "contact_polo": "Santos",
+            "contact_interesse_polo": [
+              "CAE CLUB - Polo Tatuapé"
+            ],
+            "deal_polo": "",
+            "deal_user_name": "Alice Theophilo Pereira ",
+            "contact_convidado": ""
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/novo-fraternidade-360-cs",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "70f55597-f414-44d9-81f5-bce9c043885c",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-10T13:52:18.083Z",
+      "createdAt": "2026-03-10T13:52:18.083Z",
+      "role": "workflow:owner",
+      "workflowId": "HXkM_xHPB9DQ8w_BZM-2S",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
