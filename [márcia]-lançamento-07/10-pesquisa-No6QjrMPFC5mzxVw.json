@@ -1,0 +1,584 @@
+{
+  "updatedAt": "2025-09-19T14:25:22.529Z",
+  "createdAt": "2025-09-19T13:56:24.442Z",
+  "id": "No6QjrMPFC5mzxVw",
+  "name": "[Márcia] Lançamento 07/10 Pesquisa",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\n// Telefone bruto\nconst rawPhone = String($input.first().json['WhatsApp (DDD + Número - o mesmo cadastrado na inscrição)']|| '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\nlet ddd = null;\nlet ddd_id = null;\n\n// 📌 Mapa de DDDs para o ID no Pipedrive\nconst dddMap = {\n  '11': 6115, '12': 6116, '13': 6117, '14': 6118, '15': 6119,\n  '16': 6120, '17': 6121, '18': 6122, '19': 6123, '21': 6124,\n  '22': 6125, '24': 6126, '27': 6127, '28': 6128, '31': 6129,\n  '32': 6130, '33': 6131, '34': 6132, '35': 6133, '37': 6134,\n  '38': 6135, '41': 6136, '42': 6137, '43': 6138, '44': 6139,\n  '45': 6140, '46': 6141, '47': 6142, '48': 6143, '49': 6144,\n  '51': 6145, '53': 6146, '54': 6147, '55': 6148, '61': 6149,\n  '62': 6150, '63': 6151, '64': 6152, '65': 6153, '66': 6154,\n  '67': 6155, '68': 6156, '69': 6157, '71': 6158, '73': 6159,\n  '74': 6160, '75': 6161, '77': 6162, '79': 6163, '81': 6164,\n  '82': 6165, '83': 6166, '84': 6167, '85': 6168, '86': 6169,\n  '87': 6170, '88': 6171, '89': 6172, '91': 6173, '92': 6174,\n  '93': 6175, '94': 6176, '95': 6177, '96': 6178, '97': 6179,\n  '98': 6180, '99': 6181\n};\n\n// 📌 Mapa de fontes UTM normalizadas para stage_id\nconst stageMap = {\n  'email': 1409,\n  'wpp_grupos': 1409,\n  'api': 1409,\n  'manychat': 1414,\n  'comercial': 1420,\n  'suporte': 1420,\n  'fran': 1420,\n  'dani': 1420,\n  'trafego': 1411,\n  'fb': 1411,\n  'ig': 1411,\n  'story': 1411,\n  'bio_insta': 1411\n};\n\n// 👉 Função para remover acentos e normalizar string\nfunction normalizeUTM(source) {\n  return String(source || '')\n    .toLowerCase()\n    .normalize('NFD')               // transforma acentos em caracteres compostos\n    .replace(/[\\u0300-\\u036f]/g, '')// remove acentos\n    .replace(/\\s+/g, '')            // remove espaços\n    .replace(/[^a-z0-9_]/g, '');    // remove símbolos\n}\n\n// ✅ Trata telefone\nif (/^\\d{10,11}$/.test(cleaned)) {\n  cleaned = '55' + cleaned;\n}\nif (cleaned.startsWith('5555')) {\n  cleaned = '55' + cleaned.slice(4);\n}\nif (/^55\\d{10,11}$/.test(cleaned)) {\n  ddd = cleaned.slice(2, 4);\n  ddd_id = dddMap[ddd] || null;\n} else {\n  if (!/^\\d{8,15}$/.test(cleaned)) {\n    cleaned = '';\n  }\n}\n\n// ✅ Retorno final\nreturn [{\n  json: {\n    telefoneOriginal: rawPhone,\n    telefoneFormatado: cleaned,\n    ddd: ddd,\n    ddd_id: ddd_id,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        0
+      ],
+      "id": "a7d934e1-b3c5-4635-b40f-e9cc7063b0b8",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+              "name": "Data",
+              "value": "={{ \n  new Date().toLocaleString('pt-BR', { \n    timeZone: 'America/Sao_Paulo',\n    day: '2-digit',\n    month: '2-digit',\n    year: 'numeric',\n    hour: '2-digit',\n    minute: '2-digit'\n  }).replace(',', '')\n}}",
+              "type": "string"
+            },
+            {
+              "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+              "name": "Nome",
+              "value": "={{ $('Google Sheets Trigger').item.json['Nome completo'] }}",
+              "type": "string"
+            },
+            {
+              "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+              "name": "Email",
+              "value": "={{ $('Google Sheets Trigger').item.json['E-mail (o mesmo cadastrado na inscrição)'] }}",
+              "type": "string"
+            },
+            {
+              "id": "31cdadf9-fa7c-4f7c-b988-92d0009182c6",
+              "name": "DDD",
+              "value": "={{ $json.ddd }}",
+              "type": "string"
+            },
+            {
+              "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "0d71ff73-651d-4ed3-83fb-ddbd85c2ec6c",
+              "name": "ddd id",
+              "value": "={{ $json.ddd_id }}",
+              "type": "string"
+            },
+            {
+              "id": "de9030ac-1e06-4699-b7a4-931409eb9de8",
+              "name": "Instagram",
+              "value": "={{ $('Google Sheets Trigger').item.json['@ do Instagram'] }}",
+              "type": "string"
+            },
+            {
+              "id": "bff5069c-1b04-417f-af20-21695440e506",
+              "name": "Idade",
+              "value": "={{ $('Google Sheets Trigger').item.json['Qual sua faixa etária?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f488647a-fe21-4df9-96ff-1c5d8d9a15bf",
+              "name": "Cidade",
+              "value": "={{ $json['De qual cidade você é?\\n'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d48bacb4-ea07-4097-873a-ff1dc6e93016",
+              "name": "Estado",
+              "value": "={{ $('Google Sheets Trigger').item.json['De qual estado você é?'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        0
+      ],
+      "id": "18ad4d25-ce73-4988-ae99-37a53024513e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        0
+      ],
+      "id": "9e832dc1-ab4a-4b2c-999a-fa402aeaefb7",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pipedrive.com/v1/persons?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json.Nome }}\",\n  \"email\": \"{{ $json.Email }}\",\n  \"phone\": \"{{ $json.Telefone }}\",\n\n  \"f78cd083b84a2074eac1527b995d1cd18f05d274\": {{ $json['ddd id'] }},\n\n  \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n  \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n  \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n  \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n  \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        752,
+        64
+      ],
+      "id": "10cd7834-34b1-4fb9-81d7-cd5dacd2bf1a",
+      "name": "HTTP Pipedrive Person"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pipedrive.com/v1/deals?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"QI Mental para Leigos - {{ $json.data.name }}\",\n  \"pipeline_id\": 212,\n  \"stage_id\": {{ $('Edit Fields').item.json['Stage ID'] }},\n  \"person_id\": {{ $json.data.id }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        64
+      ],
+      "id": "3866d908-660f-4de7-b9fe-a42edf99b824",
+      "name": "HTTP Pipedrive Deal"
+    },
+    {
+      "parameters": {
+        "url": "https://api.pipedrive.com/v1/personFields?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        752,
+        240
+      ],
+      "id": "f913e604-f2f1-494d-a974-9f26b7cf9a91",
+      "name": "HTTP Pipedrive Person1"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls",
+          "mode": "list",
+          "cachedResultName": "[Center AO] Dados Captação Lançamento 07/10",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1541322674,
+          "mode": "list",
+          "cachedResultName": "Respostas ao formulário 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit#gid=1541322674"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        64,
+        0
+      ],
+      "id": "9122ca1e-23dd-441a-9897-258fe66ff510",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "KahmGSoMZoSZdYaL",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pipedrive Person1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Person": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pipedrive Deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Deal": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": {
+    "node:Pipedrive Trigger": {},
+    "node:Pipedrive Trigger1": {},
+    "node:Google Sheets Trigger": {
+      "documentId": "1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls",
+      "sheetId": 1541322674,
+      "lastIndexChecked": 69
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Google Sheets Trigger": [
+      {
+        "json": {
+          "Carimbo de data/hora": "19/09/2025 11:20:39",
+          "Nome completo": "Teste",
+          "E-mail (o mesmo cadastrado na inscrição)": "tesete",
+          "WhatsApp (DDD + Número - o mesmo cadastrado na inscrição)": 3198617540,
+          "@ do Instagram": "teste",
+          "Qual sua faixa etária?": "Entre 25 e 30 anos",
+          "De qual cidade você é?": "teste",
+          "De qual estado você é?": "teste",
+          "Informe o seu gênero": "Feminino",
+          "Há quanto tempo você conhece a Dra. Márcia Yamamura?": "",
+          "Como você ficou sabendo do ENCONTRO “Mapa das emoções: descubra como elas moldam quem você é”?": "teste",
+          "O que te motivou a se inscrever no ENCONTRO “Mapa das emoções: descubra como elas moldam quem você é”?": "teste",
+          "O que você espera deste Encontro?": "teste",
+          "Das áreas da sua vida (pessoal, familiar, profissional, finanças, emocional etc): qual delas não está funcionando do jeito que você gostaria?": "teste",
+          "Se pudesse sair desse Encontro com apenas uma resposta, qual seria?": "teste",
+          "Você já conhece ou estuda algo sobre Medicina Chinesa?": "Já ouvi falar, mas não sei muito",
+          "Em relação às suas emoções, você se considera:": "Mais ou menos equilibrado(a)",
+          "Qual é a sua principal área de interesse hoje?": "Autoconhecimento",
+          "Qual das situações abaixo mais se aproxima de você no momento?": "Sinto que minhas emoções impactam minha saúde física e na minha vida como um todo",
+          "Na sua opinião, o que atrapalha sua saúde emocional?": "teste",
+          "Quando pensa no impacto das emoções, qual dessas áreas sente mais afetada?": "Saúde física",
+          "Quando pensa em cuidar melhor da sua saúde mental e emocional, o que é mais desafiador para você?": "teste",
+          "Você já buscou ajuda antes para cuidar da sua saúde emocional?": "Sim, com outras práticas",
+          "Em relação à sua saúde emocional, quais tentativas você já fez que funcionaram e não funcionaram?\n": "teste",
+          "Comente aqui qual a sua expectativa deste encontro.": "teste",
+          " Como gostaria de ser chamado(a)?": "tete"
+        }
+      }
+    ]
+  },
+  "versionId": "2f69d37f-6e4c-46e5-8ea9-cc9903cee172",
+  "activeVersionId": "2f69d37f-6e4c-46e5-8ea9-cc9903cee172",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-09-19T13:56:24.442Z",
+      "createdAt": "2025-09-19T13:56:24.442Z",
+      "role": "workflow:owner",
+      "workflowId": "No6QjrMPFC5mzxVw",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "2f69d37f-6e4c-46e5-8ea9-cc9903cee172",
+    "workflowId": "No6QjrMPFC5mzxVw",
+    "nodes": [
+      {
+        "parameters": {
+          "jsCode": "const data = $input.first().json;\n\n// Telefone bruto\nconst rawPhone = String($input.first().json['WhatsApp (DDD + Número - o mesmo cadastrado na inscrição)']|| '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\nlet ddd = null;\nlet ddd_id = null;\n\n// 📌 Mapa de DDDs para o ID no Pipedrive\nconst dddMap = {\n  '11': 6115, '12': 6116, '13': 6117, '14': 6118, '15': 6119,\n  '16': 6120, '17': 6121, '18': 6122, '19': 6123, '21': 6124,\n  '22': 6125, '24': 6126, '27': 6127, '28': 6128, '31': 6129,\n  '32': 6130, '33': 6131, '34': 6132, '35': 6133, '37': 6134,\n  '38': 6135, '41': 6136, '42': 6137, '43': 6138, '44': 6139,\n  '45': 6140, '46': 6141, '47': 6142, '48': 6143, '49': 6144,\n  '51': 6145, '53': 6146, '54': 6147, '55': 6148, '61': 6149,\n  '62': 6150, '63': 6151, '64': 6152, '65': 6153, '66': 6154,\n  '67': 6155, '68': 6156, '69': 6157, '71': 6158, '73': 6159,\n  '74': 6160, '75': 6161, '77': 6162, '79': 6163, '81': 6164,\n  '82': 6165, '83': 6166, '84': 6167, '85': 6168, '86': 6169,\n  '87': 6170, '88': 6171, '89': 6172, '91': 6173, '92': 6174,\n  '93': 6175, '94': 6176, '95': 6177, '96': 6178, '97': 6179,\n  '98': 6180, '99': 6181\n};\n\n// 📌 Mapa de fontes UTM normalizadas para stage_id\nconst stageMap = {\n  'email': 1409,\n  'wpp_grupos': 1409,\n  'api': 1409,\n  'manychat': 1414,\n  'comercial': 1420,\n  'suporte': 1420,\n  'fran': 1420,\n  'dani': 1420,\n  'trafego': 1411,\n  'fb': 1411,\n  'ig': 1411,\n  'story': 1411,\n  'bio_insta': 1411\n};\n\n// 👉 Função para remover acentos e normalizar string\nfunction normalizeUTM(source) {\n  return String(source || '')\n    .toLowerCase()\n    .normalize('NFD')               // transforma acentos em caracteres compostos\n    .replace(/[\\u0300-\\u036f]/g, '')// remove acentos\n    .replace(/\\s+/g, '')            // remove espaços\n    .replace(/[^a-z0-9_]/g, '');    // remove símbolos\n}\n\n// ✅ Trata telefone\nif (/^\\d{10,11}$/.test(cleaned)) {\n  cleaned = '55' + cleaned;\n}\nif (cleaned.startsWith('5555')) {\n  cleaned = '55' + cleaned.slice(4);\n}\nif (/^55\\d{10,11}$/.test(cleaned)) {\n  ddd = cleaned.slice(2, 4);\n  ddd_id = dddMap[ddd] || null;\n} else {\n  if (!/^\\d{8,15}$/.test(cleaned)) {\n    cleaned = '';\n  }\n}\n\n// ✅ Retorno final\nreturn [{\n  json: {\n    telefoneOriginal: rawPhone,\n    telefoneFormatado: cleaned,\n    ddd: ddd,\n    ddd_id: ddd_id,\n  }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          256,
+          0
+        ],
+        "id": "a7d934e1-b3c5-4635-b40f-e9cc7063b0b8",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+                "name": "Data",
+                "value": "={{ \n  new Date().toLocaleString('pt-BR', { \n    timeZone: 'America/Sao_Paulo',\n    day: '2-digit',\n    month: '2-digit',\n    year: 'numeric',\n    hour: '2-digit',\n    minute: '2-digit'\n  }).replace(',', '')\n}}",
+                "type": "string"
+              },
+              {
+                "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+                "name": "Nome",
+                "value": "={{ $('Google Sheets Trigger').item.json['Nome completo'] }}",
+                "type": "string"
+              },
+              {
+                "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+                "name": "Email",
+                "value": "={{ $('Google Sheets Trigger').item.json['E-mail (o mesmo cadastrado na inscrição)'] }}",
+                "type": "string"
+              },
+              {
+                "id": "31cdadf9-fa7c-4f7c-b988-92d0009182c6",
+                "name": "DDD",
+                "value": "={{ $json.ddd }}",
+                "type": "string"
+              },
+              {
+                "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+                "name": "Telefone",
+                "value": "={{ $json.telefoneFormatado }}",
+                "type": "string"
+              },
+              {
+                "id": "0d71ff73-651d-4ed3-83fb-ddbd85c2ec6c",
+                "name": "ddd id",
+                "value": "={{ $json.ddd_id }}",
+                "type": "string"
+              },
+              {
+                "id": "de9030ac-1e06-4699-b7a4-931409eb9de8",
+                "name": "Instagram",
+                "value": "={{ $('Google Sheets Trigger').item.json['@ do Instagram'] }}",
+                "type": "string"
+              },
+              {
+                "id": "bff5069c-1b04-417f-af20-21695440e506",
+                "name": "Idade",
+                "value": "={{ $('Google Sheets Trigger').item.json['Qual sua faixa etária?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "f488647a-fe21-4df9-96ff-1c5d8d9a15bf",
+                "name": "Cidade",
+                "value": "={{ $json['De qual cidade você é?\\n'] }}",
+                "type": "string"
+              },
+              {
+                "id": "d48bacb4-ea07-4097-873a-ff1dc6e93016",
+                "name": "Estado",
+                "value": "={{ $('Google Sheets Trigger').item.json['De qual estado você é?'] }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          512,
+          0
+        ],
+        "id": "18ad4d25-ce73-4988-ae99-37a53024513e",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1536,
+          0
+        ],
+        "id": "9e832dc1-ab4a-4b2c-999a-fa402aeaefb7",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pipedrive.com/v1/persons?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"name\": \"{{ $json.Nome }}\",\n  \"email\": \"{{ $json.Email }}\",\n  \"phone\": \"{{ $json.Telefone }}\",\n\n  \"f78cd083b84a2074eac1527b995d1cd18f05d274\": {{ $json['ddd id'] }},\n\n  \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n  \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n  \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n  \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n  \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\"\n}\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          752,
+          64
+        ],
+        "id": "10cd7834-34b1-4fb9-81d7-cd5dacd2bf1a",
+        "name": "HTTP Pipedrive Person"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pipedrive.com/v1/deals?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"title\": \"QI Mental para Leigos - {{ $json.data.name }}\",\n  \"pipeline_id\": 212,\n  \"stage_id\": {{ $('Edit Fields').item.json['Stage ID'] }},\n  \"person_id\": {{ $json.data.id }}\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          960,
+          64
+        ],
+        "id": "3866d908-660f-4de7-b9fe-a42edf99b824",
+        "name": "HTTP Pipedrive Deal"
+      },
+      {
+        "parameters": {
+          "url": "https://api.pipedrive.com/v1/personFields?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          752,
+          240
+        ],
+        "id": "f913e604-f2f1-494d-a974-9f26b7cf9a91",
+        "name": "HTTP Pipedrive Person1"
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "documentId": {
+            "__rl": true,
+            "value": "1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls",
+            "mode": "list",
+            "cachedResultName": "[Center AO] Dados Captação Lançamento 07/10",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1541322674,
+            "mode": "list",
+            "cachedResultName": "Respostas ao formulário 1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit#gid=1541322674"
+          },
+          "event": "rowAdded",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTrigger",
+        "typeVersion": 1,
+        "position": [
+          64,
+          0
+        ],
+        "id": "9122ca1e-23dd-441a-9897-258fe66ff510",
+        "name": "Google Sheets Trigger",
+        "credentials": {
+          "googleSheetsTriggerOAuth2Api": {
+            "id": "KahmGSoMZoSZdYaL",
+            "name": "Google Sheets Trigger account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "HTTP Pipedrive Person1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Person": {
+        "main": [
+          [
+            {
+              "node": "HTTP Pipedrive Deal",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Deal": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets Trigger": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
