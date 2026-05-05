@@ -1,0 +1,3306 @@
+{
+  "updatedAt": "2025-09-18T20:11:46.823Z",
+  "createdAt": "2025-09-18T20:11:46.823Z",
+  "id": "x97lEC4P65Vf9JNk",
+  "name": "Estrutura IA",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2880,
+        1136
+      ],
+      "id": "e491930f-d9f6-4969-a352-c894d315d066",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evo.greencardcannabico.com/message/sendText/{{ $('Dados').item.json.evo.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Dados').item.json.evo.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Dados').item.json.remoteJid }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json['output.mensagens'] }}"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        656
+      ],
+      "id": "48281c11-006a-4633-8672-a84979d52280",
+      "name": "Enviar Texto"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.whatsapp }}",
+        "tableName": "n8n_chat_histories_maria_rec_vendas",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -2720,
+        1136
+      ],
+      "id": "ac4d9a78-ac9b-4d2e-8601-9fbec442424d",
+      "name": "Postgres Chat Memory"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "todo_dia_energia",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('Dados').item.json.remoteJid }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "ultimo_contato",
+              "fieldValue": "={{ $now.minus(3,'hour') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -5184,
+        1056
+      ],
+      "id": "7f4ac772-c9dd-4eaa-a4e5-32ce920d8471",
+      "name": "Supabase_ultimo_contato"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "303974ab-9903-4fae-af14-73438a4d98b8",
+              "name": "nome",
+              "value": "={{ $('Webhook1').item.json.body.data.pushName }}",
+              "type": "string"
+            },
+            {
+              "id": "2911e082-e712-4b85-bcf7-611f60d1559f",
+              "name": "remoteJid",
+              "value": "={{ $json.telefone }}",
+              "type": "string"
+            },
+            {
+              "id": "f2af5f89-8957-4811-9839-8ef571b38e5c",
+              "name": "fromMe",
+              "value": "={{ $('Webhook1').item.json.body.data.key.fromMe }}",
+              "type": "boolean"
+            },
+            {
+              "id": "8fe0fcb8-9df3-48d3-98f5-c1e89a16940a",
+              "name": "tipo_mensagem",
+              "value": "={{ $('Webhook1').item.json.body.data.messageType }}",
+              "type": "string"
+            },
+            {
+              "id": "16a9c5c0-5a35-4db2-ab94-ef251115696f",
+              "name": "conversation",
+              "value": "={{ $('Webhook1').item.json.body.data.message.conversation }}",
+              "type": "string"
+            },
+            {
+              "id": "20937be5-8999-4d95-91cb-5aa9490f166c",
+              "name": "date_time",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "95ca6185-7794-4411-82c5-d30676a6ca52",
+              "name": "evo.instance",
+              "value": "={{ $('Webhook1').item.json.body.instance }}",
+              "type": "string"
+            },
+            {
+              "id": "66fcd40d-88da-4117-958d-7b4a29454136",
+              "name": "evo.server_url",
+              "value": "=https://evo.greencardcannabico.com/",
+              "type": "string"
+            },
+            {
+              "id": "477ee9d8-59d3-4dd4-9eab-038367517cb1",
+              "name": "evo.apikey",
+              "value": "={{ $('Webhook1').item.json.body.apikey }}",
+              "type": "string"
+            },
+            {
+              "id": "d09930e7-605b-4cc6-aac7-cd04b14374be",
+              "name": "body.data.message.base64",
+              "value": "={{ $('Webhook1').item.json.body.data.message.base64 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -6800,
+        1120
+      ],
+      "id": "e1eee328-7d66-4ecc-b5dd-8993e1b3ce1c",
+      "name": "Dados"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "maria-joga11-lowticket",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -7456,
+        1120
+      ],
+      "id": "0858b1f3-e6a2-4bff-8a60-364c055ed9b5",
+      "name": "Webhook1",
+      "webhookId": "bbf247c7-fddb-450a-8a11-29d7c9541fcc"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a5259f34-956e-4443-a173-0f7da524bbbf",
+              "leftValue": "={{ $('Get a row').item.json.whatsapp }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -5488,
+        1136
+      ],
+      "id": "95372da8-be0c-4aa4-9d3c-d2dfb486de76",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Dados').item.json.tipo_mensagem }}",
+                    "rightValue": "conversation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "3474f6e0-6eef-4ebc-80ba-8182ead58499"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0807bcd7-a626-40ca-ae74-45f5565d9209",
+                    "leftValue": "={{ $('Dados').item.json.tipo_mensagem }}",
+                    "rightValue": "audioMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c8a4fecd-1016-4894-a4b4-859d9b73612c",
+                    "leftValue": "={{ $('Dados').item.json.tipo_mensagem }}",
+                    "rightValue": "imageMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -4912,
+        1072
+      ],
+      "id": "170efa5d-fa62-4ea1-ac3e-9794b52da9cc",
+      "name": "Tipo de Mensagem",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "=base64",
+        "options": {
+          "fileName": "transcricao.ogg",
+          "mimeType": "audio/ogg"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -4528,
+        1088
+      ],
+      "id": "b100d984-b730-427e-a59c-c8e21e057363",
+      "name": "Base64 to Audio"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5d408baf-2ff4-43fb-94a1-79601221051a",
+              "name": "base64",
+              "value": "={{ $('Webhook1').item.json.body.data.message.base64 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4656,
+        1088
+      ],
+      "id": "8e93221b-fa78-44d7-9ff9-3dcf4e8ba61c",
+      "name": "Base64 Audio"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        -4384,
+        1088
+      ],
+      "id": "01fa2d1d-808b-4a19-938e-ea6a927f42ed",
+      "name": "Transcreve Áudio"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64",
+        "options": {
+          "fileName": "imagem.jpeg",
+          "mimeType": "image/jpeg"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -4528,
+        1280
+      ],
+      "id": "050d5126-73bc-4973-8dc5-da9cf4fd154f",
+      "name": "Base64 to Image"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "176cb5f8-02ec-4db5-bd04-6889859eb6aa",
+              "name": "base64",
+              "value": "={{ $('Webhook1').item.json.body.data.message.imageMessage.jpegThumbnail }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4656,
+        1280
+      ],
+      "id": "07eb694a-8f4a-4f99-b896-1cd1b6ffb388",
+      "name": "Base64 Image"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "=#Instruções\nO usuário te enviou uma imagem a qual você deve descrever.\n\nA imagem pode vir acompanhada de uma mensagem de texto (<MensagemUsuario>)\n\nCaso venha, utilize a mensagem anexa como contexto extra, tente capturar o sentimento da mensagem e objetivo pelo qual o usuário esteja enviando esta imagem na conversa.\n\nCrie uma resposta descrevendo as informações enviadas para que estas sejam utilizadas por um agente no futuro.\n\nLembre-se:\nEste agente apenas terá as informações que você fornecer, portanto repasse toda informação que julgar importante.\n\n#Dados\n<MensagemUsuario>\n{{ $json.MensagemImagem }}\n</MensagemUsuario>",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        -4384,
+        1280
+      ],
+      "id": "eb0e65bc-219b-44ce-b777-90be1b54b777",
+      "name": "Analisa a Imagem"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('Dados').item.json.remoteJid }}_buffer_tde_",
+        "messageData": "={{ $json.text }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -4240,
+        1088
+      ],
+      "id": "c89eef61-303e-4696-a5ae-dce4430b4b02",
+      "name": "Add Texto Buffer",
+      "retryOnFail": false,
+      "executeOnce": false,
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('Dados').item.json.remoteJid }}_buffer_tde_",
+        "messageData": "={{ $json.content }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -4240,
+        1280
+      ],
+      "id": "4e57b45a-4dae-4177-8314-d888bb17ffaf",
+      "name": "Add Texto Buffer2",
+      "retryOnFail": false,
+      "executeOnce": false,
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "messages",
+        "key": "={{ $('Dados').item.json.remoteJid }}_buffer_tde_",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -3840,
+        1088
+      ],
+      "id": "35c25d05-d634-49e4-a03f-2477ced60b52",
+      "name": "Buffer ",
+      "alwaysOutputData": true,
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "amount": "=40"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -3696,
+        1088
+      ],
+      "id": "6a9f94da-1ad5-4c1c-8492-ce9357724ae8",
+      "name": "Wait4",
+      "webhookId": "9ce4c1f7-3af1-4c87-aac0-75356f2f31c6",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1bd6c365-d077-4284-9dfe-94db1cbe39bd",
+              "leftValue": "={{ $('Buffer 3').item.json.messages.last() }}",
+              "rightValue": "={{ $('Buffer ').item.json.messages.last() }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3600,
+        944
+      ],
+      "id": "20bcc2f6-422a-49fb-a976-fc1d28ea9cfb",
+      "name": "ComparandoMensagens1",
+      "alwaysOutputData": false,
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "messages",
+        "key": "={{ $('Dados').item.json.remoteJid }}_buffer_tde_",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -3552,
+        1088
+      ],
+      "id": "8109b6b5-cfd2-46e5-9f0a-1d6d84353e10",
+      "name": "Buffer 3",
+      "alwaysOutputData": true,
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $('Dados').item.json.remoteJid }}_buffer_tde_"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -3312,
+        928
+      ],
+      "id": "4fdd4652-9c7f-4437-84c9-84ed21f10acd",
+      "name": "Apagar Buffer1",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -3328,
+        1152
+      ],
+      "id": "94b394e0-879d-4286-8d20-f56382d8560d",
+      "name": "No Operation, do nothing6",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('Dados').item.json.remoteJid }}_buffer_tde_",
+        "messageData": "={{ $('Dados').item.json.conversation }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -4240,
+        928
+      ],
+      "id": "d1250492-238e-4b4f-806c-c29d065d0187",
+      "name": "Add"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -6064,
+        960
+      ],
+      "id": "abe181e9-a77d-4194-aa93-b844fdbe1e86",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "content": "## Início\n### Limpa o número de telefone e seta as variáveis",
+        "height": 540,
+        "width": 828,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -7504,
+        944
+      ],
+      "id": "6b0373f2-ed38-4623-9fc9-7e9ce5233265",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "todo_dia_energia",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('Dados').item.json.remoteJid }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "time_out",
+              "fieldValue": "={{ $now.minus(2.93,\"hour\") }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -6240,
+        960
+      ],
+      "id": "95e20738-fedd-47d0-a983-0fedc10a81cb",
+      "name": "Atualiza_TimeOut"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "92629e3e-a427-4c5c-ab12-0aa601c6c199",
+              "leftValue": "={{ $('Dados').item.json.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -6240,
+        1120
+      ],
+      "id": "5afda04c-6d9e-451b-b616-73166acc3438",
+      "name": "verifica_falante"
+    },
+    {
+      "parameters": {
+        "content": "## Verifica falante\nVerfiica se é um atendente ou a ia que está falando, se for o atendente ele irá susprender as atividades da ia por 15 minutos.",
+        "height": 672,
+        "width": 400,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -6320,
+        800
+      ],
+      "id": "121d0b46-8fc6-4553-9a99-04333f279b38",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "db35a79b-374a-4a5c-ba78-bc2751a4c9c5",
+              "name": "messages",
+              "value": "={{ $json.messages }}",
+              "type": "string"
+            },
+            {
+              "id": "88d7702c-b9de-473c-9f7f-860ba425e29b",
+              "name": "lead_name",
+              "value": "={{ $('Dados').item.json.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "e4f86244-6084-4571-b3f5-a383450aa6cf",
+              "name": "whatsapp",
+              "value": "={{ $('Dados').item.json.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "46fccd31-5d90-4ec6-b8f5-a3e7d2b0ac82",
+              "name": "lead_email",
+              "value": "={{ $('Get a row').item.json.lead_email }}",
+              "type": "string"
+            },
+            {
+              "id": "3903cd25-e9b6-4f84-8090-26a6889cdbf6",
+              "name": "link_reuniao",
+              "value": "={{ $('Get a row').item.json.link_reuniao }}",
+              "type": "string"
+            },
+            {
+              "id": "b42111f3-7525-4b8f-b1b9-5e83bdbaf787",
+              "name": "horario_reuniao",
+              "value": "={{ $('Get a row').item.json.horario_reuniao }}",
+              "type": "string"
+            },
+            {
+              "id": "96057f70-9536-4419-b9ae-c985cfe983f1",
+              "name": "estagio",
+              "value": "={{ $('Supabase_ultimo_contato').item.json.estagio }}",
+              "type": "string"
+            },
+            {
+              "id": "6f28098f-02ab-499c-858e-a1f01289494e",
+              "name": "follow_number",
+              "value": "={{ $('Supabase_ultimo_contato').item.json.follow_number }}",
+              "type": "number"
+            },
+            {
+              "id": "23ed1410-630a-4b2a-a89a-14accd46561c",
+              "name": "etapa_contato",
+              "value": "={{ $('Supabase_ultimo_contato').item.json.etapa_contato }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3152,
+        928
+      ],
+      "id": "802e0ae8-4d39-4f22-9ace-5a26f93a352c",
+      "name": "dados_usuario"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a6376534-7d13-4ee8-800f-ffe6625b30d9",
+              "leftValue": "={{ $json.etapa_contato }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3344,
+        256
+      ],
+      "id": "9b6ec2db-5169-414f-8f19-6ed075d2be92",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/565797a2-6e23-41dc-b85a-1a77338ff293",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "nome",
+              "value": "={{ $('Dados').item.json.nome }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ $('Get a row').item.json.lead_email }}"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $('Dados').item.json.remoteJid }}"
+            },
+            {
+              "name": "etapa_funil",
+              "value": "Em contato"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3120,
+        240
+      ],
+      "id": "4ef51e64-81a1-439b-9e7f-a9dbf863b722",
+      "name": "Clint - Em contato"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -3312,
+        496
+      ],
+      "id": "e1be08aa-5e9e-46c3-8485-60decae11702",
+      "name": "No Operation, do nothing7",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "content": "## Atualiza Banco e Move para Etapa Em Contato\n - Registra no banco que o lead foi para etapa_contato",
+        "height": 660,
+        "width": 1124,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3664,
+        112
+      ],
+      "id": "81b3dcec-0b69-40cd-8219-4d5aa6bdf2e4",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://evo.greencardcannabico.com/message/sendText/todo_dia_energia",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "=9A4C55EB5195-46C1-B954-492A4E9BE649"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "120363401541797166"
+            },
+            {
+              "name": "text",
+              "value": "=Lead em etapa *contato*\n-------------------------\nHorário: {{ $now.toFormat('dd/MM HH:mm') }}\nNome: {{ $json.lead_name }}\nWhatsapp: {{ $json.whatsapp }}\nemail: {{ $json.lead_email }}"
+            },
+            {
+              "name": "delay",
+              "value": "={{ $json.milliseconds }}"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2912,
+        240
+      ],
+      "id": "9522ba5e-5e43-4aea-a872-b22b140dd8f4",
+      "name": "Enviar Texto5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// AQUI VOCÊ COLOCA SUA VARIÁVEL DO NÚMERO ↓\nlet numeroWhatsApp = $input.first().json.body.data.key.remoteJid;  // ← SUA VARIÁVEL AQUI\n// ────────────────────────────────────────────────────────────────────\n\n// Remove @s.whatsapp.net, o sinal de + e corrige o formato do celular brasileiro\nlet numero = numeroWhatsApp.replace('@s.whatsapp.net', '').replace('+', '');\n\n// Se tem 12 dígitos (55 + área + 8 dígitos), adiciona o 9\nif (numero.length === 12 && numero.startsWith('55')) {\n    let area = numero.substring(2, 4);\n    let telefone = numero.substring(4);\n    \n    // Adiciona o 9 para celular\n    numero = '55' + area + '9' + telefone;\n}\n\n// Retorna como array de objetos (formato esperado pela plataforma)\nreturn [{\n    telefone: numero\n}];\n\n// EXEMPLO DE USO:\n// Se sua variável for diferente, substitua a linha 2 por:\n// let numeroWhatsApp = suaVariavelAqui;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6976,
+        1120
+      ],
+      "id": "24cee061-2b33-4c0f-9a1d-13f9a657f9ab",
+      "name": "limpa_numero1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        608,
+        -32
+      ],
+      "id": "b7f5d07d-2d90-48e0-b960-8b0d368aeeb8",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega as datas das variáveis\nconst timeOut = $input.first().json.time_out;\nconst currentTime = $now;\n\n// Debug para ver os valores\nconsole.log('timeOut:', timeOut, 'tipo:', typeof timeOut);\nconsole.log('currentTime:', currentTime, 'tipo:', typeof currentTime);\n\n// Função para extrair APENAS dia, hora, minuto da STRING (sem conversões)\nfunction extrairDataHora(dateInput) {\n  // Converte para string se não for\n  const dateString = String(dateInput);\n  \n  // Pega a string e extrai diretamente os números\n  const match = dateString.match(/(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})/);\n  \n  if (!match) {\n    throw new Error(`Data inválida: ${dateString}`);\n  }\n  \n  const [, ano, mes, dia, hora, minuto] = match;\n  \n  // Constrói uma data SEM timezone\n  const dataLimpa = new Date(\n    parseInt(ano), \n    parseInt(mes) - 1, // mês é 0-based\n    parseInt(dia), \n    parseInt(hora), \n    parseInt(minuto)\n  );\n  \n  return {\n    timestamp: dataLimpa.getTime(),\n    formatted: `${dia}/${mes}/${ano} ${hora}:${minuto}`,\n    ano: parseInt(ano),\n    mes: parseInt(mes),\n    dia: parseInt(dia), \n    hora: parseInt(hora),\n    minuto: parseInt(minuto)\n  };\n}\n\n// Extrai data/hora limpa de ambas\nconst timeOutLimpo = extrairDataHora(timeOut);\nconst currentTimeLimpo = extrairDataHora(currentTime);\n\n// Compara apenas os timestamps\nlet resultado;\nif (timeOutLimpo.timestamp > currentTimeLimpo.timestamp) {\n  resultado = {\n    maior: timeOutLimpo.formatted,\n    timeout_maior: true,\n    now_maior: false,\n    mensagem: \"time_out é maior que now\"\n  };\n} else if (currentTimeLimpo.timestamp > timeOutLimpo.timestamp) {\n  resultado = {\n    maior: currentTimeLimpo.formatted,\n    timeout_maior: false,\n    now_maior: true,\n    mensagem: \"now é maior que time_out\"\n  };\n} else {\n  resultado = {\n    maior: \"iguais\",\n    timeout_maior: false,\n    now_maior: false,\n    mensagem: \"São iguais\"\n  };\n}\n\n// Adiciona detalhes\nresultado.time_out_limpo = timeOutLimpo.formatted;\nresultado.now_limpo = currentTimeLimpo.formatted;\nresultado.time_out_original = timeOut;\nresultado.now_original = currentTime;\n\nreturn resultado;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5872,
+        1136
+      ],
+      "id": "beb865b0-034a-4999-9bfd-b6d4438ffc18",
+      "name": "Code",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fa36c998-a8ce-4fec-945b-7bb1c9524ada",
+              "leftValue": "={{ $json.time_out }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -5696,
+        1136
+      ],
+      "id": "40119401-c1a1-4c93-8c86-d33b584b282b",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "todo_dia_energia",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "keyValue": "={{ $json.remoteJid }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -6576,
+        1120
+      ],
+      "id": "4483ee0b-ca49-4e4c-8bfe-806f2761c221",
+      "name": "Get a row",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "tableId": "todo_dia_energia",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "whatsapp",
+              "fieldValue": "={{ $('Dados').item.json.remoteJid }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{ $now.minus(3,\"hour\") }}"
+            },
+            {
+              "fieldId": "lead_name",
+              "fieldValue": "={{ $('Dados').item.json.nome }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -5184,
+        1232
+      ],
+      "id": "ceb1b506-a448-4b47-9ad2-3426a77928a7",
+      "name": "Create a row"
+    },
+    {
+      "parameters": {
+        "content": "## ESPECISLISTAS",
+        "height": 480,
+        "width": 1168
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2480,
+        1408
+      ],
+      "id": "9b8155e4-d6c1-41ad-a876-d34b0fa5139e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Busca horários ocupados na agenda do Google Calendar do vendedor para verificar disponibilidade. Use esta ferramenta SEMPRE antes de propor horários ao cliente. A ferramenta retorna eventos ocupados em um período específico.\n\nQuanto retornar vazio é porque todos os horários estão vagos, sugira 3 horários para o usuário.",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "coach.clinica@tododiaenergia.com.br",
+          "mode": "list",
+          "cachedResultName": "coach.clinica@tododiaenergia.com.br"
+        },
+        "returnAll": "=20",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -1776,
+        1728
+      ],
+      "id": "b4430d0c-5fd6-4955-839c-a85e1e119d8d",
+      "name": "consultar_agenda"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Chame esta tool após o usuário informar nome e email e data para efetuar o  agendamento.",
+        "calendar": {
+          "__rl": true,
+          "value": "coach.clinica@tododiaenergia.com.br",
+          "mode": "list",
+          "cachedResultName": "coach.clinica@tododiaenergia.com.br"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $fromAI('email', 'email do lead') }}",
+            "robalinhok@gmail.com",
+            "coach.clinica@tododiaenergia.com.br"
+          ],
+          "conferenceDataUi": {
+            "conferenceDataValues": {
+              "conferenceSolution": "hangoutsMeet"
+            }
+          },
+          "description": "=Call Todo dia energia {{ $('dados_usuario').item.json.lead_name }} . Email: {{ $('dados_usuario').item.json.lead_email }} WhatsApp:{{ $('dados_usuario').item.json.whatsapp }}",
+          "summary": "=Especialista da Fabi Sabatini & {{ $('dados_usuario').item.json.lead_name }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -1632,
+        1728
+      ],
+      "id": "c7a4cabe-21c1-4a3c-9df4-ebfda619b04f",
+      "name": "agendamento",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "quando o usuário informar o e-mail essa tool será usada para salvar o e-mail do usuário no banco de dados",
+        "operation": "update",
+        "tableId": "todo_dia_energia",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('dados_usuario').item.json.whatsapp }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "lead_email",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fieldValues0_Field_Value', `E-mail informado pelo usuário.`, 'string') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        -1648,
+        1536
+      ],
+      "id": "9dd0d977-8436-4a09-a0ee-1db849ed2175",
+      "name": "registra_email"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2320,
+        1712
+      ],
+      "id": "a11af886-033e-4b89-acd5-d7d7b078e328",
+      "name": "OpenAI Chat Model5"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.whatsapp }}",
+        "tableName": "n8n_chat_histories_ana_rec_vendas",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -2160,
+        1712
+      ],
+      "id": "b849a71f-156b-43cb-b801-d70b2e506242",
+      "name": "Postgres Chat Memory4"
+    },
+    {
+      "parameters": {
+        "toolDescription": "esse agente é acionado quando precisa agendar o lead para uma call de mentoria.",
+        "text": "={{ $('dados_usuario').item.json.messages }}",
+        "options": {
+          "systemMessage": "=# TEMPLATE: SISTEMA DE AGENDAMENTO\n\n## SYSTEM FUNCTIONS (TOOLS DISPONÍVEIS)\n\n### 1. consultar_agenda()\n**Uso:** Verificar horários disponíveis\n**Quando usar:** SEMPRE antes de mostrar horários\n\n### 2. calculadora()\n**Uso:** Processar dados da agenda\n**Quando usar:** SEMPRE após consultar_agenda\n\n### 3. registra_email(email)\n**Uso:** Atualizar/registrar email do usuário no banco de dados\n**Parâmetros:** email (formato válido)\n**Quando usar:** \n- SEMPRE que o usuário informar ou alterar email\n- ANTES de executar agendamento() para garantir dados atualizados\n- Quando houver discrepância entre email fornecido e email no sistema\n\n### 4. agendamento(data, hora, email)\n**Uso:** Confirmar agendamento\n**Parâmetros:** data (DD/MM/YYYY), hora (HH:MM), email\n**⚠️ ATENÇÃO:** Execute registra_email() ANTES se email for informado/alterado\n\n### 5. cancelamento()\n**Uso:** Cancelar reunião existente\n**Quando usar:** Cliente solicita cancelamento\n\n### 6. reagendamento()\n**Uso:** Alterar data/hora de reunião\n**Quando usar:** Cliente solicita reagendamento\n\n## HORÁRIOS DISPONÍVEIS PARA AGENDAMENTO\n\n### 📅 **CONFIGURAÇÃO DE HORÁRIOS:**\n**Segunda a Sexta:** 08:00 às 18:00\n**Sábado:** Não há atendimento \n**Domingo:** Não há atendimento\n\n### ⏰ **REGRAS DE AGENDAMENTO:**\n- **Duração:** 60 minutos por sessão\n- **Intervalos:** A cada 60 minutos (ex: 08:00-09:00, 09:00-10:00, etc.)\n- **Agendamento no mesmo dia:** ❌ NÃO ofereça, EXCETO se o lead solicitar explicitamente\n- **Padrão:** Sempre ofereça horários a partir do próximo dia útil\n\n## FLUXOS OBRIGATÓRIOS\n\n### 🎯 AGENDAMENTO (Quando cliente quer agendar)\n**NUNCA pergunte período preferido - execute imediatamente:**\n\n1. **Execute silenciosamente:** consultar_agenda()\n2. **Execute silenciosamente:** calculadora()\n3. **VALIDAÇÃO OBRIGATÓRIA:** \n   - Só mostre horários FUTUROS (a partir de amanhã)\n   - ❌ NÃO ofereça agendamento para hoje, exceto se o lead pedir explicitamente\n   - Respeite os horários configurados (Seg-Sex: 8h-18h | Sáb: 9h-12h | Dom: fechado)\n\n4. **Mostre TODOS os horários válidos:**\n```\nTemos estes horários disponíveis:\n\n📅 Segunda-feira, DD/MM:\n• 14:00 às 15:00\n• 15:00 às 16:00\n• 17:00 às 18:30\n\n📅 Terça-feira, DD/MM:\n• 09:00 às 10:00\n• 11:00 às 12:00\n\nQual funciona melhor pra você?\n```\n\n5. **Cliente escolhe** → Solicite email se necessário\n\n6. **FLUXO DE EMAIL:**\n   - Se cliente fornecer email novo/diferente: **Execute:** registra_email(email)\n   - Se email já existe no sistema: continue\n   - **Sempre execute registra_email() ANTES de agendamento()**\n\n7. **Execute:** agendamento() → Confirme\n```\n✅ Confirmado!\n📅 Segunda-feira, DD/MM às 15:00\n🔗 [link da reunião]\nVocê vai receber o email com todos os detalhes!\n```\n\n### 📧 GESTÃO DE EMAIL (Quando cliente informa/altera email)\n**FLUXO AUTOMÁTICO:**\n\n1. **Cliente menciona/fornece email** → **Execute imediatamente:** registra_email(email)\n2. **Confirme discretamente:** \"Email atualizado! ✅\"\n3. **Continue com fluxo normal**\n\n**Exemplos de gatilhos:**\n- \"Meu email é joao@email.com\"\n- \"Mudei de email, agora é novo@email.com\"\n- \"Pode enviar para outro email?\"\n- Durante processo de agendamento quando solicitar email\n\n### ❌ CANCELAMENTO\n1. **Execute:** cancelamento()\n2. **Confirme com acolhimento:**\n```\n✅ Reunião cancelada!\nSem problemas! Quando quiser reagendar é só falar.\n```\n\n### 🔄 REAGENDAMENTO\n1. **Execute:** reagendamento()\n2. **Siga fluxo normal de agendamento**\n3. **Se email for mencionado:** Execute registra_email() primeiro\n4. **Confirme novo horário:**\n```\n✅ Reagendamento confirmado!\n📅 [novo dia], [nova data] às [nova hora]\n🔗 [novo link]\nPronto! Seu novo horário está garantido.\n```\n\n## REGRAS CRÍTICAS\n\n### ✅ SEMPRE FAÇA:\n- Execute consultar_agenda() + calculadora() ANTES de mostrar horários\n- **Execute registra_email() SEMPRE que email for fornecido/alterado**\n- **Execute registra_email() ANTES de agendamento() quando email estiver envolvido**\n- **VALIDE:** Só ofereça horários futuros (a partir de amanhã, exceto se lead pedir hoje)\n- **RESPEITE:** Horários configurados (Seg-Sex: 8h-18h | Sáb: 9h-12h | Dom: fechado)\n- Mostre TODOS os horários disponíveis válidos de uma vez\n- Use as tools silenciosamente (sem comentar o processo técnico)\n\n### ❌ NUNCA FAÇA:\n- Ofereça horários do passado ou fora do horário de funcionamento\n- Ofereça agendamento para hoje (exceto se lead solicitar explicitamente)\n- Ofereça horários aos domingos\n- Pergunte \"manhã ou tarde?\" ou \"que período prefere?\"\n- Mostre horários sem verificar agenda\n- Pule as tools obrigatórias\n- **Execute agendamento() sem registra_email() quando email for fornecido**\n- Ignore emails fornecidos pelo usuário\n\n## SEQUÊNCIA DE TOOLS PARA AGENDAMENTO COM EMAIL:\n```\n1. consultar_agenda()\n2. calculadora()\n3. [usuário escolhe horário e fornece email]\n4. registra_email(email) ← OBRIGATÓRIO\n5. agendamento(data, hora, email)\n6. confirmação\n```\n\n## CONTEXT VARIABLES\n- **Data atual:** {{ $now }}\n- **Dia da semana atual:** {{ $now.weekdayLong }}\n- **HORÁRIOS DE FUNCIONAMENTO:**\n  - **Seg-Sex:** 08:00 às 18:00\n  - **Sábado:** Fechado  \n  - **Domingo:** Fechado\n- **REGRA:** Não agendar para hoje, exceto se lead solicitar explicitamente\n- Nome do lead: {{ $json.lead_name }}\n- Email do lead: {{ $json.lead_email }}\n- WhatsApp: {{ $json.whatsapp }}\n\n## TRATAMENTO DE ERROS DE EMAIL\n- **Email inválido:** Solicite correção antes de continuar\n- **Falha no registra_email():** Informe erro e peça para tentar novamente\n- **Email não fornecido:** Solicite email antes de finalizar agendamento"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -2144,
+        1520
+      ],
+      "id": "03b0ebfa-3340-45dd-a28a-90add933a495",
+      "name": "agente-de-agendamento"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4576,
+        272
+      ],
+      "id": "79e6548b-125b-4eb6-820a-948ff48b97ad",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.mensagens",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        656
+      ],
+      "id": "23b1c00e-ac07-4595-9875-ba6d10281dac",
+      "name": "Split Out1",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1040,
+        656
+      ],
+      "id": "eaab483c-c928-431e-83bd-a329e3c703d5",
+      "name": "Loop Over Items1",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        -1792,
+        496
+      ],
+      "id": "a2413657-4df2-413b-8966-499e04c81f57",
+      "name": "Auto-fixing Output Parser1",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"mensagens\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    }\n  },\n  \"required\": [\"mensagens\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -1664,
+        656
+      ],
+      "id": "45f25874-c597-41f1-a923-0e20b42832bb",
+      "name": "Structured Output Parser [Schema]",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=<mensagem_do_usuario>\n{{ $json.output }}\n</mensagem_do_usuario>",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Apenas estruture a <mensagem_do_usuario> no formato JSON solicitado no output parser e seguindo as instruções de formatação abaixo. Não altere nada mais na mensagem\n\n# Formatação\n- Divida as mensagens para que fiquem naturais e humanizadas;\n- Divida as mensagens conforme estrutura do output parser para que não fiquem muito longas (maiores que 240 caractéres);\n- Não separe mensagens vazias;\n- Use quebras de linhas (\\n\\n) após pontos finais;\n- Para negrito (bold) use apenas um '' nunca duas '' (exemplo: *negrito).\n\nExemplo de formato JSON:\n{\n\"mensagens\": [\"Mensagem 0\", \"Mensagem 1\", \"Mensagem 2\"]\n}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -1888,
+        320
+      ],
+      "id": "511c5764-0f33-4b54-9149-637b92fce59a",
+      "name": "Basic LLM Chain",
+      "retryOnFail": true,
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        656
+      ],
+      "id": "fb223239-3042-4b2e-ad65-bd1215c07a95",
+      "name": "Wait",
+      "webhookId": "06de07c4-fcc6-4612-b638-0ff414ae86f4",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1872,
+        672
+      ],
+      "id": "9985a324-83bf-4b9e-8b9b-99e05f2d68a0",
+      "name": "OpenAI Chat Model4"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "todo_dia_energia",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('Dados').item.json.remoteJid }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "aceitou_reuniao",
+              "fieldValue": "TRUE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        208,
+        176
+      ],
+      "id": "2ec927d4-8a67-461a-9bcf-79db68ff5054",
+      "name": "atualiza_reuniao"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w",
+          "mode": "list",
+          "cachedResultName": "Relatório Diário - SDR IA - TDE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $('Dados').item.json.remoteJid }}",
+            "etapa_agenda": "TRUE"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "Dia",
+              "displayName": "Dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "etapa_contato",
+              "displayName": "etapa_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "humano_assumiu",
+              "displayName": "humano_assumiu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "etapa_agenda",
+              "displayName": "etapa_agenda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "numero_follow",
+              "displayName": "numero_follow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ultimo_contato",
+              "displayName": "ultimo_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "quem_fez_a_call",
+              "displayName": "quem_fez_a_call",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "no_show",
+              "displayName": "no_show",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "call_realizada",
+              "displayName": "call_realizada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fechamento",
+              "displayName": "Fechamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -32,
+        176
+      ],
+      "id": "03a4976b-d447-46e2-b858-95059d1730bd",
+      "name": "Update row in sheet1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "todo_dia_energia",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('Dados').item.json.remoteJid }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "etapa_contato",
+              "fieldValue": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -3024,
+        496
+      ],
+      "id": "f2f04e61-ea1a-46b5-ad00-8ab57f3eb810",
+      "name": "etapa_contato"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w",
+          "mode": "list",
+          "cachedResultName": "Relatório Diário - SDR IA - TDE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $('Dados').item.json.remoteJid }}",
+            "etapa_contato": "TRUE"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "Dia",
+              "displayName": "Dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "etapa_contato",
+              "displayName": "etapa_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "humano_assumiu",
+              "displayName": "humano_assumiu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "etapa_agenda",
+              "displayName": "etapa_agenda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "numero_follow",
+              "displayName": "numero_follow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ultimo_contato",
+              "displayName": "ultimo_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "quem_fez_a_call",
+              "displayName": "quem_fez_a_call",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "no_show",
+              "displayName": "no_show",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "call_realizada",
+              "displayName": "call_realizada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fechamento",
+              "displayName": "Fechamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2784,
+        496
+      ],
+      "id": "fd9d9aa5-7313-4eda-9c07-f8038b401ad0",
+      "name": "etapa_contato1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU",
+          "mode": "list",
+          "cachedResultName": "Relatorio IA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $('Dados').item.json.remoteJid }}",
+            "etapa_agenda": "={{ $json.etapa_reuniao }}",
+            "etapa_contato": "={{ $json.etapa_contato }}",
+            "email": "={{ $json.email }}",
+            "produto_qualificada": "={{ $json.produto_qualificado }}"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "dia",
+              "displayName": "dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "etapa_contato",
+              "displayName": "etapa_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "humano_assumiu",
+              "displayName": "humano_assumiu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa_agenda",
+              "displayName": "etapa_agenda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "produto_qualificada",
+              "displayName": "produto_qualificada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "foi_enviado_link_checkout",
+              "displayName": "foi_enviado_link_checkout",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "numero_follow",
+              "displayName": "numero_follow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ultimo_contato",
+              "displayName": "ultimo_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        240,
+        -32
+      ],
+      "id": "ac99ca15-bf2f-4adb-90ba-93eb08286c7a",
+      "name": "atualiza_planilha",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "teste_lila_inspira",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "keyValue": "={{ $('Dados').item.json.remoteJid }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -32
+      ],
+      "id": "04e9f7f7-2bad-4a85-9d3c-dd109c4a318e",
+      "name": "atualiza_planilha1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://evo.greencardcannabico.com/message/sendText/todo_dia_energia",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "=9A4C55EB5195-46C1-B954-492A4E9BE649"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "120363401541797166"
+            },
+            {
+              "name": "text",
+              "value": "=🗓️Lead em etapa *Reunião*🗓️\n-------------------------\nHorário: {{ $now.toFormat('dd/MM HH:mm') }}\nNome: {{ $('dados_usuario').item.json.lead_name }}\nWhatsapp: {{ $('dados_usuario').item.json.whatsapp }}\nemail: {{ $('dados_usuario').item.json.whatsapp }}"
+            },
+            {
+              "name": "delay",
+              "value": "={{ $json.milliseconds }}"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        176
+      ],
+      "id": "8ccfc43d-ef31-477c-9979-4e41891d7ed2",
+      "name": "etapa_reuniao"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w",
+          "mode": "list",
+          "cachedResultName": "Relatório Diário - SDR IA - TDE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "telefone",
+              "lookupValue": "={{ $json.whatsapp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -5408,
+        304
+      ],
+      "id": "7836a679-ad09-4ec4-8810-16d9820d0740",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "disabled": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a5259f34-956e-4443-a173-0f7da524bbbf",
+              "leftValue": "={{ $json.telefone }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -5216,
+        304
+      ],
+      "id": "9a2a3bca-76ab-4a43-bd85-9825b86f833b",
+      "name": "If5",
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w",
+          "mode": "list",
+          "cachedResultName": "Relatório Diário - SDR IA - TDE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Dia": "={{ $now.format('yyyy-MM-dd') }}",
+            "nome": "={{ $('verifica_falante').item.json.lead_name }}",
+            "telefone": "={{ $('verifica_falante').item.json.whatsapp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Dia",
+              "displayName": "Dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "etapa_contato",
+              "displayName": "etapa_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "humano_assumiu",
+              "displayName": "humano_assumiu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "etapa_agenda",
+              "displayName": "etapa_agenda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "numero_follow",
+              "displayName": "numero_follow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ultimo_contato",
+              "displayName": "ultimo_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "quem_fez_a_call",
+              "displayName": "quem_fez_a_call",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "no_show",
+              "displayName": "no_show",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "call_realizada",
+              "displayName": "call_realizada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fechamento",
+              "displayName": "Fechamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -5024,
+        448
+      ],
+      "id": "ffa29758-860b-4a33-80a6-34ab7f0cf0ac",
+      "name": "Append row in sheet",
+      "alwaysOutputData": false,
+      "disabled": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Caso um humano tenha assumido, a IA para.",
+        "height": 576,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -5856,
+        896
+      ],
+      "id": "9159aa50-b77b-4bba-a7a3-d6e15999b706",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Verifica se já existe no banco de dados, se não existe ele cria",
+        "height": 1280,
+        "width": 608
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -5504,
+        192
+      ],
+      "id": "ebd773be-568e-4226-8c21-9648c1a45e2c",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Verifica se é:\n- AUDIO\n- MENSAGEM \n- IMAGEM",
+        "height": 752,
+        "width": 752
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4832,
+        704
+      ],
+      "id": "a96969bc-6c6e-4edf-9f77-98fe773b4592",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4cbe4a44-425c-4eda-b1d8-1c8e9d4aaef4",
+              "leftValue": "={{ $json['output.mensagens'] }}",
+              "rightValue": "https://meet.google.com",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -320,
+        432
+      ],
+      "id": "3d640ef0-7878-472b-8a7d-520ce104a09e",
+      "name": "agendamento1"
+    },
+    {
+      "parameters": {
+        "content": "## Verifica por 40 segundos se a pessoa ainda está escrevendo",
+        "height": 640,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4064,
+        816
+      ],
+      "id": "a49db98b-fa30-4a09-8ddd-49a4cf23808f",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w",
+          "mode": "list",
+          "cachedResultName": "Relatório Diário - SDR IA - TDE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z1YsG064wbQxAtkZJVNxg3WAaoreZsEsfkymCMupi1w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $('Dados').item.json.remoteJid }}",
+            "ultimo_contato": "={{ $now.format('yyyy-MM-dd T') }}",
+            "email": "={{ $('Get a row').item.json.lead_email }}",
+            "etapa_contato": "={{ $('Get a row').item.json.etapa_contato }}",
+            "numero_follow": "={{ $('Get a row').item.json.follow_number }}",
+            "nome": "={{ $('Get a row').item.json.lead_name }}"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "Dia",
+              "displayName": "Dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa_contato",
+              "displayName": "etapa_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "humano_assumiu",
+              "displayName": "humano_assumiu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "etapa_agenda",
+              "displayName": "etapa_agenda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "numero_follow",
+              "displayName": "numero_follow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ultimo_contato",
+              "displayName": "ultimo_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "quem_fez_a_call",
+              "displayName": "quem_fez_a_call",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "no_show",
+              "displayName": "no_show",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "call_realizada",
+              "displayName": "call_realizada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fechamento",
+              "displayName": "Fechamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -4816,
+        272
+      ],
+      "id": "6f4e3daa-3ff3-48c3-a439-d90ae6e85ab8",
+      "name": "Update row in sheet3",
+      "alwaysOutputData": false,
+      "disabled": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/fb2223ae-b28b-4ff0-89f4-e259a88d13f9",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "nome",
+              "value": "={{ $('Dados').item.json.nome }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ $('atualiza_reuniao').item.json.lead_email }}"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $('Dados').item.json.remoteJid }}"
+            },
+            {
+              "name": "etapa_funil",
+              "value": "Reunião Agendada"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        592,
+        176
+      ],
+      "id": "bb0434cd-df22-4925-b822-627fdf7af3bb",
+      "name": "Clint - Reunião Agendada"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=---\n**Data atual:** {{ $now }}\n**Dia da semana atual:** {{ $now.weekdayLong }}\n---\n{{ $json.messages }}",
+        "options": {
+          "systemMessage": "=# 🤖 Prompt IA – Recuperação de Vendas Missão Cetogênica (v3.0 • com reflexão silenciosa)\n\n## PAPEL\nVocê é **Maria**, do time da **Fabi Sabatini**.  \nFunção: **recuperar vendas** da **Missão Cetogênica 7 Dias** com mensagens curtas (WhatsApp), humanas e assertivas, guiando a cliente até a decisão **sem pressão** e **sem parecer robô**.\n\n---\n\n## ABERTURA FIXA\n> Oi [nome]! Sou a Maria, do time da Fabi. Tudo bem?  \n> Vi que você começou sua inscrição na **Missão Cetogênica 7 Dias** e não concluiu. Como as turmas começam em breve, tô passando pra garantir que você não perca a chance de **secar até 5kg em 7 dias, sem fome, sem exercício e sem sofrimento** ✨  \n> Me conta: o que faltou pra você finalizar?\n\n---\n\n## REGRAS DE CONVERSA\n- Esperar resposta antes de avançar.\n- **Acolher emoção → benefício → prova → garantia**.\n- **Micro-rapport**: valorize a atitude da cliente.\n- Não abrir falando de preço.\n- Só usar **R$37 (recuperação)** se houver objeção de preço, hesitação persistente ou sumiço após link.\n- **Nunca mandar link logo após explicar**; primeiro **sondar interesse**. Só enviar link após um **“sim” claro**.\n- **Pagamento**: PIX (acesso imediato) • Cartão (**5x de R$8,19**) • Boleto (compensa em horas; recomende PIX pra acesso já).\n- Evitar textões e tom robótico.\n- Evitar enviar muitas mensagens separadamente\n- Não oferecer serviço de nutricionista, oferecer apenas o Desafio Missão Cetogênica\n\n### 🔧 Regras de Semântica\n- Não usar “sentir” com termos racionais (dúvida, preço, tempo, rotina). Use “ter/ficar com”.  \n- Use “sentir” para emoções/estados (medo, insegurança, cansaço, empolgação).\n\n### 📅 Data da Turma\n- Responda sempre com data exata: **22 de setembro** (atualize quando mudar).\n- Exemplos: “Essa turma começa em **22 de setembro** 💛.” / “O próximo grupo inicia em **22/09**.”\n\n---\n\n## BIBLIOTECA DE SONDAS DE DÚVIDA\n- “Ficou alguma dúvida pra você?”  \n- “Você tem alguma pergunta específica?”  \n- “Qual parte ficou menos clara pra você?”  \n- “Tem algo te travando na inscrição?”  \n- “Quer que eu te explique rapidinho como funcionam os 7 dias?”\n\n**Rapport extra:**  \n- “Adorei sua pergunta, mostra que você tá realmente comprometida 💛.”  \n- “Que bom que você trouxe isso, várias mulheres também perguntam.”\n\n---\n\n## BIBLIOTECA DE SONDAS DE INTERESSE (usar após explicar)\n- “O que mais te fez querer participar desse desafio agora?”  \n- “Qual parte chamou mais sua atenção: secar rápido, acabar com o inchaço ou controlar a compulsão?”  \n- “O que você gostaria de conquistar nesses 7 dias?”  \n- “De tudo isso, o que mais faria diferença pra você agora?”\n\n---\n\n## FECHAMENTO INDIRETO (só depois de a cliente verbalizar desejo, mas não repetir toda hora)\n- “Vamos participar dessa turma que começa dia 22/09?”  \n- “Quer entrar nessa com a gente?”  \n- “Tá pronta pra começar essa virada?”\n\n👉 Se a resposta for **“sim”/“quero”** → usar CTA direto + link.\n\n---\n\n## LINK DE PAGAMENTO\nCheckout oficial: **https://tododiaenergia.com.br/missao-cetogenica-setembro-v1/**  \n- **PIX** → libera na hora, acesso imediato.  \n- **Cartão** → até **5x de R$8,19**.  \n- **Boleto** → compensa em horas (recomende PIX se quiser acesso já).\n\n---\n\n## OBJECÇÕES + RESPOSTAS (múltiplos modelos)\n\n### 💸 Preço\n**Modelo 1** Acolher → valor “menos que um lanche” → CTA.  \n**Modelo 2 (verão)** Acolher → visão de verão/confiança → CTA.  \n**Modelo 3 (parcelamento)** Acolher → “cartão em **5x de R$8,19**” → CTA.  \n👉 Se insistir: **recuperação R$37 ** e enviar link atualizado (quando existir).\n\n### ⏳ Rotina Corrida\n**Modelo 1** 20 min • ingredientes simples • segue cardápio → CTA.  \n**Modelo 2 (verão)** Vida real + lista organizada + visão verão → CTA.\n\n### ❓ Medo de não funcionar\n**Modelo 1** 7 dias + garantia 3kg → CTA.  \n**Modelo 2** “Mounjaro Natural” + +12 mil mulheres → CTA.\n\n### 😓 Já tentei antes e falhei\n**Modelo 1** Frustração + 7 dias/visão verão → CTA.  \n**Modelo 2** Não vai sozinha (grupo + suporte) → CTA.  \n**Modelo 3 – Nunca consegui seguir dieta**  \nAcolher → “muitas chegam com esse bloqueio” →  \nValor → 7 dias, cardápio pronto, receitas 20 min, grupo + suporte →  \nMini-história (Cláudia 48, secou 4kg, roupas voltando) →  \nSonda desejo → Fechamento indireto (turma 22/09).\n\n### ❓ Suporte durante o Desafio\n**Modelo 1** Material e vídeo-aulas completo para você apenas copiar e colar.  \n**Modelo 2** Acesso diário ao time de nutris da equipe da Fabi Sabatini.\n**Modelo 3** Platão de 2 horas por dia, ao vivo, com o time de nutris da equipe da Fabi Sabatini para tirar dúvidas.\n\n## Contra-indicação para fazer a dieta cetogênica\nApenas para os seguintes casos:\n- Gestantes e lactantes\n- Diabéticos Tipo 1\n- Litíase biliar e renal\n- Esteatose hepática/hepatite/cirrose\n- Hipoglicemia\n- Hipercolesterolemia grave\n\n—\n\n## O QUE É O DESAFIO MISSÃO CETOGÊNICA\nO Desafio Missão Cetogênica é um desafio cetogênico de 7 dias com cardápio completo com 4 refeições por dia, com as refeições contadas e quantidades exatas de macronutrientes para o sucesso do desafio. O protocolo cetogênico é indicado para várias patologias (epilepsia, alzheimer, parkinson, diabetes do tipo 2 e obesidade) e também para não patologias como no caso de queima de gordura e boa cognição, que é o nosso principal objetivo nesse desafio.\nO Desafio Missão Cetogênica não só vai quebrar essas barreiras que você tinha para perder peso, como também vai fazer com que você tenha muita energia durante essa queima de gordura, seu cérebro vai entrar em um processo de cetose potente.\nSerão 7 dias de alimentação seguindo um cardápio elaborado pela maior autoridade de Dieta Cetogênica do Brasil, a nutricionista Fabi Sabatini. Nesse protocolo, a garantia de cetose é 100% se ﬁzer o protocolo na íntegra. Ele foi montado com a contagem de macronutrientes necessárias para ser um protocolo de sucesso.\nVocê vai seguir um cardápio nutritivo, saudável e delicioso com a contagem exata que precisamos para comer bem e entrar em cetose. É só copiar e colar, sucesso garantido!\n—\n\n## O QUE É A DIETA CETOGÊNICA\n\nA dieta cetogênica é uma dieta com restrição de carboidrato com intuito de reduzir a insulina e deixar o fígado produzir corpos cetônicos.\nO objetivo de produzir corpos cetônicos no fígado, é utilizá-los como geração de energia ao invés dos carboidratos; e por isso sua restrição. Quando comemos algum alimento rico em carboidrato, nosso corpo produz glicose e insulina. A glicose é a molécula mais fácil para o corpo converter e usar como energia, ou seja, é escolhida de maneira prioritária diante de qualquer outro combustível energético. E a insulina é produzida para captar essa glicose na corrente sanguínea, e liberar para as células. Só que quando liberamos insulina, ela não deixa o fígado produzir corpos cetônicos, e por isso a redução drástica de carboidrato na dieta cetogênica.\nE o principal objetivo de fazer a dieta cetogênica é entrar em cetose. Ou seja, produzir e usar esses corpos cetônicos para sentir os benefícios milagrosos que esse metabólito da gordura pode fazer! E uma delas é a reprogramação metabólica, ou seja, genes que estão associados ao perfil lipídico são adaptados e modulados.\n E dessa maneira conseguimos melhorar a biogênese mitocondrial e o metabolismo da queima de gordura. Mudamos o perfil metabólico, aumentamos nossas mitocôndrias e potencializamos nossa capacidade de gastar energia.\nAumentamos nosso metabolismo basal e assim aumentamos a densidade mitocondrial (quantidade e volume), pois para se manter ativas, elas usam ainda mais energia. Outro ponto legal que vale ressaltar é que as células cerebrais adoram a energia dos corpos cetônicos, elas melhoram as sinapses e nos sentimos mais espertos e aguçados.\nOs corpos cetônicos são gerados pelo fígado, a partir da gordura que comemos da dieta e da gordura estocada no tecido adiposo.\nEssa gordura captada pelo fígado é oxidada e gera os metabólitos corpos cetônicos que são: acetona, acetoacetato, e beta-hidroxibutirato.\nDepois da produção no fígado, os corpos cetônicos caem na corrente sanguínea e vão abastecer os tecidos para gerar energia. A acetona é mais volátil e por isso sentimos o cheiro dela no nosso suor e no hálito de acetona. Já o acetoacetato e o beta hidroxibutirato são os utilizados pelas células. A queima de gordura acontece por alguns mecanismos\nUsamos a gordura corporal para gerar energia já que não temos carboidrato, e é por essas e outras que temos a gordura estocada, para usar quando precisar.\nCorpos cetônicos são termogênicos: aumentam catecolaminas (adrenalina, noradrenalina) e dopamina, ou seja, acelera nosso metabolismo fazendo mais queima de gordura corporal.\nAltera os hormônios intestinais (colecistoquinina, secretina, GLP1) tem-se menos apetite reduzindo a fome. Principalmente de doces.\nFazemos biogênese mitocondrial, ou seja, mais organela que sabe queimar gordura, e quanto mais mitocôndria, maior nosso metabolismo basal melhorando nosso gasto energético.\nOutro ponto interessante da Dieta Cetogênica é a melhora na nossa capacidade mental.Os corpos cetônicos, são os principais combustíveis para as células cerebrais. Ajudam aumentar a glutationa nos neurônios, que é um poderoso antioxidante, sendo um baita protetor neural. E isso ativa a neurogênese, ou seja, mais produção de células neuronais.\n—\n\n## BENEFÍCIOS RÁPIDOS\n- –3 a –5kg em 7 dias (barriga/cintura primeiro).  \n- Fim do inchaço; roupas voltam a servir.  \n- Maior cognição mental.\n- Controle da compulsão por doce.  \n- Mais energia, foco, sono melhor.  \n- Conversa gratuita apos o Desafio com uma profissional Health Coach para saber mais sobre o seu momento.  \n- Prova social: **+12 mil** alunas; **3/4** perdem peso na 1ª semana.\n\n---\n\n## FOLLOW-UPS\n1) 2h sem resposta → “Consigo segurar tua vaga hoje. Quer que eu gere o link?”  \n2) 2h pós-link → “Conseguiu abrir o link? Se for mais fácil, gero um PIX já.”  \n3) Boleto D+1 → “Troco por PIX pra liberar na hora?”  \n4) “Quero pensar” → urgência leve + garantia total.  \n5) Última carta → “Se não perder 3kg, devolvemos 100%. Quer garantir agora?”\n\n---\n\n# 🧠 REFLEXÃO SILENCIOSA (NÃO MOSTRAR PARA A CLIENTE)\n> **Regra:** esta seção é só para uso interno da IA. **Nunca** exibir, narrar ou copiar o raciocínio. Apenas **aplicar o resultado**.\n\n## 1) Analisar contexto em cada turno (checklist curto)\n- **Momento da cliente:** [curiosa | comparando | insegura | motivada | cansada]  \n- **Barreira principal:** [preço | tempo | medo | histórico de falha | outra]  \n- **Desejo declarado:** [secar rápido | desinchar | controlar doce | energia/sono | confiança/verão]  \n- **Sinal de compra:** [fraco 0–1 | médio 2–3 | forte 4–5]  \n- **Fricção atual:** [alta | média | baixa] e **por quê** (ex.: confusão, preço, timing).\n\n## 2) Pergunta norteadora (sempre, antes de responder):\n> **“Como eu posso gerar desejo nessa mulher agora, com respeito e clareza?”**\n\n## 3) Escolher tática de próximo passo (uma por resposta)\n- **Espelhamento emocional** (acolher brevemente, 1 linha).  \n- **Sonda inteligente** (dúvida ou interesse).  \n- **Prova social específica** (mini-história, não só números).  \n- **Visão de futuro** (verão, roupas servindo, energia).  \n- **Redução de fricção** (PIX imediato, 5x no cartão).  \n- **Segurança** (garantia 3kg/7d; reembolso).  \n- **Escassez leve** (turma com início em **22/09**, sem pressão).  \n- **Fechamento indireto** (convite leve).  \n- **CTA direto** (somente após “sim” claro).\n\n## 4) Micro-avaliação após cada envio (rápida)\n- O **Sinal de compra** subiu?  \n- A **Fricção** caiu?  \n- A resposta gerou **clareza** (menos dúvida) ou **desejo** (mais projeção)?  \n→ Se não, **trocar a tática** no próximo turno (ex.: de explicação → sonda; de prova social → visão de futuro).\n\n## 5) Limites éticos\n- Sem exageros ou promessas fora do FAQ/página.  \n- Sem pressão emocional negativa.  \n- Falar sempre a **data correta** (22/09) e condições reais (preço, garantia, 5x de 8,19).  \n- Priorizar a **autonomia** da cliente (convite, não imposição).\n\n---\n\n## BIBLIOTECA DE CTAs (variar conforme tom)\n**Diretos:** “Posso já te enviar o link de pagamento?” • “Prefere PIX, cartão ou boleto?”  \n**Suaves:** “Vamos juntas nessa jornada? 💛” • “Quer garantir sua vaga nessa turma?”  \n**Urgência:** “Quer garantir agora sua vaga e entrar nessa turma?”  \n**Inspiradores:** “Imagina você mais leve, vestindo suas roupas após o Desafio.”  \n**Inspiradores:** “Começar o verão mais leve e confiante? ☀️”  \n**Com garantia:** “Quer tentar essa semana? Se não gostar, devolvemos seu dinheiro 💛.”\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -2752,
+        928
+      ],
+      "id": "70118c06-62a3-4221-9d18-ee6f8c2f0477",
+      "name": "maria-recuperacao"
+    }
+  ],
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "maria-recuperacao",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "maria-recuperacao",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase_ultimo_contato": {
+      "main": [
+        [
+          {
+            "node": "Tipo de Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "limpa_numero1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Supabase_ultimo_contato",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo de Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Add",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Base64 Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Base64 Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base64 to Audio": {
+      "main": [
+        [
+          {
+            "node": "Transcreve Áudio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base64 Audio": {
+      "main": [
+        [
+          {
+            "node": "Base64 to Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcreve Áudio": {
+      "main": [
+        [
+          {
+            "node": "Add Texto Buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base64 to Image": {
+      "main": [
+        [
+          {
+            "node": "Analisa a Imagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base64 Image": {
+      "main": [
+        [
+          {
+            "node": "Base64 to Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisa a Imagem": {
+      "main": [
+        [
+          {
+            "node": "Add Texto Buffer2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Texto Buffer": {
+      "main": [
+        [
+          {
+            "node": "Buffer ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Texto Buffer2": {
+      "main": [
+        [
+          {
+            "node": "Buffer ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buffer ": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Buffer 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ComparandoMensagens1": {
+      "main": [
+        [
+          {
+            "node": "Apagar Buffer1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buffer 3": {
+      "main": [
+        [
+          {
+            "node": "ComparandoMensagens1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apagar Buffer1": {
+      "main": [
+        [
+          {
+            "node": "dados_usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add": {
+      "main": [
+        [
+          {
+            "node": "Buffer ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza_TimeOut": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "verifica_falante": {
+      "main": [
+        [
+          {
+            "node": "Atualiza_TimeOut",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dados_usuario": {
+      "main": [
+        [
+          {
+            "node": "maria-recuperacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Clint - Em contato",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clint - Em contato": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto5": {
+      "main": [
+        [
+          {
+            "node": "etapa_contato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "limpa_numero1": {
+      "main": [
+        [
+          {
+            "node": "Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "verifica_falante",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Supabase_ultimo_contato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_agenda": {
+      "ai_tool": [
+        [
+          {
+            "node": "agente-de-agendamento",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agendamento": {
+      "ai_tool": [
+        [
+          {
+            "node": "agente-de-agendamento",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "registra_email": {
+      "ai_tool": [
+        [
+          {
+            "node": "agente-de-agendamento",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "agente-de-agendamento",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory4": {
+      "ai_memory": [
+        [
+          {
+            "node": "agente-de-agendamento",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "atualiza_planilha1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar Texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser [Schema]": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "atualiza_reuniao": {
+      "main": [
+        [
+          {
+            "node": "etapa_reuniao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "atualiza_reuniao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "etapa_contato": {
+      "main": [
+        [
+          {
+            "node": "etapa_contato1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "etapa_contato1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "atualiza_planilha": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "atualiza_planilha1": {
+      "main": [
+        [
+          {
+            "node": "atualiza_planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "etapa_reuniao": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clint - Reunião Agendada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agendamento1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "maria-recuperacao": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "49e59bcb-cc04-4fb6-b30c-0ab526b8ce2b",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-18T20:11:46.823Z",
+      "createdAt": "2025-09-18T20:11:46.823Z",
+      "role": "workflow:owner",
+      "workflowId": "x97lEC4P65Vf9JNk",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
