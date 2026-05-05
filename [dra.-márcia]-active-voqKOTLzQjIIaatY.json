@@ -1,0 +1,106 @@
+{
+  "updatedAt": "2025-12-22T14:23:57.255Z",
+  "createdAt": "2025-12-19T14:27:08.045Z",
+  "id": "voqKOTLzQjIIaatY",
+  "name": "[Dra. Márcia] Active",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -16
+      ],
+      "id": "413d5a99-0496-412e-bda0-9ce9b9685489",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://centerao.api-us1.com/api/3/campaigns?limit=100&offset=100",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Api-Token",
+              "value": "febb1aed7274521bf0a9aae3ad43c69453d99a6398e6945fc3cdaea1dd9fb1bfeed318b1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        64,
+        -16
+      ],
+      "id": "a62f6bff-7d0f-4a48-a6f9-638d7d10349d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        336,
+        -16
+      ],
+      "id": "d567724a-bca6-4bf8-ac63-cecceb1e9a7c"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "459696a6-7aa7-4c18-a1af-ccfb0d46b2ab",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-19T14:27:08.045Z",
+      "createdAt": "2025-12-19T14:27:08.045Z",
+      "role": "workflow:owner",
+      "workflowId": "voqKOTLzQjIIaatY",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
