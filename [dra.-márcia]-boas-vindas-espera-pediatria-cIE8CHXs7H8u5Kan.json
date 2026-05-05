@@ -1,0 +1,799 @@
+{
+  "updatedAt": "2025-05-28T19:26:21.964Z",
+  "createdAt": "2025-03-26T19:32:05.517Z",
+  "id": "cIE8CHXs7H8u5Kan",
+  "name": "[Dra. Márcia] Boas vindas espera pediatria",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.pipedriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        0
+      ],
+      "id": "fca6d0af-9c41-4283-8787-6da80816abce",
+      "name": "Pipedrive Trigger",
+      "webhookId": "1138b452-f8a8-4af2-a62e-787d8cd61914",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3c2b90a1-d326-4a40-94db-fb8269466b21",
+              "name": "ID deal",
+              "value": "={{ $json.data.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -40
+      ],
+      "id": "b0429789-24d8-42f3-b288-182fd8b2408e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dealId": "={{ $json[\"ID deal\"] }}"
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -40
+      ],
+      "id": "e29956ab-1374-4a90-b90f-7481437fd166",
+      "name": "Pipedrive",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "08a346de-e8a0-47f3-b78f-6025e0a04283",
+              "leftValue": "={{ $json.meta.action }}",
+              "rightValue": "create",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -180,
+        0
+      ],
+      "id": "88a84244-672b-4534-90ea-ecdb91c56c91",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/tsSgxgIYTPLK6ZEcwivJ",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"c03a1f04-33ed-4a19-85d7-68a55ddc3d70\",\n  \"phoneNumber\": \"55{{ $json.person_id.phone[0].value }}\",\n  \"name\": \"{{ $json.person_id.name }}\"\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        -40
+      ],
+      "id": "ec250f7c-0afc-4735-915d-bf0500e64d9d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6a2045be-b315-491a-8db8-f2d262d752ec",
+              "leftValue": "={{ $('Pipedrive Trigger').item.json.data.title }}",
+              "rightValue": "[Neg Pediatria 2025]",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        300,
+        -40
+      ],
+      "id": "1da5aad1-22af-4b30-842c-cdfb021d9662",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        780,
+        440
+      ],
+      "id": "37f729ab-a82d-4c2d-a4c4-32b8dd3c4b41",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E",
+          "mode": "list",
+          "cachedResultName": "[Center AO] Leads lista de espera",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pediatria",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data": "={{ $('Pipedrive Trigger').item.json.data.add_time  }}",
+            "Nome": "={{ $('Pipedrive').item.json.person_id.name }}",
+            "Email": "={{ $('Pipedrive').item.json.person_id.email[0].value }}",
+            "Telefone ": "={{ $('Pipedrive').item.json.person_id.phone[0].value }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        940,
+        180
+      ],
+      "id": "e3d094ed-06de-47be-a242-2f276e589b25",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Pipedrive Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Pipedrive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pipedrive": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": {
+    "node:Pipedrive Trigger": {
+      "webhookId": 2150424
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Pipedrive Trigger": [
+      {
+        "json": {
+          "data": {
+            "add_time": "2025-03-22T14:23:45Z",
+            "channel": 23364,
+            "channel_id": "Solicitar contato - site YSAO YAMAMURA",
+            "close_time": null,
+            "creator_user_id": 3559832,
+            "currency": "BRL",
+            "custom_fields": {
+              "31ae0f90cc1b3ee3da765f9c9decf2321022a7cf": null
+            },
+            "expected_close_date": null,
+            "first_won_time": null,
+            "id": 63691,
+            "label_ids": [],
+            "lost_reason": null,
+            "lost_time": null,
+            "org_id": null,
+            "origin": "WebForms",
+            "origin_id": "db93bc50-3ee4-11eb-a127-b18ec1357b50",
+            "owner_id": 3559832,
+            "person_id": 70471,
+            "pipeline_id": 183,
+            "probability": null,
+            "stage_change_time": null,
+            "stage_id": 1230,
+            "status": "open",
+            "title": "[Neg Pediatria 2025] LETICIA ELISA CASAGRANDA PIAZZETTA",
+            "update_time": null,
+            "value": 0,
+            "visible_to": "3",
+            "won_time": null,
+            "is_archived": false,
+            "archive_time": null
+          },
+          "previous": null,
+          "meta": {
+            "action": "create",
+            "company_id": "2396659",
+            "correlation_id": "62c16ace-e0eb-4bcd-af9d-918891b418a9",
+            "entity_id": "63691",
+            "entity": "deal",
+            "id": "c640cee0-c1fb-4c79-be73-fad5616e1b6d",
+            "is_bulk_edit": false,
+            "timestamp": "2025-03-22T14:23:45.267Z",
+            "type": "general",
+            "user_id": "3559832",
+            "version": "2.0",
+            "webhook_id": "1737902",
+            "webhook_owner_id": "3559832",
+            "change_source": "app",
+            "attempt": 1,
+            "host": "center-ao.pipedrive.com"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "e4994eb7-91bc-4749-8255-78fe2ea1e2e6",
+  "activeVersionId": "e4994eb7-91bc-4749-8255-78fe2ea1e2e6",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-03-26T19:32:05.517Z",
+      "createdAt": "2025-03-26T19:32:05.517Z",
+      "role": "workflow:owner",
+      "workflowId": "cIE8CHXs7H8u5Kan",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "e4994eb7-91bc-4749-8255-78fe2ea1e2e6",
+    "workflowId": "cIE8CHXs7H8u5Kan",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.pipedriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          -440,
+          0
+        ],
+        "id": "fca6d0af-9c41-4283-8787-6da80816abce",
+        "name": "Pipedrive Trigger",
+        "webhookId": "1138b452-f8a8-4af2-a62e-787d8cd61914",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "3c2b90a1-d326-4a40-94db-fb8269466b21",
+                "name": "ID deal",
+                "value": "={{ $json.data.id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          640,
+          -40
+        ],
+        "id": "b0429789-24d8-42f3-b288-182fd8b2408e",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "dealId": "={{ $json[\"ID deal\"] }}"
+        },
+        "type": "n8n-nodes-base.pipedrive",
+        "typeVersion": 1,
+        "position": [
+          880,
+          -40
+        ],
+        "id": "e29956ab-1374-4a90-b90f-7481437fd166",
+        "name": "Pipedrive",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "08a346de-e8a0-47f3-b78f-6025e0a04283",
+                "leftValue": "={{ $json.meta.action }}",
+                "rightValue": "create",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -180,
+          0
+        ],
+        "id": "88a84244-672b-4534-90ea-ecdb91c56c91",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://sendflow.pro/a/tsSgxgIYTPLK6ZEcwivJ",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"apiKey\": \"c03a1f04-33ed-4a19-85d7-68a55ddc3d70\",\n  \"phoneNumber\": \"55{{ $json.person_id.phone[0].value }}\",\n  \"name\": \"{{ $json.person_id.name }}\"\n} ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1100,
+          -40
+        ],
+        "id": "ec250f7c-0afc-4735-915d-bf0500e64d9d",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "6a2045be-b315-491a-8db8-f2d262d752ec",
+                "leftValue": "={{ $('Pipedrive Trigger').item.json.data.title }}",
+                "rightValue": "[Neg Pediatria 2025]",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          300,
+          -40
+        ],
+        "id": "1da5aad1-22af-4b30-842c-cdfb021d9662",
+        "name": "If1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          780,
+          440
+        ],
+        "id": "37f729ab-a82d-4c2d-a4c4-32b8dd3c4b41",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E",
+            "mode": "list",
+            "cachedResultName": "[Center AO] Leads lista de espera",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Pediatria",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Data": "={{ $('Pipedrive Trigger').item.json.data.add_time  }}",
+              "Nome": "={{ $('Pipedrive').item.json.person_id.name }}",
+              "Email": "={{ $('Pipedrive').item.json.person_id.email[0].value }}",
+              "Telefone ": "={{ $('Pipedrive').item.json.person_id.phone[0].value }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          940,
+          180
+        ],
+        "id": "e3d094ed-06de-47be-a242-2f276e589b25",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Pipedrive Trigger": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Pipedrive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pipedrive": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
