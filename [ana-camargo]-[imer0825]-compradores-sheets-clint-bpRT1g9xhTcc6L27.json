@@ -1,0 +1,514 @@
+{
+  "updatedAt": "2026-03-24T11:52:10.965Z",
+  "createdAt": "2025-08-05T14:03:52.396Z",
+  "id": "bpRT1g9xhTcc6L27",
+  "name": "[Ana Camargo] [IMER0825] Compradores Sheets Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "imer0825-ca",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c58fa022-1e8c-4ec7-8c6a-2dc560c07a86",
+      "name": "Webhook",
+      "webhookId": "df6778ca-84d2-4a21-8d87-c0349ca3147a"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const rawPhone = item.json.body?.[\"contact[phone]\"] || \"\";\n\n  // Remove tudo que não for número\n  let telefoneLimpo = rawPhone.replace(/\\D/g, '');\n\n  // Remove o código do país se estiver presente\n  if (telefoneLimpo.startsWith('55') && telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(2);\n  } else if (telefoneLimpo.length > 11) {\n    telefoneLimpo = telefoneLimpo.slice(-11);\n  }\n\n  const ddd = telefoneLimpo.slice(0, 2);\n  let numero = telefoneLimpo.slice(2);\n\n  // Adição do nono dígito (caso DDD < 30 e número tiver só 8 dígitos)\n  if (parseInt(ddd) < 30 && numero.length === 8) {\n    numero = '9' + numero;\n  }\n\n  // Remoção do nono dígito (caso DDD >= 30 e número tiver 10 dígitos começando com 9)\n  if (parseInt(ddd) >= 30 && numero.length === 10 && numero.startsWith('9')) {\n    numero = numero.slice(1);\n  }\n\n  const telefoneFormatado = `55${ddd}${numero}`;\n\n  return {\n    json: {\n      phone: telefoneFormatado\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "eea0b812-e440-4d5c-b6a4-4fb762bb47f9",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50e85938-5f93-4e68-8023-d1e348cc59ea",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body['contact[first_name]'] }} {{ $('Webhook').item.json.body['contact[last_name]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "683fdbc9-ad30-4919-8081-053bc1487df3",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body['contact[email]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f8a97570-39fd-4e8f-9c40-53bc95ae9310",
+              "name": "Telefone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "883f841d-62bc-4540-9c05-3a17bee936a0",
+              "name": "Data Lead",
+              "value": "={{    new Date().getDate().toString().padStart(2, '0') + '/' +   (new Date().getMonth() + 1).toString().padStart(2, '0') + '/' +   new Date().getFullYear() + ' ' +   new Date().getHours().toString().padStart(2, '0') + ':' +   new Date().getMinutes().toString().padStart(2, '0') }}",
+              "type": "string"
+            },
+            {
+              "id": "41497430-0ce0-466a-b136-25eb3d9b138d",
+              "name": "Utm Source",
+              "value": "={{ $('Webhook').item.json.body['contact[fields][utmsourceimer0825]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a6e1bf87-5c16-4f18-8d2f-4b7bcc1e934e",
+              "name": "Utm Medium",
+              "value": "={{ $('Webhook').item.json.body['contact[fields][utmmediumimer0825]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "4970d5fa-0866-4253-9dac-1f3128605f4d",
+              "name": "Utm Campaign",
+              "value": "={{ $('Webhook').item.json.body['contact[fields][utmcampaignimer0825]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "37d743f3-e639-4041-80b1-cdf5b51535ab",
+              "name": "Utm Content",
+              "value": "={{ $('Webhook').item.json.body['contact[fields][utmcontentimer0825]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b235d9b7-1986-4fda-af0f-ff908ffb10d6",
+              "name": "Utm Term",
+              "value": "={{ $('Webhook').item.json.body['contact[fields][utmtermimer0825]'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "5d86b9b5-d3ac-4bb3-886f-1edee08f0c8b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/66285971-be5f-4042-8e67-fbbad87897aa",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Utm Source",
+              "value": "={{ $json['Utm Source'] }}"
+            },
+            {
+              "name": "Utm Medium",
+              "value": "={{ $json['Utm Medium'] }}"
+            },
+            {
+              "name": "Utm Campaign",
+              "value": "={{ $json['Utm Campaign'] }}"
+            },
+            {
+              "name": "Utm Content",
+              "value": "={{ $json['Utm Content'] }}"
+            },
+            {
+              "name": "Utm Term",
+              "value": "={{ $json['Utm Term'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        160
+      ],
+      "id": "d9ce8152-de5b-4a60-aeac-1087515534cf",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        900,
+        40
+      ],
+      "id": "fba0d508-8b51-49ed-a728-26c7ff3d73b2",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1SSpHe3FZSoS7wd7lkda2iN7s3HhoUwdc_xiB7EAOu1s/edit?gid=1988815600#gid=1988815600",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1988815600,
+          "mode": "list",
+          "cachedResultName": "Compradoras",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SSpHe3FZSoS7wd7lkda2iN7s3HhoUwdc_xiB7EAOu1s/edit#gid=1988815600"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json['Data Lead'] }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "Utm Source": "={{ $json['Utm Source'] }}",
+            "Utm Medium": "={{ $json['Utm Medium'] }}",
+            "Utm Campaign": "={{ $json['Utm Campaign'] }}",
+            "Utm Content": "={{ $json['Utm Content'] }}",
+            "Utm Term": "={{ $json['Utm Term'] }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Source",
+              "displayName": "Utm Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Utm Campaign",
+              "displayName": "Utm Campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Utm Medium",
+              "displayName": "Utm Medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Utm Content",
+              "displayName": "Utm Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Utm Term",
+              "displayName": "Utm Term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        -80
+      ],
+      "id": "62b26a11-5b1e-46e9-9cbe-33af15bc59fa",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "GuzzleHttp/7",
+            "content-length": "4147",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "54.225.1.90",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "54.225.1.90",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact[id]": "40224",
+            "contact[email]": "bellasimaia@gmail.com",
+            "contact[first_name]": "",
+            "contact[last_name]": "",
+            "contact[phone]": "5531984617540",
+            "contact[orgname]": "",
+            "contact[customer_acct_name]": "",
+            "contact[tags]": "[ALUNA][T16] Lojista 4 em 1, [EVI0325] Leads Downsell, [Imersão] Compradores, [JNL0625] Leads, [WVI] Leads Pop up, [IMER0825] Compra Aprovada",
+            "contact[ip4]": "127.0.0.1",
+            "contact[fields][utmcampaign]": "teste",
+            "contact[fields][utmsource]": "teste",
+            "contact[fields][utmmedium]": "teste",
+            "contact[fields][utmcontent]": "teste",
+            "contact[fields][utmterm]": "teste",
+            "contact[fields][data_lead_alc2]": "",
+            "contact[fields][data_lead_alc3]": "",
+            "contact[fields][data_lead_epsmt]": "",
+            "contact[fields][utmcampaignepsmt]": "",
+            "contact[fields][utmsourceepsmt]": "",
+            "contact[fields][utmmediumepsmt]": "",
+            "contact[fields][utmcontentepsmt]": "",
+            "contact[fields][utmtermepsmt]": "",
+            "contact[fields][utmcampaignalc4]": "",
+            "contact[fields][utmsourcealc4]": "",
+            "contact[fields][utmmediumalc4]": "",
+            "contact[fields][utmtermalc4]": "",
+            "contact[fields][utmcontentalc4]": "",
+            "contact[fields][data_lead_alc4]": "",
+            "contact[fields][data_lead_checkout_epsmt]": "",
+            "contact[fields][utmcampaignalc5]": "",
+            "contact[fields][utmsourcealc5]": "",
+            "contact[fields][utmmediumalc5]": "",
+            "contact[fields][utmtermalc5]": "",
+            "contact[fields][data_lead_alc5]": "",
+            "contact[fields][utmcontentalc5]": "",
+            "contact[fields][utmcampaignevi0125]": "",
+            "contact[fields][utmsourceevi0125]": "",
+            "contact[fields][utmmediumevi0125]": "",
+            "contact[fields][utmcontentevi0125]": "",
+            "contact[fields][utmtermevi0125]": "",
+            "contact[fields][data_lead_evi0125]": "",
+            "contact[fields][link_boleto]": "teste",
+            "contact[fields][data_lead_evi0125_downsell]": "",
+            "contact[fields][utmcampaignevi0125dw]": "",
+            "contact[fields][utmsourceevi0125dw]": "",
+            "contact[fields][utmmediumevi0125dw]": "",
+            "contact[fields][utmcontentevi0125dw]": "",
+            "contact[fields][utmtermevi0125dw]": "",
+            "contact[fields][utmcampaignigvd0225]": "",
+            "contact[fields][utmsourceigvd0225]": "",
+            "contact[fields][utmmediumigvd0225]": "",
+            "contact[fields][utmcontentigvd0225]": "",
+            "contact[fields][utmtermigvd0225]": "",
+            "contact[fields][data_lead_igvd0225]": "",
+            "contact[fields][utmcampaignevi0325]": "teste",
+            "contact[fields][utmsourceevi0325]": "teste",
+            "contact[fields][utmmediumevi0325]": "teste",
+            "contact[fields][utmcontentevi0325]": "teste",
+            "contact[fields][utmtermevi0325]": "teste",
+            "contact[fields][data_lead_evi0325]": "2025-04-03",
+            "contact[fields][cpf]": "13298886696",
+            "contact[fields][tipo_de_pagamento]": "Pix",
+            "contact[fields][produto]": "Lojista 4 em 1",
+            "contact[fields][data_lead_evi0325_downsell]": "2025-04-04T11:50:34-03:00",
+            "contact[fields][utmcampaignevi0325dw]": "teste",
+            "contact[fields][utmsourceevi0325dw]": "teste",
+            "contact[fields][utmmediumevi0325dw]": "teste",
+            "contact[fields][utmcontentevi0325dw]": "teste",
+            "contact[fields][utmtermevi0325dw]": "teste",
+            "contact[fields][utmcampaignevi0625]": "EVI0625",
+            "contact[fields][utmsourceevi0625]": "instagram",
+            "contact[fields][utmmediumevi0625]": "insta_manychat",
+            "contact[fields][utmcontentevi0625]": "insta_manychat",
+            "contact[fields][utmtermevi0625]": "insta_manychat",
+            "contact[fields][data_lead_evi0625]": "2025-05-26T09:43:57-03:00",
+            "contact[fields][utmcampaignwvi]": "undefined",
+            "contact[fields][utmsourcewvi]": "undefined",
+            "contact[fields][utmmediumwvi]": "undefined",
+            "contact[fields][utmcontentwvi]": "undefined",
+            "contact[fields][utmtermwvi]": "undefined",
+            "contact[fields][data_lead_wvi]": "2025-07-14",
+            "contact[fields][utmsourceimer0825]": "teste",
+            "contact[fields][utmmediumimer0825]": "teste",
+            "contact[fields][utmcontentimer0825]": "teste",
+            "contact[fields][utmcampaignimer0825]": "teste",
+            "contact[fields][utmtermimer0825]": "teste",
+            "contact[fields][data_lead_imer0825]": "2025-08-31",
+            "contact[fields][data_compra_imer0825]": "2025-08-05T11:23:40-03:00",
+            "seriesid": "58"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/imer0825-ca",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "cdd2cac6-3a81-4b1a-8f76-cc17064f8ce5",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-08-05T14:03:52.396Z",
+      "createdAt": "2025-08-05T14:03:52.396Z",
+      "role": "workflow:owner",
+      "workflowId": "bpRT1g9xhTcc6L27",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
