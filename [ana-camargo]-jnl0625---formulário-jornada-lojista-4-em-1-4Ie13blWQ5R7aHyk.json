@@ -1,0 +1,317 @@
+{
+  "updatedAt": "2026-03-24T11:52:25.664Z",
+  "createdAt": "2025-06-16T20:12:49.371Z",
+  "id": "4Ie13blWQ5R7aHyk",
+  "name": "[Ana Camargo] JNL0625 - Formulário Jornada Lojista 4 em 1",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1Rb3xX-KERDCrc6qV5Vova4ubXdIO8Pr_DQ39F08pmUM/edit?resourcekey=&gid=464794529#gid=464794529",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 464794529,
+          "mode": "list",
+          "cachedResultName": "Respostas ao formulário 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Rb3xX-KERDCrc6qV5Vova4ubXdIO8Pr_DQ39F08pmUM/edit#gid=464794529"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6df709dd-7782-4048-b320-52656c555d60",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "KahmGSoMZoSZdYaL",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o telefone da entrada\nconst rawPhone = String($input.first().json['Seu número de telefone?']|| '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "36f48298-07e4-4d4b-99e9-87ef0aac1d12",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "84e08980-28e7-4b4c-8672-09eba35574c8",
+              "name": "Data",
+              "value": "={{ $('Google Sheets Trigger').item.json['Carimbo de data/hora'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2dd92b0d-70eb-4160-a600-ee2e276db7c6",
+              "name": "Nome",
+              "value": "={{ $('Google Sheets Trigger').item.json['Qual  seu nome?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a1c3b4da-0ff5-49c9-98a5-fa6a8a7516c5",
+              "name": "Email",
+              "value": "={{ $('Google Sheets Trigger').item.json['Seu e-mail?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b742ef88-0520-4b54-bd1b-956303270ba2",
+              "name": "Telefone",
+              "value": "={{ $('Google Sheets Trigger').item.json['Seu número de telefone?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a7d3a9d6-5ba0-4d1e-8381-9bed4bb32b7e",
+              "name": "Loja",
+              "value": "={{ $('Google Sheets Trigger').item.json['Você tem uma loja?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "db2e26fa-02c0-4c65-a120-27ecfe9d2374",
+              "name": "Investir",
+              "value": "={{ $('Google Sheets Trigger').item.json['O quanto você está disposta a investir no seu conhecimento e no sucesso da sua loja nos próximos 3 meses? '] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "f444a48f-be13-4f11-a0fc-143c2affbe1a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7c863821-45c4-4d95-9ed0-e6dbd7ded12c",
+              "leftValue": "={{ $json.Investir }}",
+              "rightValue": "Mais de R$3.000,00",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "2ab967fa-1a8f-4ca1-b747-e799a4faa50c",
+              "leftValue": "={{ $json.Investir }}",
+              "rightValue": "Até 10.000,00",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "3e1d8c02-ea40-4113-b832-ec165d2c0b39",
+              "leftValue": "={{ $json.Investir }}",
+              "rightValue": "Ilimitado",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "673aa1ef-ed1d-42d2-bfae-bdcb224c3e83",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        20
+      ],
+      "id": "2099e11f-69ba-4cad-bf5f-76c47f21c2d0",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/c1c52a36-c530-4c6e-a480-b32956493bc3",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        -100
+      ],
+      "id": "cf90516c-de51-4f31-876d-19b689041459",
+      "name": "HTTP Clint"
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "1Rb3xX-KERDCrc6qV5Vova4ubXdIO8Pr_DQ39F08pmUM",
+      "sheetId": 464794529,
+      "lastIndexChecked": 336
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Google Sheets Trigger": [
+      {
+        "json": {
+          "Carimbo de data/hora": "16/06/2025 17:13:42",
+          "Qual  seu nome?": "Teste",
+          "Seu número de telefone?": 5531984617540,
+          "Seu e-mail?": "teste@teste.com.br",
+          "Você tem uma loja?": "Loja infantil",
+          "O quanto você está disposta a investir no seu conhecimento e no sucesso da sua loja nos próximos 3 meses? ": "Ilimitado"
+        }
+      }
+    ]
+  },
+  "versionId": "ba07b5f2-5bc3-4cc1-b08a-324d00dafc4c",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-06-16T20:12:49.371Z",
+      "createdAt": "2025-06-16T20:12:49.371Z",
+      "role": "workflow:owner",
+      "workflowId": "4Ie13blWQ5R7aHyk",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
