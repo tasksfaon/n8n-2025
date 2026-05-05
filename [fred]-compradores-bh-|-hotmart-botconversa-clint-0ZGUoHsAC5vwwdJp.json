@@ -1,0 +1,456 @@
+{
+  "updatedAt": "2026-03-24T11:50:17.089Z",
+  "createdAt": "2025-05-19T17:17:16.303Z",
+  "id": "0ZGUoHsAC5vwwdJp",
+  "name": "[Fred] Compradores BH | Hotmart-Botconversa-Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fred-teatro-bh",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -120,
+        100
+      ],
+      "id": "d27c7e57-1073-4a08-a37c-749b111da5e2",
+      "name": "Webhook",
+      "webhookId": "2e0ed523-a38a-4c29-ace1-6eedf8f11b82"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cffffa45-9cb7-436d-b02b-104741e74ca4",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.name }}",
+              "type": "string"
+            },
+            {
+              "id": "0fcf7389-3181-4991-ab4a-8174aa91a476",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.data.buyer.email }}",
+              "type": "string"
+            },
+            {
+              "id": "47c483ac-6dca-46d8-94d8-4dd783fd2150",
+              "name": "Telefone",
+              "value": "={{ $json.Telefoneformatado }}",
+              "type": "string"
+            },
+            {
+              "id": "a6966c5f-55c6-4e1d-9bc0-79ff53da9610",
+              "name": "DDD",
+              "value": "={{ $json.DDD }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        100
+      ],
+      "id": "39dde565-0b88-4a1f-93d0-4cb20dc5248e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/154398/VKbV1LsRhGIl/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        860,
+        -20
+      ],
+      "id": "74ec309e-feb5-496c-8383-9355b4dbea2f",
+      "name": "HTTP Botconversa Comprar"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        120
+      ],
+      "id": "ca676361-84e7-456d-b4e8-632c36b9bf62",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o telefone da entrada\nconst rawPhone = $input.first().json.body.data.buyer.checkout_phone;\n\n// Remove tudo que não for número\nconst cleanedPhone = rawPhone.replace(/\\D/g, '');\n\n// Garante que o número esteja no formato com DDI 55\nlet phone = cleanedPhone;\n\n// Se o número começar com \"0\" ou não tiver \"55\", ajusta\nif (!phone.startsWith('55')) {\n  // Se o número tem 11 dígitos (DDD + número), adiciona 55\n  if (phone.length === 11) {\n    phone = '55' + phone;\n  }\n}\n\n// Extrai o DDD (após o 55, os dois próximos dígitos)\nconst ddd = phone.substring(2, 4);\n\n// Retorna os dois campos no formato esperado\nreturn [\n  {\n    json: {\n      Telefoneformatado: phone,\n      DDD: ddd\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        60,
+        100
+      ],
+      "id": "27c3a4f8-7508-4352-b431-3ed93ade804f",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "55ccbb82-676f-4ff7-a9bf-be7965f022f7",
+              "leftValue": "={{ $json.DDD }}",
+              "rightValue": "31",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "52393a59-9794-49ee-b194-dca2a52a2703",
+              "leftValue": "={{ $json.DDD }}",
+              "rightValue": "32",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "64e76a1f-4688-4d29-a4e2-252b7fb4cbf1",
+              "leftValue": "={{ $json.DDD }}",
+              "rightValue": "37",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        100
+      ],
+      "id": "c7a4ecd7-fac2-4304-ae06-7eb9367b9519",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/ec3c9969-7e96-40b6-9af3-61a5e123d463",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $('Edit Fields').item.json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $('Edit Fields').item.json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('Edit Fields').item.json.Telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        860,
+        -220
+      ],
+      "id": "705ef5be-099f-4c4d-922d-0d051d9130dc",
+      "name": "HTTP Clint"
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        -120
+      ],
+      "id": "787cfb92-5308-49a1-bbde-1605ba7de1d8",
+      "name": "Wait",
+      "webhookId": "232b3371-20b2-46c6-8d78-f9fd44510ef3"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Botconversa Comprar": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Botconversa Comprar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Jodd HTTP",
+            "content-length": "2151",
+            "content-type": "application/json",
+            "x-forwarded-for": "35.170.73.113",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-hotmart-hottok": "Dohp3MDQas9iC2iYaSGH03NryWBkPy9c79c1a7-b0f3-4557-ad0e-d06dba581d91",
+            "x-real-ip": "35.170.73.113",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "data": {
+              "product": {
+                "support_email": "produtos@fredelboni.com.br",
+                "has_co_production": false,
+                "name": "Audiobook: O Que Os Olhos Não Veem, Mas O Coração Sente",
+                "warranty_date": "2025-04-29T00:00:00Z",
+                "id": 2927954,
+                "ucode": "7d55a2ef-9ff9-4cf4-98be-3489be5a89c1"
+              },
+              "commissions": [
+                {
+                  "currency_value": "BRL",
+                  "source": "MARKETPLACE",
+                  "value": 3.74
+                },
+                {
+                  "currency_value": "BRL",
+                  "source": "PRODUCER",
+                  "value": 33.26
+                }
+              ],
+              "purchase": {
+                "original_offer_price": {
+                  "currency_value": "BRL",
+                  "value": 37
+                },
+                "subscription_anticipation_purchase": false,
+                "checkout_country": {
+                  "iso": "BR",
+                  "name": "Brasil"
+                },
+                "origin": {
+                  "src": "ig|paid|6683816616098_v2_s04|6683820803298|6683816615898|6683816616098|PAZXh0bgNhZW0BMABhZGlkAAAGFDLYwYoBp7sDB8xLEx86ElNmx5m5rpThGkMWrYaaCOB0WIpXENXbe2UPYGHSrYfWjm_F_aem_o9bhlvnRcmKZrlh-AkAXcg"
+                },
+                "order_bump": {
+                  "is_order_bump": false
+                },
+                "approved_date": 1745338290000,
+                "offer": {
+                  "code": "la8jcjs1"
+                },
+                "is_funnel": true,
+                "order_date": 1745338205000,
+                "price": {
+                  "currency_value": "BRL",
+                  "value": 37
+                },
+                "payment": {
+                  "pix_qrcode": "https://live-us.adyen.com/hpp/generateQRCodeImage.shtml?url=00020101021226900014br.gov.bcb.pix2568pix.adyen.com%2Fpixqrcodelocation%2Fpixloc%2Fv1%2Floc%2F_3T3btPORd6K6j6xqoPmfQ5204000053039865802BR5902HT6009SAO+PAULO62070503***6304AD08",
+                  "pix_expiration_date": 1745511005000,
+                  "installments_number": 1,
+                  "type": "PIX",
+                  "pix_code": "00020101021226900014br.gov.bcb.pix2568pix.adyen.com/pixqrcodelocation/pixloc/v1/loc/_3T3btPORd6K6j6xqoPmfQ5204000053039865802BR5902HT6009SAO PAULO62070503***6304AD08"
+                },
+                "full_price": {
+                  "currency_value": "BRL",
+                  "value": 37
+                },
+                "business_model": "I",
+                "invoice_by": "HOTMART",
+                "transaction": "HP3006853295",
+                "status": "APPROVED"
+              },
+              "affiliates": [
+                {
+                  "affiliate_code": "",
+                  "name": ""
+                }
+              ],
+              "producer": {
+                "legal_nature": "Pessoa Jurídica",
+                "document": "23168282000136",
+                "name": "Quimo Serviços Ltda - ME"
+              },
+              "buyer": {
+                "checkout_phone_code": "31",
+                "address": {
+                  "country": "Brasil",
+                  "country_iso": "BR"
+                },
+                "document": "38402267831",
+                "name": "Roberta Souza ",
+                "last_name": "Souza",
+                "checkout_phone": "31976235764",
+                "first_name": "Roberta",
+                "email": "rcsouzaa10@gmail.com",
+                "document_type": "CPF"
+              }
+            },
+            "id": "fb98e953-bf60-4e28-bf61-7f500680cb48",
+            "creation_date": 1745338293536,
+            "event": "PURCHASE_APPROVED",
+            "version": "2.0.0"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/fred-aprovada-sp",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "f15e2e84-91cc-487a-85ea-c4bfeb1b73ca",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-05-19T17:17:16.303Z",
+      "createdAt": "2025-05-19T17:17:16.303Z",
+      "role": "workflow:owner",
+      "workflowId": "0ZGUoHsAC5vwwdJp",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
