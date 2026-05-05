@@ -1,0 +1,900 @@
+{
+  "updatedAt": "2025-12-16T16:09:40.440Z",
+  "createdAt": "2025-08-20T14:30:25.523Z",
+  "id": "SyoCwUe45DVgxn4g",
+  "name": "[Márcia] Lista de Espera Pós 2026 Pipedrive Active",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.pipedriveTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -512,
+        0
+      ],
+      "id": "b2e3c390-3de9-46be-a858-62f469168c8f",
+      "name": "Pipedrive Trigger",
+      "webhookId": "e215fd5c-1882-4d31-9e4e-79fd38fbd722",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+              "name": "Data",
+              "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+              "name": "Primeiro Nome",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "84e3e1d4-75d9-441e-b3f0-cd2b54f86d4b",
+              "name": "Último Nome",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+              "name": "Email",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data.email[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "31cdadf9-fa7c-4f7c-b988-92d0009182c6",
+              "name": "DDD",
+              "value": "={{ $json.ddd }}",
+              "type": "string"
+            },
+            {
+              "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+              "name": "Telefone",
+              "value": "={{ $json.telefonePadronizado }}",
+              "type": "string"
+            },
+            {
+              "id": "3f0c133f-ff82-4cef-9951-4db0b6ac9391",
+              "name": "CRM",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data['487088fb302d80a85669079afe41a91a21fd45ff'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3b4d256b-68b2-4ab6-b109-e5864cd2b676",
+              "name": "Profissional",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data['334747750ddbc82c2010b5a75da2d82b3bf71783'] }}",
+              "type": "string"
+            },
+            {
+              "id": "67be04d4-9287-45ff-99f6-4efe20b56e52",
+              "name": "UF",
+              "value": "={{ $json.uf }}",
+              "type": "string"
+            },
+            {
+              "id": "b2c546fb-2e79-427f-94a0-6bc42963d4c8",
+              "name": "Mensagem",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data['53e2271622f39f32eecdb9e3c746fd69630e7366'] }}",
+              "type": "string"
+            },
+            {
+              "id": "02fb411b-69b9-4a00-9268-e9ca64b985cb",
+              "name": "Pipeline ID",
+              "value": "={{ $('Pipedrive Trigger').item.json.data.pipeline_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        0
+      ],
+      "id": "d8f1deec-3458-459c-a643-43fc12e4de9a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        32
+      ],
+      "id": "0c461180-9136-4d77-ab28-379e101d5b69",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b0c78a24-0d95-4ca0-9273-a155f7af9228",
+              "leftValue": "={{ $json['Pipeline ID'] }}",
+              "rightValue": "196",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        0
+      ],
+      "id": "bf39875b-159d-455a-9deb-f6caf7e9a4b4",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.Email }}",
+        "updateIfExists": true,
+        "additionalFields": {
+          "fieldValues": {
+            "property": [
+              {
+                "field": "4",
+                "value": "={{ $json.DDD }}"
+              },
+              {
+                "field": "1",
+                "value": "={{ $json.Profissional }}"
+              },
+              {
+                "field": "2",
+                "value": "={{ $json.UF }}"
+              },
+              {
+                "field": "7",
+                "value": "={{ $json.Mensagem }}"
+              },
+              {
+                "field": "3",
+                "value": "={{ $json.CRM }}"
+              }
+            ]
+          },
+          "firstName": "={{ $json['Primeiro Nome'] }}",
+          "lastName": "={{ $json['Último Nome'] }}",
+          "phone": "={{ $json.Telefone }}"
+        }
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -96
+      ],
+      "id": "ad536673-4401-499c-87c2-d0824ac51868",
+      "name": "ActiveCampaign",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactTag",
+        "tagId": "13",
+        "contactId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        -96
+      ],
+      "id": "72d653e7-325b-4c3b-8bc6-479d14d0f18c",
+      "name": "ActiveCampaign1",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "listId": 7,
+        "contactId": "={{ $json.contact }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        -96
+      ],
+      "id": "b38a5563-bdd0-43f6-b266-3809a820f4f8",
+      "name": "ActiveCampaign2",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/vV9VebSZg7w023jcvfDS",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"37e290c1-7110-4353-8f4f-b74f5057e915\",\n  \"phoneNumber\": \"{{ $json.Telefone }}\",\n  \"name\": \"{{ $json['Primeiro Nome'] }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        -320
+      ],
+      "id": "a09f6c4d-cba6-48e2-8a81-e1e807727d20",
+      "name": "HTTP Sendflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ================================\n// 1. Captura do telefone\n// ================================\nconst telefoneOriginal = $input.first().json.data.phone[0].value || '';\n\n// ================================\n// 2. Remove tudo que não for número\n// ================================\nlet telefone = telefoneOriginal.replace(/\\D/g, '');\n\n// ================================\n// 3. Remove código do país (55), se existir\n// ================================\nif (telefone.startsWith('55')) {\n  telefone = telefone.substring(2);\n}\n\n// ================================\n// 4. Extrai DDD e número\n// ================================\nconst ddd = telefone.substring(0, 2);\nlet numero = telefone.substring(2);\n\n// ================================\n// 5. Garante o dígito 9 (celular)\n// ================================\nif (numero.length === 8) {\n  numero = '9' + numero;\n}\n\n// ================================\n// 6. Monta telefone padronizado\n// ================================\nconst telefonePadronizado = `55${ddd}${numero}`;\n\n// ================================\n// 7. Captura o código da UF vindo do Pipedrive\n// ================================\nconst codigoUF = $input.first().json.data['f77f5009ce48d7b62427c2d0961522f1830eb66e'];\n\n// ================================\n// 8. Mapa código → UF\n// ================================\nconst mapaUF = {\n  6050: \"AC\",\n  6051: \"AL\",\n  6052: \"AP\",\n  6053: \"AM\",\n  6054: \"BA\",\n  6055: \"CE\",\n  6056: \"DF\",\n  6057: \"ES\",\n  6058: \"GO\",\n  6059: \"MA\",\n  6060: \"MT\",\n  6061: \"MS\",\n  6062: \"MG\",\n  6063: \"PA\",\n  6064: \"PB\",\n  6065: \"PR\",\n  6066: \"PE\",\n  6067: \"PI\",\n  6068: \"RJ\",\n  6069: \"RN\",\n  6070: \"RS\",\n  6071: \"RO\",\n  6072: \"RR\",\n  6073: \"SC\",\n  6074: \"SP\",\n  6075: \"SE\",\n  6076: \"TO\"\n};\n\n// ================================\n// 9. Resolve a UF\n// ================================\nconst uf = mapaUF[codigoUF] || \"\";\n\n// ================================\n// 10. Retorno\n// ================================\nreturn {\n  ddd,\n  telefonePadronizado,\n  uf\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "b5bf4e28-66a7-4f55-a135-81a97fb46c5f",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.pipedrive.com/v1/persons/{{ $json.data.person_id }}?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04 ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -288,
+        0
+      ],
+      "id": "50b70c05-3ab9-4a13-9c09-75c2b7e668ab",
+      "name": "HTTP Pipedrive Person"
+    }
+  ],
+  "connections": {
+    "Pipedrive Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pipedrive Person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Sendflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign1": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Sendflow": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Person": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Pipedrive Trigger": {
+      "webhookId": 2150430
+    },
+    "node:Pipedrive Trigger1": {}
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Pipedrive Trigger": [
+      {
+        "json": {
+          "data": {
+            "add_time": "2025-12-16T15:47:27Z",
+            "channel": null,
+            "channel_id": null,
+            "close_time": null,
+            "creator_user_id": 3559832,
+            "currency": "BRL",
+            "custom_fields": {
+              "31ae0f90cc1b3ee3da765f9c9decf2321022a7cf": null
+            },
+            "expected_close_date": null,
+            "first_won_time": null,
+            "id": 66198,
+            "label_ids": [],
+            "lost_reason": null,
+            "lost_time": null,
+            "org_id": null,
+            "origin": "API",
+            "origin_id": null,
+            "owner_id": 3559832,
+            "person_id": 73927,
+            "pipeline_id": 196,
+            "probability": null,
+            "stage_change_time": null,
+            "stage_id": 1496,
+            "status": "open",
+            "title": "[Neg Turma 57 2026] - Isabella Siqueira Maia",
+            "update_time": null,
+            "value": 0,
+            "visible_to": "3",
+            "won_time": null,
+            "is_archived": false,
+            "archive_time": null
+          },
+          "previous": null,
+          "meta": {
+            "action": "create",
+            "company_id": "2396659",
+            "correlation_id": "6af15ff2-8f1c-4bd4-85cd-befcf94bf3fa",
+            "entity_id": "66198",
+            "entity": "deal",
+            "id": "e36af1d9-1286-4ed8-ba23-3176d8d7eb8b",
+            "is_bulk_edit": false,
+            "timestamp": "2025-12-16T15:47:27.763Z",
+            "type": "general",
+            "user_id": "3559832",
+            "version": "2.0",
+            "webhook_id": "2014030",
+            "webhook_owner_id": "3559832",
+            "change_source": "api",
+            "permitted_user_ids": [
+              "3559832",
+              "3559867"
+            ],
+            "attempt": 1,
+            "host": "center-ao.pipedrive.com"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "d920c9b6-809d-4e8b-91b8-762b50e60634",
+  "activeVersionId": "d920c9b6-809d-4e8b-91b8-762b50e60634",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-08-20T14:30:25.523Z",
+      "createdAt": "2025-08-20T14:30:25.523Z",
+      "role": "workflow:owner",
+      "workflowId": "SyoCwUe45DVgxn4g",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-16T16:09:40.443Z",
+    "createdAt": "2025-12-16T16:09:40.443Z",
+    "versionId": "d920c9b6-809d-4e8b-91b8-762b50e60634",
+    "workflowId": "SyoCwUe45DVgxn4g",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.pipedriveTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -512,
+          0
+        ],
+        "id": "b2e3c390-3de9-46be-a858-62f469168c8f",
+        "name": "Pipedrive Trigger",
+        "webhookId": "e215fd5c-1882-4d31-9e4e-79fd38fbd722",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+                "name": "Data",
+                "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+                "type": "string"
+              },
+              {
+                "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+                "name": "Primeiro Nome",
+                "value": "={{ $('HTTP Pipedrive Person').item.json.data.first_name }}",
+                "type": "string"
+              },
+              {
+                "id": "84e3e1d4-75d9-441e-b3f0-cd2b54f86d4b",
+                "name": "Último Nome",
+                "value": "={{ $('HTTP Pipedrive Person').item.json.data.last_name }}",
+                "type": "string"
+              },
+              {
+                "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+                "name": "Email",
+                "value": "={{ $('HTTP Pipedrive Person').item.json.data.email[0].value }}",
+                "type": "string"
+              },
+              {
+                "id": "31cdadf9-fa7c-4f7c-b988-92d0009182c6",
+                "name": "DDD",
+                "value": "={{ $json.ddd }}",
+                "type": "string"
+              },
+              {
+                "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+                "name": "Telefone",
+                "value": "={{ $json.telefonePadronizado }}",
+                "type": "string"
+              },
+              {
+                "id": "3f0c133f-ff82-4cef-9951-4db0b6ac9391",
+                "name": "CRM",
+                "value": "={{ $('HTTP Pipedrive Person').item.json.data['487088fb302d80a85669079afe41a91a21fd45ff'] }}",
+                "type": "string"
+              },
+              {
+                "id": "3b4d256b-68b2-4ab6-b109-e5864cd2b676",
+                "name": "Profissional",
+                "value": "={{ $('HTTP Pipedrive Person').item.json.data['334747750ddbc82c2010b5a75da2d82b3bf71783'] }}",
+                "type": "string"
+              },
+              {
+                "id": "67be04d4-9287-45ff-99f6-4efe20b56e52",
+                "name": "UF",
+                "value": "={{ $json.uf }}",
+                "type": "string"
+              },
+              {
+                "id": "b2c546fb-2e79-427f-94a0-6bc42963d4c8",
+                "name": "Mensagem",
+                "value": "={{ $('HTTP Pipedrive Person').item.json.data['53e2271622f39f32eecdb9e3c746fd69630e7366'] }}",
+                "type": "string"
+              },
+              {
+                "id": "02fb411b-69b9-4a00-9268-e9ca64b985cb",
+                "name": "Pipeline ID",
+                "value": "={{ $('Pipedrive Trigger').item.json.data.pipeline_id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          128,
+          0
+        ],
+        "id": "d8f1deec-3458-459c-a643-43fc12e4de9a",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1424,
+          32
+        ],
+        "id": "0c461180-9136-4d77-ab28-379e101d5b69",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "b0c78a24-0d95-4ca0-9273-a155f7af9228",
+                "leftValue": "={{ $json['Pipeline ID'] }}",
+                "rightValue": "196",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          336,
+          0
+        ],
+        "id": "bf39875b-159d-455a-9deb-f6caf7e9a4b4",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "email": "={{ $json.Email }}",
+          "updateIfExists": true,
+          "additionalFields": {
+            "fieldValues": {
+              "property": [
+                {
+                  "field": "4",
+                  "value": "={{ $json.DDD }}"
+                },
+                {
+                  "field": "1",
+                  "value": "={{ $json.Profissional }}"
+                },
+                {
+                  "field": "2",
+                  "value": "={{ $json.UF }}"
+                },
+                {
+                  "field": "7",
+                  "value": "={{ $json.Mensagem }}"
+                },
+                {
+                  "field": "3",
+                  "value": "={{ $json.CRM }}"
+                }
+              ]
+            },
+            "firstName": "={{ $json['Primeiro Nome'] }}",
+            "lastName": "={{ $json['Último Nome'] }}",
+            "phone": "={{ $json.Telefone }}"
+          }
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          784,
+          -96
+        ],
+        "id": "ad536673-4401-499c-87c2-d0824ac51868",
+        "name": "ActiveCampaign",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "contactTag",
+          "tagId": "13",
+          "contactId": "={{ $json.id }}"
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          1008,
+          -96
+        ],
+        "id": "72d653e7-325b-4c3b-8bc6-479d14d0f18c",
+        "name": "ActiveCampaign1",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "contactList",
+          "listId": 7,
+          "contactId": "={{ $json.contact }}"
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          1184,
+          -96
+        ],
+        "id": "b38a5563-bdd0-43f6-b266-3809a820f4f8",
+        "name": "ActiveCampaign2",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://sendflow.pro/a/vV9VebSZg7w023jcvfDS",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"apiKey\": \"37e290c1-7110-4353-8f4f-b74f5057e915\",\n  \"phoneNumber\": \"{{ $json.Telefone }}\",\n  \"name\": \"{{ $json['Primeiro Nome'] }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          912,
+          -320
+        ],
+        "id": "a09f6c4d-cba6-48e2-8a81-e1e807727d20",
+        "name": "HTTP Sendflow"
+      },
+      {
+        "parameters": {
+          "jsCode": "// ================================\n// 1. Captura do telefone\n// ================================\nconst telefoneOriginal = $input.first().json.data.phone[0].value || '';\n\n// ================================\n// 2. Remove tudo que não for número\n// ================================\nlet telefone = telefoneOriginal.replace(/\\D/g, '');\n\n// ================================\n// 3. Remove código do país (55), se existir\n// ================================\nif (telefone.startsWith('55')) {\n  telefone = telefone.substring(2);\n}\n\n// ================================\n// 4. Extrai DDD e número\n// ================================\nconst ddd = telefone.substring(0, 2);\nlet numero = telefone.substring(2);\n\n// ================================\n// 5. Garante o dígito 9 (celular)\n// ================================\nif (numero.length === 8) {\n  numero = '9' + numero;\n}\n\n// ================================\n// 6. Monta telefone padronizado\n// ================================\nconst telefonePadronizado = `55${ddd}${numero}`;\n\n// ================================\n// 7. Captura o código da UF vindo do Pipedrive\n// ================================\nconst codigoUF = $input.first().json.data['f77f5009ce48d7b62427c2d0961522f1830eb66e'];\n\n// ================================\n// 8. Mapa código → UF\n// ================================\nconst mapaUF = {\n  6050: \"AC\",\n  6051: \"AL\",\n  6052: \"AP\",\n  6053: \"AM\",\n  6054: \"BA\",\n  6055: \"CE\",\n  6056: \"DF\",\n  6057: \"ES\",\n  6058: \"GO\",\n  6059: \"MA\",\n  6060: \"MT\",\n  6061: \"MS\",\n  6062: \"MG\",\n  6063: \"PA\",\n  6064: \"PB\",\n  6065: \"PR\",\n  6066: \"PE\",\n  6067: \"PI\",\n  6068: \"RJ\",\n  6069: \"RN\",\n  6070: \"RS\",\n  6071: \"RO\",\n  6072: \"RR\",\n  6073: \"SC\",\n  6074: \"SP\",\n  6075: \"SE\",\n  6076: \"TO\"\n};\n\n// ================================\n// 9. Resolve a UF\n// ================================\nconst uf = mapaUF[codigoUF] || \"\";\n\n// ================================\n// 10. Retorno\n// ================================\nreturn {\n  ddd,\n  telefonePadronizado,\n  uf\n};\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -48,
+          0
+        ],
+        "id": "b5bf4e28-66a7-4f55-a135-81a97fb46c5f",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "url": "=https://api.pipedrive.com/v1/persons/{{ $json.data.person_id }}?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04 ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          -288,
+          0
+        ],
+        "id": "50b70c05-3ab9-4a13-9c09-75c2b7e668ab",
+        "name": "HTTP Pipedrive Person"
+      }
+    ],
+    "connections": {
+      "Pipedrive Trigger": {
+        "main": [
+          [
+            {
+              "node": "HTTP Pipedrive Person",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTTP Sendflow",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign1": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign2": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Sendflow": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Person": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
