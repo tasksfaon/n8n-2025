@@ -1,0 +1,1919 @@
+{
+  "updatedAt": "2025-09-18T20:13:51.395Z",
+  "createdAt": "2025-09-18T20:12:29.791Z",
+  "id": "5U8shw6MisM2pzNN",
+  "name": "fup dia 1 com ia",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2128,
+        624
+      ],
+      "id": "32c46a0f-0567-4cb2-acf9-22c6ddf2f6d2",
+      "name": "Ative todos os dias as 9am"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -560,
+        336
+      ],
+      "id": "7b194ba0-2cab-4e62-b357-8262380eabeb",
+      "name": "Loop Over Items",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Edit Fields').item.json.follow_number }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "696086e6-d522-4865-913e-ab2feb9e402e"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "21f6621b-a2d3-4189-8d22-a37d0ca4ad4d",
+                    "leftValue": "={{ $('Edit Fields').item.json.follow_number }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0fb3f688-f792-45b6-a26d-d5a1db149213",
+                    "leftValue": "={{ $('Edit Fields').item.json.follow_number }}",
+                    "rightValue": 3,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1504,
+        400
+      ],
+      "id": "f5d36850-4e42-4088-86ba-b44e50671a92",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6c7e3d14-6542-48c2-80cc-981e727009aa",
+              "name": "lead_name",
+              "value": "={{ $json.lead_name }}",
+              "type": "string"
+            },
+            {
+              "id": "0b89dd8a-308f-4867-9f98-114ad1828024",
+              "name": "whatsapp",
+              "value": "={{ $json.whatsapp }}",
+              "type": "string"
+            },
+            {
+              "id": "b927c436-1ff1-46fa-a874-e99ca85ed540",
+              "name": "lead_email",
+              "value": "={{ $json.lead_email }}",
+              "type": "string"
+            },
+            {
+              "id": "a382f0f1-432c-4040-9cb1-268b0065e59e",
+              "name": "etapa_contato",
+              "value": "={{ $json.etapa_contato }}",
+              "type": "boolean"
+            },
+            {
+              "id": "e7aa0fac-69ee-4efe-9033-0be167ea1284",
+              "name": "follow_number",
+              "value": "={{ $json.follow_number }}",
+              "type": "number"
+            },
+            {
+              "id": "4c3cd805-bb5b-4c38-b1bb-d63a39b7a1d4",
+              "name": "time_out",
+              "value": "={{ $json.time_out }}",
+              "type": "string"
+            },
+            {
+              "id": "9a81ff6d-7edf-47c6-9b57-eafe5bb7b90c",
+              "name": "instancia_evo",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "0bd46730-d9b7-4a28-8def-96494e5526f4",
+              "name": "api-key",
+              "value": "690D11724576-4999-AB8E-799D8AE326C8",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1616,
+        624
+      ],
+      "id": "4bc34b25-b6d2-46c5-a814-a56f294d80dd",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Edit Fields').item.json.follow_number }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "696086e6-d522-4865-913e-ab2feb9e402e"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "21f6621b-a2d3-4189-8d22-a37d0ca4ad4d",
+                    "leftValue": "={{ $('Edit Fields').item.json.follow_number }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0fb3f688-f792-45b6-a26d-d5a1db149213",
+                    "leftValue": "={{ $('Edit Fields').item.json.follow_number }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -896,
+        592
+      ],
+      "id": "56863f78-9dfd-4343-bdf0-4c0cad49f7ed",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://wsapi.tododiaenergia.com.br/message/sendText/ana-sdr",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Edit Fields').item.json['api-key'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.lead_name }}, chegou a ler minha mensagem? "
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        352
+      ],
+      "id": "4c7dc152-f900-485c-9652-a83a8f63e4f8",
+      "name": "Enviar Texto1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/fb2223ae-b28b-4ff0-89f4-e259a88d13f9",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "nome",
+              "value": "={{ $('Edit Fields').item.json.lead_name }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ $('Edit Fields').item.json.lead_email }}"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "etapa_funil",
+              "value": "Dia 2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2096,
+        384
+      ],
+      "id": "6607e85f-4864-467b-ad7f-51c7fd14fc16",
+      "name": "Clint - Dia 2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/7af3a9fa-07eb-4045-895f-3fb7e9806861",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "nome",
+              "value": "={{ $('Edit Fields').item.json.lead_name }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ $('Edit Fields').item.json.lead_email }}"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "etapa_funil",
+              "value": "Dia 3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        544
+      ],
+      "id": "1283eaaf-2bfc-40e1-bb1a-6bbcc96eb3d7",
+      "name": "Clint - Dia 3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/7af3a9fa-07eb-4045-895f-3fb7e9806861",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "nome",
+              "value": "={{ $('Edit Fields').item.json.lead_name }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ $('Edit Fields').item.json.lead_email }}"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "etapa_funil",
+              "value": "Dia 4"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        768
+      ],
+      "id": "5f1d7f2b-bceb-4141-9f1b-3092d06151ee",
+      "name": "Clint - Dia 4"
+    },
+    {
+      "parameters": {
+        "content": "## Move de etapa na clint e registra no banco e dados o Follow que foi feito",
+        "height": 700,
+        "width": 980
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        240
+      ],
+      "id": "276b5272-7924-4716-8e0b-1ab188940ff8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evo.greencardcannabico.com/message/sendText/{{ $('Edit Fields').item.json.instancia_evo }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Edit Fields').item.json['api-key'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "text",
+              "value": "=Oi {{ $('Edit Fields').item.json.lead_name }}, tudo bem?\nAqui sou eu de novo 🙂"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        656
+      ],
+      "id": "ba88424b-0888-4213-8774-7fcd6607197d",
+      "name": "Enviar Texto4",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        256,
+        656
+      ],
+      "id": "039aaf0e-d936-4462-b78e-9b1a1cff0762",
+      "name": "Wait4",
+      "webhookId": "ecfc86ba-3797-4a07-aa6e-8160c8d3ced9"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evo.greencardcannabico.com/message/sendText/{{ $('Edit Fields').item.json.instancia_evo }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Edit Fields').item.json['api-key'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "text",
+              "value": "Você chegou a ver minha última mensagem?"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        416,
+        656
+      ],
+      "id": "00482a86-e273-4074-bd3b-5d609c3243ef",
+      "name": "Enviar Texto5",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 4
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        656
+      ],
+      "id": "d2890bc8-3834-4aa3-baf5-e9fe3b418cfe",
+      "name": "Wait5",
+      "webhookId": "fc19beee-379f-4900-8721-8a463c04e7ad"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evo.greencardcannabico.com/message/sendText/{{ $('Edit Fields').item.json.instancia_evo }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Edit Fields').item.json['api-key'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "text",
+              "value": "A Vênus é sobre comunicar o seu valor de forma impossível de ser ignorada."
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        736,
+        656
+      ],
+      "id": "4226ef64-b1f1-48bf-88de-8477108e9718",
+      "name": "Enviar Texto6",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 4
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        656
+      ],
+      "id": "42229a93-8e65-4537-8e9f-9a9b51d0854f",
+      "name": "Wait6",
+      "webhookId": "46e7acc7-6b81-4bc4-8096-3907a937065b"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evo.greencardcannabico.com/message/sendText/{{ $('Edit Fields').item.json.instancia_evo }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Edit Fields').item.json['api-key'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "text",
+              "value": "= Oi {{ $json.lead_name }}, tudo certo por aí?"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -32,
+        944
+      ],
+      "id": "9da15e71-4e5d-49f7-b12e-0f560ace48df",
+      "name": "Enviar Texto7"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        944
+      ],
+      "id": "ce8abe8d-8b3f-4d9b-bce7-a1063def2923",
+      "name": "Wait7",
+      "webhookId": "ec131c16-e9d2-44b1-b04f-f9a060761433"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evo.greencardcannabico.com/message/sendText/{{ $('Edit Fields').item.json.instancia_evo }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Edit Fields').item.json['api-key'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "text",
+              "value": "Queria saber como você está se sentindo com a experiência até agora!"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        944
+      ],
+      "id": "fe9a1b1b-cf98-483a-a294-2dc2b9cb068e",
+      "name": "Enviar Texto8"
+    },
+    {
+      "parameters": {
+        "amount": 4
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        944
+      ],
+      "id": "edd0d901-6c0d-4bbe-acde-4c4b4081dfb9",
+      "name": "Wait8",
+      "webhookId": "a1c666c2-047f-4166-b5f6-5fbb1c703938"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evo.greencardcannabico.com/message/sendText/{{ $('Edit Fields').item.json.instancia_evo }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Edit Fields').item.json['api-key'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "text",
+              "value": "Teve algum insight que te movimentou? Ou algo que ficou te travando?"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1008,
+        944
+      ],
+      "id": "0f3c6482-06b1-43a6-b587-208831383616",
+      "name": "Enviar Texto9"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        944
+      ],
+      "id": "8d758c98-e217-420c-9d61-8fc21ce16089",
+      "name": "Wait9",
+      "webhookId": "b86c7b07-ed8b-4a63-a32a-6f569c96ad98"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evo.greencardcannabico.com/message/sendText/{{ $('Edit Fields').item.json.instancia_evo }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Edit Fields').item.json['api-key'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "text",
+              "value": "👉 Me conta: qual é a conquista mais importante que você deseja ter com a Vênus?"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1088,
+        656
+      ],
+      "id": "496ed26a-0fd7-4605-b6a7-ddc3b0eeeee2",
+      "name": "Enviar Texto10",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -576,
+        640
+      ],
+      "id": "b1e0e226-a5ac-4083-aaa1-b5f583e5081d",
+      "name": "Loop Over Items1",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        656
+      ],
+      "id": "bd447025-f30c-49c0-bc8f-581918e6f5e9",
+      "name": "Wait10",
+      "webhookId": "700c8d2f-7c88-453e-a45d-acad4ac4a484"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -496,
+        928
+      ],
+      "id": "e8f71996-ef0a-4dd4-bfe3-26d7d5451cdb",
+      "name": "Loop Over Items2",
+      "notes": "TEMPLATE DESENVOLVIDO POR NOCODE STARTUP\nhttps://nocodestartup.io/\n\nFORMAÇÃO GESTOR DE AGENTES DE IA:\nhttps://nocodestartup.io/formacao-gestor-agentes-ia/"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        48
+      ],
+      "id": "017b903e-c5fe-4b63-a5d2-336eadd5f98e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ab0aa2f5-c647-4d6c-9a06-7499eb877a6d",
+              "leftValue": "={{ $json.follow_number }}",
+              "rightValue": 4,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1168,
+        624
+      ],
+      "id": "6230509b-8347-4c66-a129-c034fd759524",
+      "name": "já fez todos os foolow?"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "todo_dia_energia",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "follow_number",
+              "condition": "eq",
+              "keyValue": "1"
+            },
+            {
+              "keyName": "utm_source",
+              "condition": "eq",
+              "keyValue": "outbound"
+            },
+            {
+              "keyName": "time_out",
+              "condition": "is",
+              "keyValue": "=null"
+            },
+            {
+              "keyName": "aceitou_reuniao",
+              "condition": "is",
+              "keyValue": "null"
+            },
+            {
+              "keyName": "etapa_contato",
+              "condition": "eq",
+              "keyValue": "false"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1888,
+        624
+      ],
+      "id": "c1bbdb63-76e5-47ae-9aac-9cd838146d8e",
+      "name": "Get many rows",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "todo_dia_energia",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('Edit Fields').item.json.whatsapp }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "follow_number",
+              "fieldValue": "2"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        384
+      ],
+      "id": "e66d973e-c86d-4970-82b8-81e65190626c",
+      "name": "Update a row"
+    },
+    {
+      "parameters": {
+        "content": "etapa_contato = false - nao respondeu a ia ainda\nFollow up LESS THEN 4 - numero de follow menor que 4\naceitou_reuniao = null - nao pode ter agendado reuniao ainda\ntime_out = null - humano nao pode ter iniciado conversa\n\n",
+        "height": 576,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1968,
+        352
+      ],
+      "id": "64addae6-40e9-49a4-b4e7-df8b87390dd9",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "teste_lila_inspira",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('Edit Fields').item.json.whatsapp }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "follow_up",
+              "fieldValue": "2"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1856,
+        560
+      ],
+      "id": "8b82ccaf-ff43-4112-9755-0704164907b8",
+      "name": "Update a row1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "teste_lila_inspira",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('Edit Fields').item.json.whatsapp }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "follow_up",
+              "fieldValue": "3"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        752
+      ],
+      "id": "bdda70b4-969a-4925-9a3a-235e98c6e9a1",
+      "name": "Update a row2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU",
+          "mode": "list",
+          "cachedResultName": "Relatorio IA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $('Edit Fields').item.json.whatsapp }}",
+            "numero_follow": "=2"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "dia",
+              "displayName": "dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "etapa_contato",
+              "displayName": "etapa_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "humano_assumiu",
+              "displayName": "humano_assumiu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa_agenda",
+              "displayName": "etapa_agenda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "produto_qualificada",
+              "displayName": "produto_qualificada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "foi_enviado_link_checkout",
+              "displayName": "foi_enviado_link_checkout",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "numero_follow",
+              "displayName": "numero_follow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ultimo_contato",
+              "displayName": "ultimo_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2080,
+        560
+      ],
+      "id": "60f4f9ca-7a10-418b-ab39-ba36e3501342",
+      "name": "Update row in sheet1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU",
+          "mode": "list",
+          "cachedResultName": "Relatorio IA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_RLqQnqPjDB-dt29w3YjocnCtezJVGwa04tNv0B1umU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $('Edit Fields').item.json.whatsapp }}",
+            "numero_follow": "=3"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "dia",
+              "displayName": "dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "etapa_contato",
+              "displayName": "etapa_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "humano_assumiu",
+              "displayName": "humano_assumiu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa_agenda",
+              "displayName": "etapa_agenda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "produto_qualificada",
+              "displayName": "produto_qualificada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "foi_enviado_link_checkout",
+              "displayName": "foi_enviado_link_checkout",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "numero_follow",
+              "displayName": "numero_follow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ultimo_contato",
+              "displayName": "ultimo_contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2096,
+        752
+      ],
+      "id": "51886dc1-e8f7-4baf-a062-712cee971a9d",
+      "name": "Update row in sheet2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== VERSÃO CORRIGIDA PARA CODE NODE n8n =====\n// Parse da data created_at (formato ISO 8601)\nconst dataCreated = new Date($input.first().json.created_at);\n\n// Data atual (sem usar {{$now}} no Code Node)\nconst dataAtual = new Date();\n\n// Calcular diferença em milissegundos\nconst diferencaMs = dataAtual.getTime() - dataCreated.getTime();\n\n// Converter para dias\nconst diferencaDias = Math.floor(diferencaMs / (1000 * 60 * 60 * 24));\n\n// Retornar resultado\nreturn [{\n  json: {\n    created_at: $input.first().json.created_at,\n    data_atual: dataAtual.toISOString(),\n    diferenca_dias: diferencaDias,\n    diferenca_absoluta: Math.abs(diferencaDias)\n  }\n}];\n\n// ===== ALTERNATIVA: Se created_at está em um campo específico =====\n/*\nconst dataCreated = new Date($input.first().json.created_at);\nconst dataAtual = new Date();\nconst diferencaMs = dataAtual.getTime() - dataCreated.getTime();\nconst diferencaDias = Math.floor(diferencaMs / (1000 * 60 * 60 * 24));\n\nreturn [{\n  json: {\n    ...($input.first().json), // mantém os dados originais\n    diferenca_dias: diferencaDias\n  }\n}];\n*/\n\n// ===== VERSÃO MAIS ROBUSTA COM TRATAMENTO DE ERRO =====\n/*\ntry {\n  const inputData = $input.first().json;\n  \n  if (!inputData.created_at) {\n    throw new Error('Campo created_at não encontrado');\n  }\n  \n  const dataCreated = new Date(inputData.created_at);\n  const dataAtual = new Date();\n  \n  if (isNaN(dataCreated.getTime())) {\n    throw new Error('Data created_at inválida');\n  }\n  \n  const diferencaMs = dataAtual.getTime() - dataCreated.getTime();\n  const diferencaDias = Math.floor(diferencaMs / (1000 * 60 * 60 * 24));\n  \n  return [{\n    json: {\n      ...inputData,\n      diferenca_dias: diferencaDias,\n      diferenca_absoluta: Math.abs(diferencaDias),\n      eh_passado: diferencaDias > 0,\n      eh_futuro: diferencaDias < 0,\n      eh_hoje: diferencaDias === 0\n    }\n  }];\n  \n} catch (error) {\n  return [{\n    json: {\n      error: error.message,\n      created_at: $input.first().json.created_at || 'não encontrado'\n    }\n  }];\n}\n*/"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        656
+      ],
+      "id": "1ed8f526-2dc0-42eb-bcc6-1242682463eb",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7b258f8e-7e40-40f9-bb12-75d0d7c44147",
+              "leftValue": "={{ $json.diferenca_dias }}",
+              "rightValue": 7,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        656
+      ],
+      "id": "37d39d40-e844-4bea-98ee-3ab8e310ea5e",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "content": "calcula a quantidade de dias que ele entrou e se for maior que 7 dias ele manda o segundo follow",
+        "height": 224,
+        "width": 432
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        576
+      ],
+      "id": "3648b523-373b-4c1d-8f88-2495d0f968b4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Verifica se é o segundo follow\n",
+        "height": 336,
+        "width": 384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1328,
+        464
+      ],
+      "id": "26d4788c-bbb2-4950-a5b3-71b84a67731f",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "amount": 4
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        352
+      ],
+      "id": "54e78832-3c69-408a-9b11-034f157068f4",
+      "name": "Wait",
+      "webhookId": "fc19beee-379f-4900-8721-8a463c04e7ad"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://wsapi.tododiaenergia.com.br/message/sendText/ana-sdr",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apiKey ",
+              "value": "={{ $('Edit Fields').item.json['api-key'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields').item.json.whatsapp }}"
+            },
+            {
+              "name": "text",
+              "value": "=O que mais te incomoda hoje e que, se mudasse, já faria diferença no seu dia a dia? ex. emagrecer, ganhar massa muscular, desinflamar...|"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        432,
+        352
+      ],
+      "id": "1d3a8689-7c7a-4ff8-bde3-97311bd8d18c",
+      "name": "Enviar Texto"
+    },
+    {
+      "parameters": {
+        "amount": 4
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        352
+      ],
+      "id": "2867e6d3-ef12-40c4-ae71-1797f98bd23c",
+      "name": "Wait1",
+      "webhookId": "fc19beee-379f-4900-8721-8a463c04e7ad"
+    }
+  ],
+  "connections": {
+    "Ative todos os dias as 9am": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar Texto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "já fez todos os foolow?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto4": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto5": {
+      "main": [
+        [
+          {
+            "node": "Wait5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait5": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto6": {
+      "main": [
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto7": {
+      "main": [
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait7": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto8": {
+      "main": [
+        [
+          {
+            "node": "Wait8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait8": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto9": {
+      "main": [
+        [
+          {
+            "node": "Wait9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait9": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto10": {
+      "main": [
+        [
+          {
+            "node": "Wait10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait10": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar Texto7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "já fez todos os foolow?": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "Clint - Dia 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Enviar Texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Texto": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Ative todos os dias as 9am": [
+      {
+        "json": {
+          "timestamp": "2025-06-22T19:38:55.048-03:00",
+          "Readable date": "June 22nd 2025, 7:38:55 pm",
+          "Readable time": "7:38:55 pm",
+          "Day of week": "Sunday",
+          "Year": "2025",
+          "Month": "June",
+          "Day of month": "23",
+          "Hour": "19",
+          "Minute": "38",
+          "Second": "55",
+          "Timezone": "America/Sao_Paulo (UTC-03:00)"
+        }
+      }
+    ]
+  },
+  "versionId": "294d283b-d507-40a3-a083-3f77961f7c39",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-18T20:12:29.791Z",
+      "createdAt": "2025-09-18T20:12:29.791Z",
+      "role": "workflow:owner",
+      "workflowId": "5U8shw6MisM2pzNN",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
