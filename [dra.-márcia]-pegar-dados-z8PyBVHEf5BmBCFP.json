@@ -1,0 +1,440 @@
+{
+  "updatedAt": "2025-12-19T14:09:01.666Z",
+  "createdAt": "2025-12-18T20:20:07.569Z",
+  "id": "z8PyBVHEf5BmBCFP",
+  "name": "[Dra. Márcia] Pegar dados",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cb25a2ff-1df9-444b-95a0-43fadd9a8093",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://centerao.api-us1.com/api/3/campaigns",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Api-Token",
+              "value": "febb1aed7274521bf0a9aae3ad43c69453d99a6398e6945fc3cdaea1dd9fb1bfeed318b1"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "16445f69-6dca-4cd1-888b-597020bdf850",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputs = $input.all();\n\n// últimos 2 meses\nconst startDate = new Date();\nstartDate.setMonth(startDate.getMonth() - 2);\n\n// pega campanhas em formatos comuns\nconst root = inputs[0]?.json ?? {};\nlet campaigns = inputs.flatMap(i => i.json?.campaigns ?? []);\n\nif (!campaigns.length && Array.isArray(root.data)) campaigns = inputs.flatMap(i => i.json?.data ?? []);\nif (!campaigns.length && root.campaigns && typeof root.campaigns === \"object\" && !Array.isArray(root.campaigns)) {\n  campaigns = Object.values(root.campaigns);\n}\n\n// helper: acha data candidata dentro do objeto\nfunction pickSentDate(c) {\n  const candidates = [\n    c.sent_at, c.sentAt, c.send_date, c.sendDate,\n    c.sdate, c.senddate, c.completed_at, c.completedAt,\n    c.lastSent, c.last_sent, c.updated_at\n  ];\n  for (const v of candidates) {\n    if (!v) continue;\n    const d = new Date(v);\n    if (!Number.isNaN(d.getTime())) return d;\n  }\n  return null;\n}\n\n// helper: status enviado\nfunction isSent(c) {\n  const s1 = String(c.statusString ?? \"\").toLowerCase();\n  const s2 = String(c.status ?? \"\").toLowerCase();\n  const s3 = String(c.state ?? \"\").toLowerCase();\n  const s4 = String(c.send_status ?? \"\").toLowerCase();\n\n  // amplia as chances de bater com o payload real\n  const sentWords = [\"enviado\", \"sent\", \"complete\", \"completed\", \"done\", \"dispatched\"];\n  const hasSentWord = sentWords.some(w => s1.includes(w) || s2.includes(w) || s3.includes(w) || s4.includes(w));\n\n  // alguns endpoints usam números/códigos\n  const isSentCode = [\"5\", \"sent\", \"completed\"].includes(String(c.status));\n\n  return hasSentWord || isSentCode;\n}\n\nconst filtered = campaigns\n  .map(c => {\n    const sentDate = pickSentDate(c);\n    return { c, sentDate };\n  })\n  .filter(({ c, sentDate }) => {\n    if (!isSent(c)) return false;\n    if (!sentDate) return false;\n    return sentDate >= startDate;\n  })\n  .sort((a,b) => a.sentDate - b.sentDate);\n\n// ✅ se tiver match: retorna vários itens (um por campanha)\nreturn filtered.map(({ c, sentDate }) => ({\n  json: {\n    id: c.id,\n    name: c.name,\n    subject: c.subject,\n    status: c.status,\n    statusString: c.statusString,\n    sent_at: sentDate.toISOString(),\n    // opcional: guarda o objeto inteiro\n    raw: c,\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "db682d39-53bd-428c-ae95-5deee8b416ac",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1WcbTyrcU8g3SwJnVkoz9HQz02M_sygXoMxbuwZUXtrw",
+          "mode": "list",
+          "cachedResultName": "[Dra. Márcia] MÉTRICAS Envios",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WcbTyrcU8g3SwJnVkoz9HQz02M_sygXoMxbuwZUXtrw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Emails",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WcbTyrcU8g3SwJnVkoz9HQz02M_sygXoMxbuwZUXtrw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data do Envio": "={{ $json.campaigns[0] }}",
+            "Segmentação": "={{ $json.campaigns[1] }}",
+            "ID da Campanha": "={{ $json.campaigns[2] }}",
+            "Nome da campanha": "={{ $json.campaigns[3] }}",
+            "Assunto": "={{ $json.campaigns[4] }}",
+            "Tipo (newsletter, venda, convite...)": "={{ $json.campaigns[5] }}",
+            "Produto/Ação": "={{ $json.campaigns[6] }}",
+            "CTA": "={{ $json.campaigns[7] }}",
+            "Qtd. Envios": "={{ $json.campaigns[8] }}",
+            "Aberturas": "={{ $json.campaigns[9] }}",
+            "Taxa de Abertura": "={{ $json.campaigns[10] }}",
+            "Cliques": "={{ $json.campaigns[11] }}",
+            "Taxa de Cliques": "={{ $json.campaigns[12] }}",
+            "Descadastros/SPAM": "={{ $json.campaigns[13] }}",
+            "Taxa de Descadastros/SPAM": "={{ $json.campaigns[14] }}"
+          },
+          "matchingColumns": [
+            "Data do Envio"
+          ],
+          "schema": [
+            {
+              "id": "Data do Envio",
+              "displayName": "Data do Envio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Segmentação",
+              "displayName": "Segmentação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID da Campanha",
+              "displayName": "ID da Campanha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome da campanha",
+              "displayName": "Nome da campanha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Assunto",
+              "displayName": "Assunto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo (newsletter, venda, convite...)",
+              "displayName": "Tipo (newsletter, venda, convite...)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Produto/Ação",
+              "displayName": "Produto/Ação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CTA",
+              "displayName": "CTA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Qtd. Envios",
+              "displayName": "Qtd. Envios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Aberturas",
+              "displayName": "Aberturas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Taxa de Abertura",
+              "displayName": "Taxa de Abertura",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cliques",
+              "displayName": "Cliques",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Taxa de Cliques",
+              "displayName": "Taxa de Cliques",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Descadastros/SPAM",
+              "displayName": "Descadastros/SPAM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Taxa de Descadastros/SPAM",
+              "displayName": "Taxa de Descadastros/SPAM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data do Envio",
+              "displayName": "Data do Envio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Segmentação",
+              "displayName": "Segmentação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID da Campanha",
+              "displayName": "ID da Campanha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome da campanha",
+              "displayName": "Nome da campanha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Assunto",
+              "displayName": "Assunto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo (newsletter, venda, convite...)",
+              "displayName": "Tipo (newsletter, venda, convite...)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Produto/Ação",
+              "displayName": "Produto/Ação",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CTA",
+              "displayName": "CTA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Qtd. Envios",
+              "displayName": "Qtd. Envios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Aberturas",
+              "displayName": "Aberturas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Taxa de Abertura",
+              "displayName": "Taxa de Abertura",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cliques",
+              "displayName": "Cliques",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Taxa de Cliques",
+              "displayName": "Taxa de Cliques",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Descadastros/SPAM",
+              "displayName": "Descadastros/SPAM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Taxa de Descadastros/SPAM",
+              "displayName": "Taxa de Descadastros/SPAM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "ab236b91-6163-41be-b57a-c8eb2f8dcebc",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "566fdb79-eba7-4bc3-b59b-604ad396cffa",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-18T20:20:07.569Z",
+      "createdAt": "2025-12-18T20:20:07.569Z",
+      "role": "workflow:owner",
+      "workflowId": "z8PyBVHEf5BmBCFP",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
