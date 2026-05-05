@@ -1,0 +1,224 @@
+{
+  "updatedAt": "2025-04-09T16:58:21.201Z",
+  "createdAt": "2025-03-14T14:14:06.395Z",
+  "id": "RRsVBXY5fGQPDmrT",
+  "name": "My workflow 2",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "options": {}
+      },
+      "id": "252807a4-b55a-4b9c-bc3a-e65784f6feba",
+      "name": "Move Binary Data",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "binaryData": true,
+        "name": "={{ $node[\"OBTEM TODOS WORKFLOWS\"].json[\"name\"] }}.json",
+        "resolveData": true,
+        "parents": [
+          "={{$item(0).$node[\"CRIAR SUBPASTA\"].json[\"id\"] }}"
+        ],
+        "options": {}
+      },
+      "id": "6386ed78-b52c-4cdd-88d1-2e3745d2d103",
+      "name": "Google Drive1",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $today.format(\"dd/MM/yyyy\") }}",
+        "options": {
+          "parents": [
+            "1xTiGO18tdObjHU-lc1jp4zQ2Qe5tePTE"
+          ]
+        }
+      },
+      "id": "cc3d680b-a7bd-40f1-8073-910e91ed619f",
+      "name": "CRIAR SUBPASTA",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 2,
+      "position": [
+        -820,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "id": "f687ce9f-d4c8-4036-bcb4-58a254a057da",
+      "name": "OBTEM TODOS WORKFLOWS",
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        -620,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 20,
+        "options": {}
+      },
+      "id": "085d364f-40cb-4e02-8708-bb9f66232793",
+      "name": "Split In Batches1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "unit": "seconds"
+      },
+      "id": "3ef28bd2-a9e4-4088-a5ab-840f752dc022",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "0654025d-cb68-42b6-b8b1-e910ec999037"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 19
+            }
+          ]
+        }
+      },
+      "id": "933e5703-7ddc-4d41-9bbe-cca9b77e1d17",
+      "name": "backup_workflows",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1000,
+        20
+      ]
+    }
+  ],
+  "connections": {
+    "Move Binary Data": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CRIAR SUBPASTA": {
+      "main": [
+        [
+          {
+            "node": "OBTEM TODOS WORKFLOWS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OBTEM TODOS WORKFLOWS": {
+      "main": [
+        [
+          {
+            "node": "Move Binary Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "backup_workflows": {
+      "main": [
+        [
+          {
+            "node": "CRIAR SUBPASTA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "1c5340c0-4bc7-4264-82e7-7268b696c0ca",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-03-14T14:14:06.395Z",
+      "createdAt": "2025-03-14T14:14:06.395Z",
+      "role": "workflow:owner",
+      "workflowId": "RRsVBXY5fGQPDmrT",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
