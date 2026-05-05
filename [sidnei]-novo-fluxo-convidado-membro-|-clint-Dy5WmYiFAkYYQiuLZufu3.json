@@ -1,0 +1,280 @@
+{
+  "updatedAt": "2026-04-16T11:46:31.438Z",
+  "createdAt": "2026-02-05T19:21:49.918Z",
+  "id": "Dy5WmYiFAkYYQiuLZufu3",
+  "name": "[Sidnei] novo fluxo convidado Membro | Clint",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "novo-fluxo-convidado-membro",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0331cd14-a851-4fa8-a95c-6c9e9a11430e",
+      "name": "Webhook",
+      "webhookId": "57fc08e3-2d7c-4eae-af9f-f71ba4963110"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =========================\n// FUNÇÃO NORMALIZADORA\n// =========================\nconst norm = (s) =>\n  (s || \"\")\n    .toString()\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .toLowerCase()\n    .replace(/\\s+/g, \" \")\n    .trim();\n\n\n// =========================\n// TELEFONE\n// =========================\nlet telefone = $json.body.convidado_telefone || \"\";\ntelefone = telefone.replace(/\\D/g, \"\");\n\n// Remove 55 se já vier com DDI\nif (telefone.startsWith(\"55\") && telefone.length > 11) {\n  telefone = telefone.substring(2);\n}\n\n// Se vier com 10 dígitos (DDD + número sem 9)\nif (telefone.length === 10) {\n  const ddd = telefone.substring(0, 2);\n  const numero = telefone.substring(2);\n  telefone = ddd + \"9\" + numero;\n}\n\n// Adiciona 55\nif (telefone.length === 11) {\n  telefone = \"55\" + telefone;\n}\n\n\n// =========================\n// MEMBRO + EMAIL\n// =========================\nlet nomeOriginal = $input.first().json.body.membro_nome || \"\";\nlet nomeKey = norm(nomeOriginal);\n\nlet email_membro = \"Não encontrado\";\n\n// Base oficial\nconst membros = {\n  \"kauan matheus\": \"kaua.caeclub@gmail.com\",\n  \"erika adm\": \"maria.victoria@caeclub.com.br\",\n  \"leticia piazzetta\": \"letty.piazzetta@gmail.com\",\n  \"caroline fernandes\": \"carolineprado2017@icloud.com\",\n  \"mateus laurentino\": \"mateusl.caeclub@gmail.com\",\n  \"alice theophilo pereira\": \"alicetheophilope@gmail.com\",\n  \"beatriz adriany\": \"biahadriany@gmail.com\",\n  \"jessica miranda\": \"contato@caesaopaulo.com.br\",\n  \"jonathan andre\": \"jonathanandrepires@gmail.com\",\n  \"heloiza ciocheti martins\": \"heloizaciocheti15@gmail.com\",\n  \"talita artacho\": \"talita.a.caeclub@gmail.com\",\n  \"beatriz foresto\": \"bia.caeclub@gmail.com\"\n};\n\n// =========================\n// ALIASES / VARIAÇÕES\n// =========================\nconst aliases = {\n  \"jonatan\": \"jonathan andre\",\n  \"jonathan\": \"jonathan andre\",\n  \"jonathan pires\": \"jonathan andre\",\n  \"kaua\": \"kauan matheus\",\n  \"erika\": \"erika adm\",\n  \"leticia\": \"leticia piazzetta\",\n  \"caroline\": \"caroline fernandes\",\n  \"mateus\": \"mateus laurentino\",\n  \"alice\": \"alice theophilo pereira\",\n  \"beatriz adriany\": \"beatriz adriany\",\n  \"beatriz foresto\": \"beatriz foresto\",\n  \"jessica\": \"jessica miranda\",\n  \"heloiza\": \"heloiza ciocheti martins\",\n  \"talita\": \"talita artacho\"\n};\n\n// Se for alias direto\nif (aliases[nomeKey]) {\n  nomeKey = aliases[nomeKey];\n}\n\n// =========================\n// MATCH EXATO\n// =========================\nif (membros[nomeKey]) {\n  email_membro = membros[nomeKey];\n}\n\n// =========================\n// MATCH PARCIAL (fallback)\n// =========================\nif (email_membro === \"Não encontrado\" && nomeKey) {\n  for (const nomeBase in membros) {\n    if (\n      nomeBase.includes(nomeKey) ||\n      nomeKey.includes(nomeBase)\n    ) {\n      email_membro = membros[nomeBase];\n      break;\n    }\n  }\n}\n\n\n// =========================\n// RETORNO\n// =========================\nreturn [\n  {\n    json: {\n      telefone_formatado: telefone,\n      membro_nome_detectado: nomeKey,\n      email_membro: email_membro\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "9d91836d-7638-4f69-ba4a-0ed9615cadba",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f6486870-0d98-4536-b7ef-9ce391ec213a",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.membro_nome }}",
+              "type": "string"
+            },
+            {
+              "id": "f68e9754-d680-43e2-b92a-bf0ecfc833eb",
+              "name": "Convidado",
+              "value": "={{ $('Webhook').item.json.body.convidado_nome }}",
+              "type": "string"
+            },
+            {
+              "id": "c994d8ff-ab5e-4fed-b61b-b00539713714",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.convidado_email }}",
+              "type": "string"
+            },
+            {
+              "id": "486d76fd-9efd-4174-90da-b25a286015ae",
+              "name": "Telefone",
+              "value": "={{ $json.telefone_formatado }}",
+              "type": "string"
+            },
+            {
+              "id": "ced935de-2f2b-432a-b5c1-fe85a9f82e9d",
+              "name": "Empresa",
+              "value": "={{ $('Webhook').item.json.body.convidado_empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "eae097f3-dd9f-4dd0-a838-4197eebc8b19",
+              "name": "Polo",
+              "value": "={{ $('Webhook').item.json.body.convidado_polo }}",
+              "type": "string"
+            },
+            {
+              "id": "ea340d03-e71d-4d54-b849-1c1111a1e701",
+              "name": "Mes",
+              "value": "={{ $('Webhook').item.json.body.convidado_mes }}",
+              "type": "string"
+            },
+            {
+              "id": "33c37bf9-8687-4ddc-88c9-6391777423bf",
+              "name": "Ano",
+              "value": "={{ $('Webhook').item.json.body.convidado_ano }}",
+              "type": "string"
+            },
+            {
+              "id": "e1e8ed92-c3c8-442e-87e4-833498b754a0",
+              "name": "Vendedor",
+              "value": "={{ $json.email_membro }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "bd590914-1e22-4661-a36d-9a0b6a319af7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        832,
+        0
+      ],
+      "id": "fcdd9b35-8abe-4b27-8443-7dcefd425013",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/8dd4afc7-828f-4105-9e05-5b7492ea75d7",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Convidado }}"
+            },
+            {
+              "name": "Indicou",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $json.Telefone }}"
+            },
+            {
+              "name": "Empresa",
+              "value": "={{ $json.Empresa }}"
+            },
+            {
+              "name": "Polo",
+              "value": "={{ $json.Polo }}"
+            },
+            {
+              "name": "Mes",
+              "value": "={{ $json.Mes }}"
+            },
+            {
+              "name": "Ano",
+              "value": "={{ $json.Ano }}"
+            },
+            {
+              "name": "Vendedor",
+              "value": "={{ $json.Vendedor }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        624,
+        0
+      ],
+      "id": "ce5a3dab-9da0-42c8-bca7-e3d407c49697",
+      "name": "HTTP Clint"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "Mozilla/5.0 (compatible; Google-Apps-Script; beanserver; +https://script.google.com; id: UAEmdDd8Tq5jegfiu3dN8G8R1xpGzseq7pJU)",
+            "content-length": "294",
+            "accept-encoding": "gzip, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "107.178.224.233",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "107.178.224.233"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "tipo": "Indicação",
+            "timestamp": "2026-02-25T13:31:15.995Z",
+            "membro_nome": "Jonathan",
+            "convidado_nome": "Viviane",
+            "convidado_email": "Vivi@vivi.com",
+            "convidado_telefone": "(11) 97986-6224",
+            "convidado_empresa": "CAE Teste",
+            "convidado_polo": "Butantã",
+            "convidado_mes": "Março",
+            "convidado_ano": "2026"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/novo-fluxo-convidado-membro",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "9b696c05-aee8-48f7-a14a-19fcf575f562",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-05T19:21:49.918Z",
+      "createdAt": "2026-02-05T19:21:49.918Z",
+      "role": "workflow:owner",
+      "workflowId": "Dy5WmYiFAkYYQiuLZufu3",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
