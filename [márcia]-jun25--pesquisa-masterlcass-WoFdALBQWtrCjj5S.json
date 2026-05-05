@@ -1,0 +1,1223 @@
+{
+  "updatedAt": "2025-05-16T17:09:16.695Z",
+  "createdAt": "2025-05-16T16:54:15.421Z",
+  "id": "WoFdALBQWtrCjj5S",
+  "name": "[Márcia] Jun25 -Pesquisa Masterlcass",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/12LUhdwATvL75USiI4lhy0CoJGNIc5tB7RYpzw09XVKw/edit?resourcekey=&gid=1283396849#gid=1283396849",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1283396849,
+          "mode": "list",
+          "cachedResultName": "Respostas ao formulário 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12LUhdwATvL75USiI4lhy0CoJGNIc5tB7RYpzw09XVKw/edit#gid=1283396849"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fe569f83-ab7e-4612-bdc5-4ddd6bffcfe9",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "KahmGSoMZoSZdYaL",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\n// Pega o telefone da entrada\nlet rawPhone = String(data[\"WhatsApp com DDD\"] || '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "7860968b-99f2-4610-9d42-d751d4812c0f",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a83dec06-218f-4ac0-a705-4543a16e3223",
+              "name": "Data",
+              "value": "={{ $('Google Sheets Trigger').item.json['Carimbo de data/hora'] }}",
+              "type": "string"
+            },
+            {
+              "id": "723a2083-2209-4379-8505-4fc30f5322b3",
+              "name": "Nome",
+              "value": "={{ $('Google Sheets Trigger').item.json['Nome completo'] }}",
+              "type": "string"
+            },
+            {
+              "id": "4faedcfa-d233-425f-bbc9-51c43329d901",
+              "name": "Email",
+              "value": "={{ $('Google Sheets Trigger').item.json['Seu melhor e-mail'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9aeace4e-10cb-4dde-acc2-e90705422d50",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "447abc57-8656-49e1-b250-c62ffb666344",
+              "name": "CRM",
+              "value": "={{ $('Google Sheets Trigger').item.json['CRM (número/UF)'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7439f222-be9a-4de3-8b4f-f2d091994fb2",
+              "name": "Idade",
+              "value": "={{ $('Google Sheets Trigger').item.json['Qual sua faixa etária?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f2f94b63-d9d8-426a-a8d4-b789a370fe10",
+              "name": "Formado",
+              "value": "={{ $('Google Sheets Trigger').item.json['Há quanto tempo você é formado(a) em Medicina?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "bb906ea4-994c-4dc2-8eed-8c9b67b477ad",
+              "name": "Especialidade",
+              "value": "={{ $('Google Sheets Trigger').item.json['Possui especialidade médica? Se sim, qual(is)?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c9a7ef80-ce94-45b7-96ff-92a70a9a3212",
+              "name": "Inscrever",
+              "value": "={{ $('Google Sheets Trigger').item.json['O que te motivou a se inscrever na Masterclass: \"Pronto atendimento com acupuntura no tratamento de DORES?\"'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f39b62b4-32f4-404b-bc89-f72524378c18",
+              "name": "Aprender",
+              "value": "={{ $('Google Sheets Trigger').item.json['O que você espera aprender nesta Masterclass?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a7da5bf8-15a3-47ab-9fea-d02012dcc066",
+              "name": "Saber",
+              "value": "={{ $('Google Sheets Trigger').item.json['Como você ficou sabendo da nossa Masterclass?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b39f755e-43e1-40fd-8e2b-0a25748df359",
+              "name": "Ouviu falar",
+              "value": "={{ $('Google Sheets Trigger').item.json['Você já ouviu falar sobre Acupuntura?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2b0c6f48-1927-445e-8df5-416415afdafd",
+              "name": "Interesse",
+              "value": "={{ $('Google Sheets Trigger').item.json['Tem interesse em aprender Acupuntura?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "cdbc605a-49e8-41d1-97c4-e8dccbef5074",
+              "name": "Técnicas",
+              "value": "={{ $('Google Sheets Trigger').item.json['Já utiliza das técnicas da Acupuntura no seu consultório?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "33320d81-fe11-45ab-ace3-30ff846601ac",
+              "name": "Dúvida",
+              "value": "={{ $('Google Sheets Trigger').item.json['Qual é a sua maior dúvida sobre a Acupuntura?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e99253c9-d02d-4dd5-b4a8-a0452ff768b1",
+              "name": "Receio",
+              "value": "={{ $('Google Sheets Trigger').item.json['Existe algo que você tem receio sobre a Acupuntura? '] }}",
+              "type": "string"
+            },
+            {
+              "id": "3f81da71-2e51-4c29-9579-0a4ba23b8d67",
+              "name": "Resultado",
+              "value": "={{ $('Google Sheets Trigger').item.json['Qual resultado você espera alcançar ao implementar a Acupuntura nos seus atendimentos?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "8ecd6b7c-dae5-4d9e-88d5-ed08eabd30f2",
+              "name": "Formação",
+              "value": "={{ $('Google Sheets Trigger').item.json['Você já tem formação em Acupuntura?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "cd5721af-6065-42dc-98ec-250a6a9110e9",
+              "name": "Desafio Implementar",
+              "value": "={{ $('Google Sheets Trigger').item.json['Qual você considera o maior desafio para implementar a Acupuntura na sua prática clínica? '] }}",
+              "type": "string"
+            },
+            {
+              "id": "34ab9769-080a-4864-9033-084629a00081",
+              "name": "Desafio Clinica",
+              "value": "={{ $('Google Sheets Trigger').item.json['Qual é o maior desafio que você enfrenta na sua prática clínica atualmente? '] }}",
+              "type": "string"
+            },
+            {
+              "id": "f8ab1f85-14a6-4805-96d8-84f6aaab5003",
+              "name": "Mudar prática",
+              "value": "={{ $('Google Sheets Trigger').item.json['Se pudesse mudar algo na sua prática clínica hoje, o que seria? '] }}",
+              "type": "string"
+            },
+            {
+              "id": "eeae6486-20fc-48c0-ac9b-e1541fbaa00f",
+              "name": "Sonho",
+              "value": "={{ $('Google Sheets Trigger').item.json['Qual é o seu maior sonho como médico(a)?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e36a93c9-6d37-413c-b313-ee8329dac14f",
+              "name": "Tempo conhece Marcia",
+              "value": "={{ $('Google Sheets Trigger').item.json['Há quanto tempo você conhece a Dra. Márcia Yamamura?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2ab980e6-cc85-4657-9fd9-ac672f4700c4",
+              "name": "Pergunta",
+              "value": "={{ $('Google Sheets Trigger').item.json['Se você tivesse uma hora com a Dra. Márcia Yamamura, o que você gostaria de perguntar?'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "4c7a74bd-e1a0-4c00-b0b5-a205d29ed5ae",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1-AOpqR7pMk_lu2afsjzxJRCokw5ZMGEDMd7S3psrOwM/edit?gid=1850491555#gid=1850491555",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1850491555,
+          "mode": "list",
+          "cachedResultName": "Pesquisa",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-AOpqR7pMk_lu2afsjzxJRCokw5ZMGEDMd7S3psrOwM/edit#gid=1850491555"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Carimbo de data/hora": "={{ $json.Data }}",
+            "Endereço de e-mail": "={{ $('Google Sheets Trigger').item.json['Endereço de e-mail'] }}",
+            "Nome completo": "={{ $json.Nome }}",
+            "Seu melhor e-mail": "={{ $json.Email }}",
+            "WhatsApp com DDD": "={{ $json.Telefone }}",
+            "CRM (número/UF)": "={{ $json.CRM }}",
+            "Qual sua faixa etária?": "={{ $json.Idade }}",
+            "Há quanto tempo você é formado(a) em Medicina?": "={{ $json.Formado }}",
+            "Possui especialidade médica? Se sim, qual(is)?": "={{ $json.Especialidade }}",
+            "O que te motivou a se inscrever na Masterclass: \"Pronto atendimento com acupuntura no tratamento de DORES?\"": "={{ $json.Inscrever }}",
+            "O que você espera aprender nesta Masterclass?": "={{ $json.Aprender }}",
+            "Como você ficou sabendo da nossa Masterclass?": "={{ $json.Saber }}",
+            "Você já ouviu falar sobre Acupuntura?": "={{ $json['Ouviu falar'] }}",
+            "Tem interesse em aprender Acupuntura?": "={{ $json.Interesse }}",
+            "Já utiliza das técnicas da Acupuntura no seu consultório?": "={{ $json['Técnicas'] }}",
+            "Qual é a sua maior dúvida sobre a Acupuntura?": "={{ $json['Dúvida'] }}",
+            "Existe algo que você tem receio sobre a Acupuntura?": "={{ $json.Receio }}",
+            "Qual resultado você espera alcançar ao implementar a Acupuntura nos seus atendimentos?": "={{ $json.Resultado }}",
+            "Você já tem formação em Acupuntura?": "={{ $json['Formação'] }}",
+            "Qual você considera o maior desafio para implementar a Acupuntura na sua prática clínica?": "={{ $json['Desafio Implementar'] }}",
+            "Qual é o maior desafio que você enfrenta na sua prática clínica atualmente?": "={{ $json['Desafio Clinica'] }}",
+            "Se pudesse mudar algo na sua prática clínica hoje, o que seria?": "={{ $json['Mudar prática'] }}",
+            "Qual é o seu maior sonho como médico(a)?": "={{ $json.Sonho }}",
+            "Há quanto tempo você conhece a Dra. Márcia Yamamura?": "={{ $json['Tempo conhece Marcia'] }}",
+            "Se você tivesse uma hora com a Dra. Márcia Yamamura, o que você gostaria de perguntar?": "={{ $json.Pergunta }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Carimbo de data/hora",
+              "displayName": "Carimbo de data/hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Endereço de e-mail",
+              "displayName": "Endereço de e-mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nome completo",
+              "displayName": "Nome completo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Seu melhor e-mail",
+              "displayName": "Seu melhor e-mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WhatsApp com DDD",
+              "displayName": "WhatsApp com DDD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CRM (número/UF)",
+              "displayName": "CRM (número/UF)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Qual sua faixa etária?",
+              "displayName": "Qual sua faixa etária?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Há quanto tempo você é formado(a) em Medicina?",
+              "displayName": "Há quanto tempo você é formado(a) em Medicina?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Possui especialidade médica? Se sim, qual(is)?",
+              "displayName": "Possui especialidade médica? Se sim, qual(is)?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "O que te motivou a se inscrever na Masterclass: \"Pronto atendimento com acupuntura no tratamento de DORES?\"",
+              "displayName": "O que te motivou a se inscrever na Masterclass: \"Pronto atendimento com acupuntura no tratamento de DORES?\"",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "O que você espera aprender nesta Masterclass?",
+              "displayName": "O que você espera aprender nesta Masterclass?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Como você ficou sabendo da nossa Masterclass?",
+              "displayName": "Como você ficou sabendo da nossa Masterclass?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Você já ouviu falar sobre Acupuntura?",
+              "displayName": "Você já ouviu falar sobre Acupuntura?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tem interesse em aprender Acupuntura?",
+              "displayName": "Tem interesse em aprender Acupuntura?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Já utiliza das técnicas da Acupuntura no seu consultório?",
+              "displayName": "Já utiliza das técnicas da Acupuntura no seu consultório?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Qual é a sua maior dúvida sobre a Acupuntura?",
+              "displayName": "Qual é a sua maior dúvida sobre a Acupuntura?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Existe algo que você tem receio sobre a Acupuntura?",
+              "displayName": "Existe algo que você tem receio sobre a Acupuntura?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Qual resultado você espera alcançar ao implementar a Acupuntura nos seus atendimentos?",
+              "displayName": "Qual resultado você espera alcançar ao implementar a Acupuntura nos seus atendimentos?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Você já tem formação em Acupuntura?",
+              "displayName": "Você já tem formação em Acupuntura?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Qual você considera o maior desafio para implementar a Acupuntura na sua prática clínica?",
+              "displayName": "Qual você considera o maior desafio para implementar a Acupuntura na sua prática clínica?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Qual é o maior desafio que você enfrenta na sua prática clínica atualmente?",
+              "displayName": "Qual é o maior desafio que você enfrenta na sua prática clínica atualmente?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Se pudesse mudar algo na sua prática clínica hoje, o que seria?",
+              "displayName": "Se pudesse mudar algo na sua prática clínica hoje, o que seria?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Qual é o seu maior sonho como médico(a)?",
+              "displayName": "Qual é o seu maior sonho como médico(a)?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Há quanto tempo você conhece a Dra. Márcia Yamamura?",
+              "displayName": "Há quanto tempo você conhece a Dra. Márcia Yamamura?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Se você tivesse uma hora com a Dra. Márcia Yamamura, o que você gostaria de perguntar?",
+              "displayName": "Se você tivesse uma hora com a Dra. Márcia Yamamura, o que você gostaria de perguntar?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        0
+      ],
+      "id": "a442d8d5-a226-4b3d-8fa3-7dae3a9c6c40",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "06f87253-230f-4e78-960d-462b41887d55",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "12LUhdwATvL75USiI4lhy0CoJGNIc5tB7RYpzw09XVKw",
+      "sheetId": 1283396849,
+      "lastIndexChecked": 70
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "b7f1ab44-cd8b-4adc-979d-8de6862f9cea",
+  "activeVersionId": "b7f1ab44-cd8b-4adc-979d-8de6862f9cea",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-05-16T16:54:15.421Z",
+      "createdAt": "2025-05-16T16:54:15.421Z",
+      "role": "workflow:owner",
+      "workflowId": "WoFdALBQWtrCjj5S",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "b7f1ab44-cd8b-4adc-979d-8de6862f9cea",
+    "workflowId": "WoFdALBQWtrCjj5S",
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/12LUhdwATvL75USiI4lhy0CoJGNIc5tB7RYpzw09XVKw/edit?resourcekey=&gid=1283396849#gid=1283396849",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1283396849,
+            "mode": "list",
+            "cachedResultName": "Respostas ao formulário 1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12LUhdwATvL75USiI4lhy0CoJGNIc5tB7RYpzw09XVKw/edit#gid=1283396849"
+          },
+          "event": "rowAdded",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "fe569f83-ab7e-4612-bdc5-4ddd6bffcfe9",
+        "name": "Google Sheets Trigger",
+        "credentials": {
+          "googleSheetsTriggerOAuth2Api": {
+            "id": "KahmGSoMZoSZdYaL",
+            "name": "Google Sheets Trigger account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const data = $input.first().json;\n\n// Pega o telefone da entrada\nlet rawPhone = String(data[\"WhatsApp com DDD\"] || '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "7860968b-99f2-4610-9d42-d751d4812c0f",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "a83dec06-218f-4ac0-a705-4543a16e3223",
+                "name": "Data",
+                "value": "={{ $('Google Sheets Trigger').item.json['Carimbo de data/hora'] }}",
+                "type": "string"
+              },
+              {
+                "id": "723a2083-2209-4379-8505-4fc30f5322b3",
+                "name": "Nome",
+                "value": "={{ $('Google Sheets Trigger').item.json['Nome completo'] }}",
+                "type": "string"
+              },
+              {
+                "id": "4faedcfa-d233-425f-bbc9-51c43329d901",
+                "name": "Email",
+                "value": "={{ $('Google Sheets Trigger').item.json['Seu melhor e-mail'] }}",
+                "type": "string"
+              },
+              {
+                "id": "9aeace4e-10cb-4dde-acc2-e90705422d50",
+                "name": "Telefone",
+                "value": "={{ $json.telefoneFormatado }}",
+                "type": "string"
+              },
+              {
+                "id": "447abc57-8656-49e1-b250-c62ffb666344",
+                "name": "CRM",
+                "value": "={{ $('Google Sheets Trigger').item.json['CRM (número/UF)'] }}",
+                "type": "string"
+              },
+              {
+                "id": "7439f222-be9a-4de3-8b4f-f2d091994fb2",
+                "name": "Idade",
+                "value": "={{ $('Google Sheets Trigger').item.json['Qual sua faixa etária?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "f2f94b63-d9d8-426a-a8d4-b789a370fe10",
+                "name": "Formado",
+                "value": "={{ $('Google Sheets Trigger').item.json['Há quanto tempo você é formado(a) em Medicina?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "bb906ea4-994c-4dc2-8eed-8c9b67b477ad",
+                "name": "Especialidade",
+                "value": "={{ $('Google Sheets Trigger').item.json['Possui especialidade médica? Se sim, qual(is)?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "c9a7ef80-ce94-45b7-96ff-92a70a9a3212",
+                "name": "Inscrever",
+                "value": "={{ $('Google Sheets Trigger').item.json['O que te motivou a se inscrever na Masterclass: \"Pronto atendimento com acupuntura no tratamento de DORES?\"'] }}",
+                "type": "string"
+              },
+              {
+                "id": "f39b62b4-32f4-404b-bc89-f72524378c18",
+                "name": "Aprender",
+                "value": "={{ $('Google Sheets Trigger').item.json['O que você espera aprender nesta Masterclass?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "a7da5bf8-15a3-47ab-9fea-d02012dcc066",
+                "name": "Saber",
+                "value": "={{ $('Google Sheets Trigger').item.json['Como você ficou sabendo da nossa Masterclass?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "b39f755e-43e1-40fd-8e2b-0a25748df359",
+                "name": "Ouviu falar",
+                "value": "={{ $('Google Sheets Trigger').item.json['Você já ouviu falar sobre Acupuntura?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "2b0c6f48-1927-445e-8df5-416415afdafd",
+                "name": "Interesse",
+                "value": "={{ $('Google Sheets Trigger').item.json['Tem interesse em aprender Acupuntura?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "cdbc605a-49e8-41d1-97c4-e8dccbef5074",
+                "name": "Técnicas",
+                "value": "={{ $('Google Sheets Trigger').item.json['Já utiliza das técnicas da Acupuntura no seu consultório?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "33320d81-fe11-45ab-ace3-30ff846601ac",
+                "name": "Dúvida",
+                "value": "={{ $('Google Sheets Trigger').item.json['Qual é a sua maior dúvida sobre a Acupuntura?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "e99253c9-d02d-4dd5-b4a8-a0452ff768b1",
+                "name": "Receio",
+                "value": "={{ $('Google Sheets Trigger').item.json['Existe algo que você tem receio sobre a Acupuntura? '] }}",
+                "type": "string"
+              },
+              {
+                "id": "3f81da71-2e51-4c29-9579-0a4ba23b8d67",
+                "name": "Resultado",
+                "value": "={{ $('Google Sheets Trigger').item.json['Qual resultado você espera alcançar ao implementar a Acupuntura nos seus atendimentos?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "8ecd6b7c-dae5-4d9e-88d5-ed08eabd30f2",
+                "name": "Formação",
+                "value": "={{ $('Google Sheets Trigger').item.json['Você já tem formação em Acupuntura?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "cd5721af-6065-42dc-98ec-250a6a9110e9",
+                "name": "Desafio Implementar",
+                "value": "={{ $('Google Sheets Trigger').item.json['Qual você considera o maior desafio para implementar a Acupuntura na sua prática clínica? '] }}",
+                "type": "string"
+              },
+              {
+                "id": "34ab9769-080a-4864-9033-084629a00081",
+                "name": "Desafio Clinica",
+                "value": "={{ $('Google Sheets Trigger').item.json['Qual é o maior desafio que você enfrenta na sua prática clínica atualmente? '] }}",
+                "type": "string"
+              },
+              {
+                "id": "f8ab1f85-14a6-4805-96d8-84f6aaab5003",
+                "name": "Mudar prática",
+                "value": "={{ $('Google Sheets Trigger').item.json['Se pudesse mudar algo na sua prática clínica hoje, o que seria? '] }}",
+                "type": "string"
+              },
+              {
+                "id": "eeae6486-20fc-48c0-ac9b-e1541fbaa00f",
+                "name": "Sonho",
+                "value": "={{ $('Google Sheets Trigger').item.json['Qual é o seu maior sonho como médico(a)?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "e36a93c9-6d37-413c-b313-ee8329dac14f",
+                "name": "Tempo conhece Marcia",
+                "value": "={{ $('Google Sheets Trigger').item.json['Há quanto tempo você conhece a Dra. Márcia Yamamura?'] }}",
+                "type": "string"
+              },
+              {
+                "id": "2ab980e6-cc85-4657-9fd9-ac672f4700c4",
+                "name": "Pergunta",
+                "value": "={{ $('Google Sheets Trigger').item.json['Se você tivesse uma hora com a Dra. Márcia Yamamura, o que você gostaria de perguntar?'] }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          440,
+          0
+        ],
+        "id": "4c7a74bd-e1a0-4c00-b0b5-a205d29ed5ae",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1-AOpqR7pMk_lu2afsjzxJRCokw5ZMGEDMd7S3psrOwM/edit?gid=1850491555#gid=1850491555",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1850491555,
+            "mode": "list",
+            "cachedResultName": "Pesquisa",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-AOpqR7pMk_lu2afsjzxJRCokw5ZMGEDMd7S3psrOwM/edit#gid=1850491555"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Carimbo de data/hora": "={{ $json.Data }}",
+              "Endereço de e-mail": "={{ $('Google Sheets Trigger').item.json['Endereço de e-mail'] }}",
+              "Nome completo": "={{ $json.Nome }}",
+              "Seu melhor e-mail": "={{ $json.Email }}",
+              "WhatsApp com DDD": "={{ $json.Telefone }}",
+              "CRM (número/UF)": "={{ $json.CRM }}",
+              "Qual sua faixa etária?": "={{ $json.Idade }}",
+              "Há quanto tempo você é formado(a) em Medicina?": "={{ $json.Formado }}",
+              "Possui especialidade médica? Se sim, qual(is)?": "={{ $json.Especialidade }}",
+              "O que te motivou a se inscrever na Masterclass: \"Pronto atendimento com acupuntura no tratamento de DORES?\"": "={{ $json.Inscrever }}",
+              "O que você espera aprender nesta Masterclass?": "={{ $json.Aprender }}",
+              "Como você ficou sabendo da nossa Masterclass?": "={{ $json.Saber }}",
+              "Você já ouviu falar sobre Acupuntura?": "={{ $json['Ouviu falar'] }}",
+              "Tem interesse em aprender Acupuntura?": "={{ $json.Interesse }}",
+              "Já utiliza das técnicas da Acupuntura no seu consultório?": "={{ $json['Técnicas'] }}",
+              "Qual é a sua maior dúvida sobre a Acupuntura?": "={{ $json['Dúvida'] }}",
+              "Existe algo que você tem receio sobre a Acupuntura?": "={{ $json.Receio }}",
+              "Qual resultado você espera alcançar ao implementar a Acupuntura nos seus atendimentos?": "={{ $json.Resultado }}",
+              "Você já tem formação em Acupuntura?": "={{ $json['Formação'] }}",
+              "Qual você considera o maior desafio para implementar a Acupuntura na sua prática clínica?": "={{ $json['Desafio Implementar'] }}",
+              "Qual é o maior desafio que você enfrenta na sua prática clínica atualmente?": "={{ $json['Desafio Clinica'] }}",
+              "Se pudesse mudar algo na sua prática clínica hoje, o que seria?": "={{ $json['Mudar prática'] }}",
+              "Qual é o seu maior sonho como médico(a)?": "={{ $json.Sonho }}",
+              "Há quanto tempo você conhece a Dra. Márcia Yamamura?": "={{ $json['Tempo conhece Marcia'] }}",
+              "Se você tivesse uma hora com a Dra. Márcia Yamamura, o que você gostaria de perguntar?": "={{ $json.Pergunta }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Carimbo de data/hora",
+                "displayName": "Carimbo de data/hora",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Endereço de e-mail",
+                "displayName": "Endereço de e-mail",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Nome completo",
+                "displayName": "Nome completo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Seu melhor e-mail",
+                "displayName": "Seu melhor e-mail",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "WhatsApp com DDD",
+                "displayName": "WhatsApp com DDD",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "CRM (número/UF)",
+                "displayName": "CRM (número/UF)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Qual sua faixa etária?",
+                "displayName": "Qual sua faixa etária?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Há quanto tempo você é formado(a) em Medicina?",
+                "displayName": "Há quanto tempo você é formado(a) em Medicina?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Possui especialidade médica? Se sim, qual(is)?",
+                "displayName": "Possui especialidade médica? Se sim, qual(is)?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "O que te motivou a se inscrever na Masterclass: \"Pronto atendimento com acupuntura no tratamento de DORES?\"",
+                "displayName": "O que te motivou a se inscrever na Masterclass: \"Pronto atendimento com acupuntura no tratamento de DORES?\"",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "O que você espera aprender nesta Masterclass?",
+                "displayName": "O que você espera aprender nesta Masterclass?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Como você ficou sabendo da nossa Masterclass?",
+                "displayName": "Como você ficou sabendo da nossa Masterclass?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Você já ouviu falar sobre Acupuntura?",
+                "displayName": "Você já ouviu falar sobre Acupuntura?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Tem interesse em aprender Acupuntura?",
+                "displayName": "Tem interesse em aprender Acupuntura?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Já utiliza das técnicas da Acupuntura no seu consultório?",
+                "displayName": "Já utiliza das técnicas da Acupuntura no seu consultório?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Qual é a sua maior dúvida sobre a Acupuntura?",
+                "displayName": "Qual é a sua maior dúvida sobre a Acupuntura?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Existe algo que você tem receio sobre a Acupuntura?",
+                "displayName": "Existe algo que você tem receio sobre a Acupuntura?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Qual resultado você espera alcançar ao implementar a Acupuntura nos seus atendimentos?",
+                "displayName": "Qual resultado você espera alcançar ao implementar a Acupuntura nos seus atendimentos?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Você já tem formação em Acupuntura?",
+                "displayName": "Você já tem formação em Acupuntura?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Qual você considera o maior desafio para implementar a Acupuntura na sua prática clínica?",
+                "displayName": "Qual você considera o maior desafio para implementar a Acupuntura na sua prática clínica?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Qual é o maior desafio que você enfrenta na sua prática clínica atualmente?",
+                "displayName": "Qual é o maior desafio que você enfrenta na sua prática clínica atualmente?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Se pudesse mudar algo na sua prática clínica hoje, o que seria?",
+                "displayName": "Se pudesse mudar algo na sua prática clínica hoje, o que seria?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Qual é o seu maior sonho como médico(a)?",
+                "displayName": "Qual é o seu maior sonho como médico(a)?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Há quanto tempo você conhece a Dra. Márcia Yamamura?",
+                "displayName": "Há quanto tempo você conhece a Dra. Márcia Yamamura?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Se você tivesse uma hora com a Dra. Márcia Yamamura, o que você gostaria de perguntar?",
+                "displayName": "Se você tivesse uma hora com a Dra. Márcia Yamamura, o que você gostaria de perguntar?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          660,
+          0
+        ],
+        "id": "a442d8d5-a226-4b3d-8fa3-7dae3a9c6c40",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          880,
+          0
+        ],
+        "id": "06f87253-230f-4e78-960d-462b41887d55",
+        "name": "No Operation, do nothing"
+      }
+    ],
+    "connections": {
+      "Google Sheets Trigger": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
