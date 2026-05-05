@@ -1,0 +1,407 @@
+{
+  "updatedAt": "2026-04-16T19:22:59.606Z",
+  "createdAt": "2025-04-25T20:56:15.132Z",
+  "id": "oevE2smapCcTSv48",
+  "name": "[Sidney] Poder do networking",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b4d68cb5-7cb0-4144-970c-1b09b15ca56f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        0
+      ],
+      "id": "0328aea6-b4e4-407f-80d1-66e6eb15ea45",
+      "name": "Webhook",
+      "webhookId": "b4d68cb5-7cb0-4144-970c-1b09b15ca56f"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawPhone = $input.first().json.body.__submission.user_inputs.phone || '';\n\nconst cleanedPhone = rawPhone.replace(/\\D/g, '');\n\n// Se não começar com 55, adiciona\nconst finalPhone = cleanedPhone.startsWith('55') ? cleanedPhone : '55' + cleanedPhone;\n\nreturn {\n  telefoneFormatado: finalPhone\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        0
+      ],
+      "id": "058b9dbf-412b-4fe2-b67c-3a9813cba01e",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "60ba9ac7-99e6-46d8-a2cf-cac9b7b537d8",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.names.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "c799cf9c-c390-4fb2-986d-afbc19bb0d91",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "7e8518f7-ace9-43ab-8ab0-c3d4e940e39c",
+              "name": "Email",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "id": "e225dcea-0cf8-4612-a1b5-88a03cc028fa",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://functions-api.clint.digital/endpoints/integration/webhook/4148a67f-24d8-4af0-887a-ad213a880443",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Nome",
+              "value": "={{ $json.Nome }}"
+            },
+            {
+              "name": "Email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "name": "Telefone",
+              "value": "={{ $('Code').item.json.telefoneFormatado }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        0
+      ],
+      "id": "1d6222f2-6c17-48aa-83f7-c90cceae9763",
+      "name": "HTTP Clint"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        680,
+        0
+      ],
+      "id": "72c0f4ca-c09c-4fbf-9d38-7b4f110a33b6",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Clint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Clint": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.7.2; https://caeclub.com.br",
+            "content-length": "902",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/json",
+            "x-forwarded-for": "177.154.191.146",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "177.154.191.146"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "_fluentform_22_fluentformnonce": "8a26152822",
+            "names": {
+              "first_name": "Camila Lages"
+            },
+            "email": "camilaglages@gmail.com",
+            "phone": "5511963941865",
+            "__submission": {
+              "id": "1408",
+              "form_id": "22",
+              "serial_number": "83",
+              "source_url": "https://caeclub.com.br/poder-do-networking/?utm_medium=paid&utm_source=ig&utm_id=120223610970190518&utm_content=120223616837470518&utm_term=120223616027720518&utm_campaign=120223610970190518&fbclid=PAZXh0bgNhZW0BMABhZGlkAasfCkXlKfYBp25tUXI0iZusX-HspthL5qM",
+              "user_id": "0",
+              "status": "unread",
+              "is_favourite": "0",
+              "browser": "Chrome",
+              "device": "Android",
+              "ip": "45.172.68.1",
+              "city": null,
+              "country": null,
+              "payment_status": null,
+              "payment_method": null,
+              "payment_type": null,
+              "currency": null,
+              "payment_total": null,
+              "total_paid": null,
+              "created_at": "2025-04-30 00:06:53",
+              "updated_at": "2025-04-30 00:06:53",
+              "user_inputs": {
+                "names": "Camila Lages",
+                "email": "camilaglages@gmail.com",
+                "phone": "5511963941865"
+              }
+            }
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/b4d68cb5-7cb0-4144-970c-1b09b15ca56f",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "8be01f0e-fa6f-49ed-aa9f-c204b3a57382",
+  "activeVersionId": "8be01f0e-fa6f-49ed-aa9f-c204b3a57382",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-04-25T20:56:15.132Z",
+      "createdAt": "2025-04-25T20:56:15.132Z",
+      "role": "workflow:owner",
+      "workflowId": "oevE2smapCcTSv48",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-16T19:23:54.851Z",
+    "createdAt": "2026-04-16T19:22:59.609Z",
+    "versionId": "8be01f0e-fa6f-49ed-aa9f-c204b3a57382",
+    "workflowId": "oevE2smapCcTSv48",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "b4d68cb5-7cb0-4144-970c-1b09b15ca56f",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -200,
+          0
+        ],
+        "id": "0328aea6-b4e4-407f-80d1-66e6eb15ea45",
+        "name": "Webhook",
+        "webhookId": "b4d68cb5-7cb0-4144-970c-1b09b15ca56f"
+      },
+      {
+        "parameters": {
+          "jsCode": "const rawPhone = $input.first().json.body.__submission.user_inputs.phone || '';\n\nconst cleanedPhone = rawPhone.replace(/\\D/g, '');\n\n// Se não começar com 55, adiciona\nconst finalPhone = cleanedPhone.startsWith('55') ? cleanedPhone : '55' + cleanedPhone;\n\nreturn {\n  telefoneFormatado: finalPhone\n};\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          20,
+          0
+        ],
+        "id": "058b9dbf-412b-4fe2-b67c-3a9813cba01e",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "60ba9ac7-99e6-46d8-a2cf-cac9b7b537d8",
+                "name": "Nome",
+                "value": "={{ $('Webhook').item.json.body.names.first_name }}",
+                "type": "string"
+              },
+              {
+                "id": "c799cf9c-c390-4fb2-986d-afbc19bb0d91",
+                "name": "Email",
+                "value": "={{ $('Webhook').item.json.body.email }}",
+                "type": "string"
+              },
+              {
+                "id": "7e8518f7-ace9-43ab-8ab0-c3d4e940e39c",
+                "name": "Email",
+                "value": "={{ $json.telefoneFormatado }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          240,
+          0
+        ],
+        "id": "e225dcea-0cf8-4612-a1b5-88a03cc028fa",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/4148a67f-24d8-4af0-887a-ad213a880443",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "Nome",
+                "value": "={{ $json.Nome }}"
+              },
+              {
+                "name": "Email",
+                "value": "={{ $json.Email }}"
+              },
+              {
+                "name": "Telefone",
+                "value": "={{ $('Code').item.json.telefoneFormatado }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          460,
+          0
+        ],
+        "id": "1d6222f2-6c17-48aa-83f7-c90cceae9763",
+        "name": "HTTP Clint"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          680,
+          0
+        ],
+        "id": "72c0f4ca-c09c-4fbf-9d38-7b4f110a33b6",
+        "name": "No Operation, do nothing"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "HTTP Clint",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Clint": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": "Version 8be01f0e",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
