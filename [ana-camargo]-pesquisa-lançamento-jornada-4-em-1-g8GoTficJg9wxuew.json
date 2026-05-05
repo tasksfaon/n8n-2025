@@ -1,1 +1,500 @@
-{"fileName":"[ana-camargo]-pesquisa-lançamento-jornada-4-em-1-g8GoTficJg9wxuew.json","mimeType":"application/json","conteudo":{"error":"Falha ao converter binário para JSON","rawData":"u�Zm�\u001e"}}
+{
+  "updatedAt": "2026-03-24T11:51:08.647Z",
+  "createdAt": "2025-05-24T20:40:30.049Z",
+  "id": "g8GoTficJg9wxuew",
+  "name": "[Ana Camargo] Pesquisa lançamento jornada 4 em 1",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "jun-25-imersao-4-em-1-pesquisa",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "acdbd3e2-a584-4631-aecd-bf5affffc698",
+      "name": "Webhook",
+      "webhookId": "fa93510c-8861-49b0-bbc1-bf60719fa826"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "155449a9-0e83-438c-a721-7ea91e860648",
+              "name": "body[\"Há quanto tempo você me conhece?\"]",
+              "value": "={{ $json.body[\"Há quanto tempo você me conhece?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "c59ef9e9-efd0-4f94-b5d8-b5a588a27856",
+              "name": "body[\"Qual sua idade?\"]",
+              "value": "={{ $json.body[\"Qual sua idade?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "eab7e28f-5680-48fc-8b99-325c9627bb61",
+              "name": "body[\"Qual a sua renda mensal?\"]",
+              "value": "={{ $json.body[\"Qual a sua renda mensal?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "8b003d01-d06d-4815-b09a-d661ecf23d13",
+              "name": "body[\"Você tem uma loja?\"]",
+              "value": "={{ $json.body[\"Você tem uma loja?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "fc834f81-becd-4b66-8877-649146e898d2",
+              "name": "body[\"Escolha a opção abaixo que melhor se encaixa no seu momento atual:\"]",
+              "value": "={{ $json.body[\"Escolha a opção abaixo que melhor se encaixa no seu momento atual:\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "999be944-8947-4a66-8320-077cdac99a6d",
+              "name": "body[\"Você já participou de algum evento meu?\"]",
+              "value": "={{ $json.body[\"Você já participou de algum evento meu?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "d3bbe7d8-eaca-437f-a2a8-6440d642eacb",
+              "name": "body[\"Qual a sua maior dificuldade na sua loja?\"]",
+              "value": "={{ $json.body[\"Qual a sua maior dificuldade na sua loja?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "5ec63a2a-8716-409b-bb0d-b48f91b712f8",
+              "name": "body[\"E-mail\"]",
+              "value": "={{ $json.body[\"E-mail\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "8ce202a8-7251-4aa3-ba40-7149e9829787",
+              "name": "body.WhatsApp",
+              "value": "={{ $json.body.WhatsApp }}",
+              "type": "string"
+            },
+            {
+              "id": "bab5f230-118e-4b67-8e29-fdb501ac3f09",
+              "name": "body.utm_source",
+              "value": "={{ $json.body.utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "33053383-7514-41ba-bc0f-47eafe674dc8",
+              "name": "body.utm_campaign",
+              "value": "={{ $json.body.utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "00d3b2dd-bdfc-491a-b041-195ea5d7773e",
+              "name": "body.utm_medium",
+              "value": "={{ $json.body.utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "7d44d12b-449b-4d8b-befa-7c5404b9a88a",
+              "name": "body.utm_term",
+              "value": "={{ $json.body.utm_term }}",
+              "type": "string"
+            },
+            {
+              "id": "51b09dbc-0bb0-4ed6-92bf-81bf0464e94e",
+              "name": "body.utm_content",
+              "value": "={{ $json.body.utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "db80e964-1a51-4da6-b28e-bccf39f5e3d2",
+              "name": "body.Data",
+              "value": "={{ $json.body.Data }}",
+              "type": "string"
+            },
+            {
+              "id": "cb112e72-24ec-402e-9d13-23d19ed6f178",
+              "name": "body[\"Qual o faturamento da sua loja?\"]",
+              "value": "={{ $json.body[\"Qual o faturamento da sua loja?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "17e10968-07f6-4bb6-a7f9-13b3022fe350",
+              "name": "body[\"Qual a sua renda mensal?\"]",
+              "value": "={{ $json.body[\"Qual a sua renda mensal?\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "313ca03b-79bd-460b-a320-590d33434139",
+              "name": "body[\"Qual gênero você se identifica?\"]",
+              "value": "={{ $json.body[\"Qual gênero você se identifica?\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "f6b947f0-7e25-451f-8c66-fbbd49788802",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1fMeLimP9GP8h8izJYN9LH2EysKDbK0VXo_5ZsJI02uM",
+          "mode": "list",
+          "cachedResultName": "[EVIJNL0625] Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fMeLimP9GP8h8izJYN9LH2EysKDbK0VXo_5ZsJI02uM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 430224495,
+          "mode": "list",
+          "cachedResultName": "Pesquisa",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fMeLimP9GP8h8izJYN9LH2EysKDbK0VXo_5ZsJI02uM/edit#gid=430224495"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.body[\"E-mail\"] }}",
+            "Data": "={{ $json.body.Data }}",
+            "Telefone": "={{ $json.body.WhatsApp }}",
+            "Há quanto tempo você me conhece?": "={{ $json.body[\"Há quanto tempo você me conhece?\"] }}",
+            "Qual sua idade?": "={{ $json.body[\"Qual sua idade?\"] }}",
+            "Qual a sua renda mensal?": "={{ $json.body[\"Qual a sua renda mensal?\"] }}",
+            "Voce tem uma loja?": "={{ $json.body[\"Você tem uma loja?\"] }}",
+            "Escolha a opção abaixo que melhor se encaixa no seu momento atual:": "={{ $json.body[\"Escolha a opção abaixo que melhor se encaixa no seu momento atual:\"] }}",
+            "Você já participou de algum evento meu?": "={{ $json.body[\"Você já participou de algum evento meu?\"] }}",
+            "Qual o faturamento da sua loja?": "={{ $json.body[\"Qual o faturamento da sua loja?\"] }}",
+            "Utm Source": "={{ $json.body.utm_source }}",
+            "Utm Campaign": "={{ $json.body.utm_campaign }}",
+            "Utm Medium": "={{ $json.body.utm_medium }}",
+            "Utm Term": "={{ $json.body.utm_term }}",
+            "Utm Content": "={{ $json.body.utm_content }}",
+            "Qual a sua maior dificuldade na sua loja?": "={{ $json.body[\"Qual a sua maior dificuldade na sua loja?\"] }}",
+            "Qual gênero você se identifica?": "={{ $json.body[\"Qual gênero você se identifica?\"] }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Há quanto tempo você me conhece?",
+              "displayName": "Há quanto tempo você me conhece?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Qual sua idade?",
+              "displayName": "Qual sua idade?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Qual gênero você se identifica?",
+              "displayName": "Qual gênero você se identifica?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Qual a sua renda mensal?",
+              "displayName": "Qual a sua renda mensal?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Voce tem uma loja?",
+              "displayName": "Voce tem uma loja?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Escolha a opção abaixo que melhor se encaixa no seu momento atual:",
+              "displayName": "Escolha a opção abaixo que melhor se encaixa no seu momento atual:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Você já participou de algum evento meu?",
+              "displayName": "Você já participou de algum evento meu?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Qual o faturamento da sua loja?",
+              "displayName": "Qual o faturamento da sua loja?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Qual a sua maior dificuldade na sua loja?",
+              "displayName": "Qual a sua maior dificuldade na sua loja?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Source",
+              "displayName": "Utm Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Campaign",
+              "displayName": "Utm Campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Medium",
+              "displayName": "Utm Medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Content",
+              "displayName": "Utm Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Utm Term",
+              "displayName": "Utm Term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        0
+      ],
+      "id": "3b497976-3e6a-4312-8e87-d4568155a099",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        660,
+        0
+      ],
+      "id": "55901a5e-77e7-4d9d-982e-3400c5bb2fc7",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.6.2; https://analauracamargo.com.br",
+            "content-length": "1066",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "177.154.191.246",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "177.154.191.246"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "No Label field_25ebf06": "",
+            "Há quanto tempo você me conhece?": "Há pouco tempo ( entre 1 e 3 meses)",
+            "No Label field_8025d8d": "",
+            "Qual sua idade?": "Entre 18 e 24",
+            "No Label field_aa7ed73": "",
+            "Qual gênero você se identifica?": "Feminino",
+            "No Label field_891a043": "",
+            "Qual a sua renda mensal?": "Entre R$5.001 e R$7.000/mês",
+            "No Label field_2ec60c7": "",
+            "Você tem uma loja?": "Moda feminina",
+            "No Label field_b5e4020": "",
+            "Escolha a opção abaixo que melhor se encaixa no seu momento atual:": "Sou clt e pretendo ter uma loja infantil",
+            "No Label field_5ebe553": "",
+            "Você já participou de algum evento meu?": "Sem, já participei de eventos anteriores",
+            "No Label field_6149171": "",
+            "Qual o faturamento da sua loja?": "Entre R$10.001 e R$30.000/mês",
+            "No Label field_3870620": "",
+            "Qual a sua maior dificuldade na sua loja?": "Equilibrar a rotina da loja com a vida pessoal",
+            "E-mail": "",
+            "WhatsApp": "",
+            "utm_source": "undefined",
+            "utm_campaign": "undefined",
+            "utm_medium": "undefined",
+            "utm_content": "undefined",
+            "utm_term": "undefined",
+            "Data": "24/05/2025",
+            "form_id": "e1f41ca",
+            "form_name": "JNL0625 - OBG"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/jun-25-imersao-4-em-1-pesquisa",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "33cf12bc-524a-4b84-ad9f-1fd4579a6f7b",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-05-24T20:40:30.049Z",
+      "createdAt": "2025-05-24T20:40:30.049Z",
+      "role": "workflow:owner",
+      "workflowId": "g8GoTficJg9wxuew",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
