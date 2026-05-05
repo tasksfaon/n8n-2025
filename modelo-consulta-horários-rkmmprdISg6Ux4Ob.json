@@ -1,0 +1,401 @@
+{
+  "updatedAt": "2025-09-18T20:12:11.994Z",
+  "createdAt": "2025-09-18T20:12:11.994Z",
+  "id": "rkmmprdISg6Ux4Ob",
+  "name": "Modelo consulta horários",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "coach.clinica@tododiaenergia.com.br",
+          "mode": "list",
+          "cachedResultName": "coach.clinica@tododiaenergia.com.br"
+        },
+        "limit": 100,
+        "timeMax": "={{ $now.plus({ week: 2 }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        -80
+      ],
+      "id": "ebc07054-eb69-4c6b-ab7c-039d04ef73a0",
+      "name": "Get many events"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        416,
+        -80
+      ],
+      "id": "2d2723eb-6f25-49a3-9d9a-663374d986a6",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código para n8n - Analisador de Horários Livres\n// Este código deve ser usado em um nó \"Code\" do n8n\n// IMPORTANTE: Use um nó \"Aggregate\" antes deste código para juntar todos os eventos\n\n// ========== CONFIGURAÇÕES - ALTERE AQUI ==========\nconst WORKING_HOURS = {\n  start: 9, // Horário de início (9:00)\n  end: 18,  // Horário de fim (18:00)\n};\n\nconst SLOT_DURATION = 60; // Duração de cada slot em minutos\n\nconst DAYS_TO_CHECK = 14; // Quantos dias verificar à frente\n\nconst TIMEZONE = 'America/Sao_Paulo'; // Fuso horário\n// ===============================================\n\n// Função principal\nfunction findFreeSlots() {\n  // Pega os dados agregados do calendário\n  // O aggregate junta todos os eventos em um único array\n  const inputData = $input.first().json.data;\n  \n  // Debug: vamos ver como os dados estão chegando\n  console.log('Input data structure:', Object.keys(inputData));\n  console.log('Full input:', JSON.stringify(inputData, null, 2));\n  \n  // Tenta diferentes estruturas possíveis do aggregate\n  let calendarData = [];\n  \n  if (inputData.data && Array.isArray(inputData.data)) {\n    calendarData = inputData.data;\n  } else if (Array.isArray(inputData)) {\n    calendarData = inputData;\n  } else if (inputData.items && Array.isArray(inputData.items)) {\n    calendarData = inputData.items;\n  } else {\n    // Se não encontrar, procura por arrays dentro do objeto\n    for (const key in inputData) {\n      if (Array.isArray(inputData[key]) && inputData[key].length > 0) {\n        calendarData = inputData[key];\n        break;\n      }\n    }\n  }\n  \n  console.log('Calendar data found:', calendarData.length, 'events');\n  console.log('First event sample:', calendarData[0]);\n  \n  // Gera os próximos X dias, começando de amanhã\n  const today = new Date();\n  const nextDays = [];\n  \n  // O loop começa com i = 1 para pular o dia de hoje\n  for (let i = 1; i < DAYS_TO_CHECK + 1; i++) {\n    const date = new Date(today);\n    date.setDate(today.getDate() + i);\n    nextDays.push(date);\n  }\n  \n  const freeSlots = [];\n  \n  // Para cada dia\n  nextDays.forEach(date => {\n    const dayString = date.toISOString().split('T')[0];\n    \n    // Pula fins de semana (opcional - remova se quiser incluir)\n    const dayOfWeek = date.getDay();\n    if (dayOfWeek === 0 || dayOfWeek === 6) {\n      return; // Pula domingo (0) e sábado (6)\n    }\n    \n    // Busca eventos do dia\n    const dayEvents = calendarData.filter(event => {\n      if (!event.start) return false;\n      \n      const eventDate = event.start.date || event.start.dateTime?.split('T')[0];\n      return eventDate === dayString;\n    });\n    \n    // Gera slots do horário comercial\n    const daySlots = generateDaySlots(date, dayEvents);\n    freeSlots.push(...daySlots);\n  });\n  \n  return freeSlots;\n}\n\n// Gera slots para um dia específico\nfunction generateDaySlots(date, dayEvents) {\n  const slots = [];\n  const dayString = date.toISOString().split('T')[0];\n  \n  // Converte eventos para array de períodos ocupados\n  const busyPeriods = dayEvents.map(event => {\n    let startTime, endTime;\n    \n    if (event.start.dateTime) {\n      // Evento com horário específico\n      startTime = new Date(event.start.dateTime);\n      endTime = new Date(event.end.dateTime);\n    } else if (event.start.date) {\n      // Evento de dia inteiro\n      const eventDate = new Date(event.start.date + 'T00:00:00');\n      if (event.summary === 'off' || event.summary === 'close') {\n        // Se for \"off\" ou \"close\", considera como indisponível\n        startTime = new Date(eventDate);\n        startTime.setHours(0, 0, 0, 0);\n        endTime = new Date(eventDate);\n        endTime.setHours(23, 59, 59, 999);\n      } else {\n        return null; // Ignora outros eventos de dia inteiro\n      }\n    }\n    \n    return startTime && endTime ? { start: startTime, end: endTime } : null;\n  }).filter(period => period !== null);\n  \n  // Ordena períodos ocupados por horário de início\n  busyPeriods.sort((a, b) => a.start - b.start);\n  \n  // Gera slots livres\n  let currentTime = new Date(date);\n  currentTime.setHours(WORKING_HOURS.start, 0, 0, 0);\n  \n  const endOfDay = new Date(date);\n  endOfDay.setHours(WORKING_HOURS.end, 0, 0, 0);\n  \n  while (currentTime < endOfDay) {\n    const slotEnd = new Date(currentTime);\n    slotEnd.setMinutes(slotEnd.getMinutes() + SLOT_DURATION);\n    \n    // Verifica se o slot está livre\n    const isFree = !busyPeriods.some(period => {\n      return (currentTime < period.end && slotEnd > period.start);\n    });\n    \n    if (isFree && slotEnd <= endOfDay) {\n      slots.push({\n        date: dayString,\n        start: formatTime(currentTime),\n        end: formatTime(slotEnd),\n        startDateTime: currentTime.toISOString(),\n        endDateTime: slotEnd.toISOString(),\n        duration: SLOT_DURATION,\n        dayOfWeek: getDayName(currentTime.getDay())\n      });\n    }\n    \n    // Avança para o próximo slot\n    currentTime.setMinutes(currentTime.getMinutes() + SLOT_DURATION);\n  }\n  \n  return slots;\n}\n\n// Funções auxiliares\nfunction formatTime(date) {\n  return date.toLocaleTimeString('pt-BR', {\n    hour: '2-digit',\n    minute: '2-digit',\n    timeZone: TIMEZONE\n  });\n}\n\nfunction getDayName(dayIndex) {\n  const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];\n  return days[dayIndex];\n}\n\n// Executa a análise\nconst freeSlots = findFreeSlots();\n\n// Verifica se há horários livres\nif (freeSlots.length === 0) {\n  return {\n    message: `Não há horários livres nos próximos ${DAYS_TO_CHECK} dias`,\n    freeSlots: [],\n    totalSlots: 0,\n    summary: {\n      totalDays: DAYS_TO_CHECK,\n      workingDays: 0,\n      slotsPerDay: {}\n    }\n  };\n}\n\n// Retorna resultado no formato esperado pelo n8n\nreturn {\n  freeSlots: freeSlots,\n  totalSlots: freeSlots.length,\n  summary: {\n    totalDays: DAYS_TO_CHECK,\n    workingDays: freeSlots.reduce((acc, slot) => {\n      const dates = acc.filter(d => d === slot.date);\n      return dates.length === 0 ? [...acc, slot.date] : acc;\n    }, []).length,\n    slotsPerDay: freeSlots.reduce((acc, slot) => {\n      acc[slot.date] = (acc[slot.date] || 0) + 1;\n      return acc;\n    }, {})\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -80
+      ],
+      "id": "3161812a-2f9f-4dea-8e43-7d0ebb0161d0",
+      "name": "retorna os horários livres da agenda"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -32,
+        -80
+      ],
+      "id": "b49c5d43-c5cf-4bb0-8757-4416c670d50c",
+      "name": "consulta_agenda"
+    },
+    {
+      "parameters": {
+        "jsCode": "// O código espera receber um array de 'freeSlots'\nconst freeSlots = $input.all().map(item => item.json.freeSlots).flat();\n\nif (!freeSlots || freeSlots.length === 0) {\n  return [{ json: { message: 'Nenhum horário livre encontrado para formatar.' } }];\n}\n\n// Objeto para agrupar os horários por data\nconst groupedSlots = {};\n\nfreeSlots.forEach(slot => {\n  const dateKey = slot.date;\n  \n  if (!groupedSlots[dateKey]) {\n    groupedSlots[dateKey] = {\n      date: dateKey,\n      dayOfWeek: slot.dayOfWeek,\n      times: []\n    };\n  }\n  \n  groupedSlots[dateKey].times.push(`${slot.start} às ${slot.end}`);\n});\n\n// Converte o objeto agrupado em um array de objetos formatados para a IA\nconst outputForAI = Object.values(groupedSlots).map(day => {\n  // Converte a data de 'YYYY-MM-DD' para 'Dia <Dia> de <Mês>'\n  const dateParts = day.date.split('-');\n  const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);\n  \n  const options = { day: 'numeric', month: 'long' };\n  const formattedDate = date.toLocaleDateString('pt-BR', options);\n\n  // Formato final para a IA\n  return {\n    dia: formattedDate,\n    diaSemana: day.dayOfWeek,\n    horariosDisponiveis: day.times\n  };\n});\n\n// A saída do nó será um array de objetos JSON\nreturn outputForAI.map(item => ({ json: item }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        -80
+      ],
+      "id": "f3d01a72-1151-4acc-b6d9-01e6352c009f",
+      "name": "Ajusta comunicação para ia"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        -80
+      ],
+      "id": "3ef83764-dbc7-43da-9763-8fb7b9355161",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a80ec82b-12f9-43b7-a4b8-f692b228251f",
+              "name": "response",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        -80
+      ],
+      "id": "a593636a-4bc9-4b14-b9c8-e0f794920bc5",
+      "name": "response"
+    }
+  ],
+  "connections": {
+    "Get many events": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "retorna os horários livres da agenda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "retorna os horários livres da agenda": {
+      "main": [
+        [
+          {
+            "node": "Ajusta comunicação para ia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consulta_agenda": {
+      "main": [
+        [
+          {
+            "node": "Get many events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajusta comunicação para ia": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "eeef728c-002c-4a94-8533-4f45ff66f526",
+  "activeVersionId": "eeef728c-002c-4a94-8533-4f45ff66f526",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-18T20:12:11.994Z",
+      "createdAt": "2025-09-18T20:12:11.994Z",
+      "role": "workflow:owner",
+      "workflowId": "rkmmprdISg6Ux4Ob",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "eeef728c-002c-4a94-8533-4f45ff66f526",
+    "workflowId": "rkmmprdISg6Ux4Ob",
+    "nodes": [
+      {
+        "parameters": {
+          "operation": "getAll",
+          "calendar": {
+            "__rl": true,
+            "value": "coach.clinica@tododiaenergia.com.br",
+            "mode": "list",
+            "cachedResultName": "coach.clinica@tododiaenergia.com.br"
+          },
+          "limit": 100,
+          "timeMax": "={{ $now.plus({ week: 2 }) }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          208,
+          -80
+        ],
+        "id": "ebc07054-eb69-4c6b-ab7c-039d04ef73a0",
+        "name": "Get many events"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          416,
+          -80
+        ],
+        "id": "2d2723eb-6f25-49a3-9d9a-663374d986a6",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Código para n8n - Analisador de Horários Livres\n// Este código deve ser usado em um nó \"Code\" do n8n\n// IMPORTANTE: Use um nó \"Aggregate\" antes deste código para juntar todos os eventos\n\n// ========== CONFIGURAÇÕES - ALTERE AQUI ==========\nconst WORKING_HOURS = {\n  start: 9, // Horário de início (9:00)\n  end: 18,  // Horário de fim (18:00)\n};\n\nconst SLOT_DURATION = 60; // Duração de cada slot em minutos\n\nconst DAYS_TO_CHECK = 14; // Quantos dias verificar à frente\n\nconst TIMEZONE = 'America/Sao_Paulo'; // Fuso horário\n// ===============================================\n\n// Função principal\nfunction findFreeSlots() {\n  // Pega os dados agregados do calendário\n  // O aggregate junta todos os eventos em um único array\n  const inputData = $input.first().json.data;\n  \n  // Debug: vamos ver como os dados estão chegando\n  console.log('Input data structure:', Object.keys(inputData));\n  console.log('Full input:', JSON.stringify(inputData, null, 2));\n  \n  // Tenta diferentes estruturas possíveis do aggregate\n  let calendarData = [];\n  \n  if (inputData.data && Array.isArray(inputData.data)) {\n    calendarData = inputData.data;\n  } else if (Array.isArray(inputData)) {\n    calendarData = inputData;\n  } else if (inputData.items && Array.isArray(inputData.items)) {\n    calendarData = inputData.items;\n  } else {\n    // Se não encontrar, procura por arrays dentro do objeto\n    for (const key in inputData) {\n      if (Array.isArray(inputData[key]) && inputData[key].length > 0) {\n        calendarData = inputData[key];\n        break;\n      }\n    }\n  }\n  \n  console.log('Calendar data found:', calendarData.length, 'events');\n  console.log('First event sample:', calendarData[0]);\n  \n  // Gera os próximos X dias, começando de amanhã\n  const today = new Date();\n  const nextDays = [];\n  \n  // O loop começa com i = 1 para pular o dia de hoje\n  for (let i = 1; i < DAYS_TO_CHECK + 1; i++) {\n    const date = new Date(today);\n    date.setDate(today.getDate() + i);\n    nextDays.push(date);\n  }\n  \n  const freeSlots = [];\n  \n  // Para cada dia\n  nextDays.forEach(date => {\n    const dayString = date.toISOString().split('T')[0];\n    \n    // Pula fins de semana (opcional - remova se quiser incluir)\n    const dayOfWeek = date.getDay();\n    if (dayOfWeek === 0 || dayOfWeek === 6) {\n      return; // Pula domingo (0) e sábado (6)\n    }\n    \n    // Busca eventos do dia\n    const dayEvents = calendarData.filter(event => {\n      if (!event.start) return false;\n      \n      const eventDate = event.start.date || event.start.dateTime?.split('T')[0];\n      return eventDate === dayString;\n    });\n    \n    // Gera slots do horário comercial\n    const daySlots = generateDaySlots(date, dayEvents);\n    freeSlots.push(...daySlots);\n  });\n  \n  return freeSlots;\n}\n\n// Gera slots para um dia específico\nfunction generateDaySlots(date, dayEvents) {\n  const slots = [];\n  const dayString = date.toISOString().split('T')[0];\n  \n  // Converte eventos para array de períodos ocupados\n  const busyPeriods = dayEvents.map(event => {\n    let startTime, endTime;\n    \n    if (event.start.dateTime) {\n      // Evento com horário específico\n      startTime = new Date(event.start.dateTime);\n      endTime = new Date(event.end.dateTime);\n    } else if (event.start.date) {\n      // Evento de dia inteiro\n      const eventDate = new Date(event.start.date + 'T00:00:00');\n      if (event.summary === 'off' || event.summary === 'close') {\n        // Se for \"off\" ou \"close\", considera como indisponível\n        startTime = new Date(eventDate);\n        startTime.setHours(0, 0, 0, 0);\n        endTime = new Date(eventDate);\n        endTime.setHours(23, 59, 59, 999);\n      } else {\n        return null; // Ignora outros eventos de dia inteiro\n      }\n    }\n    \n    return startTime && endTime ? { start: startTime, end: endTime } : null;\n  }).filter(period => period !== null);\n  \n  // Ordena períodos ocupados por horário de início\n  busyPeriods.sort((a, b) => a.start - b.start);\n  \n  // Gera slots livres\n  let currentTime = new Date(date);\n  currentTime.setHours(WORKING_HOURS.start, 0, 0, 0);\n  \n  const endOfDay = new Date(date);\n  endOfDay.setHours(WORKING_HOURS.end, 0, 0, 0);\n  \n  while (currentTime < endOfDay) {\n    const slotEnd = new Date(currentTime);\n    slotEnd.setMinutes(slotEnd.getMinutes() + SLOT_DURATION);\n    \n    // Verifica se o slot está livre\n    const isFree = !busyPeriods.some(period => {\n      return (currentTime < period.end && slotEnd > period.start);\n    });\n    \n    if (isFree && slotEnd <= endOfDay) {\n      slots.push({\n        date: dayString,\n        start: formatTime(currentTime),\n        end: formatTime(slotEnd),\n        startDateTime: currentTime.toISOString(),\n        endDateTime: slotEnd.toISOString(),\n        duration: SLOT_DURATION,\n        dayOfWeek: getDayName(currentTime.getDay())\n      });\n    }\n    \n    // Avança para o próximo slot\n    currentTime.setMinutes(currentTime.getMinutes() + SLOT_DURATION);\n  }\n  \n  return slots;\n}\n\n// Funções auxiliares\nfunction formatTime(date) {\n  return date.toLocaleTimeString('pt-BR', {\n    hour: '2-digit',\n    minute: '2-digit',\n    timeZone: TIMEZONE\n  });\n}\n\nfunction getDayName(dayIndex) {\n  const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];\n  return days[dayIndex];\n}\n\n// Executa a análise\nconst freeSlots = findFreeSlots();\n\n// Verifica se há horários livres\nif (freeSlots.length === 0) {\n  return {\n    message: `Não há horários livres nos próximos ${DAYS_TO_CHECK} dias`,\n    freeSlots: [],\n    totalSlots: 0,\n    summary: {\n      totalDays: DAYS_TO_CHECK,\n      workingDays: 0,\n      slotsPerDay: {}\n    }\n  };\n}\n\n// Retorna resultado no formato esperado pelo n8n\nreturn {\n  freeSlots: freeSlots,\n  totalSlots: freeSlots.length,\n  summary: {\n    totalDays: DAYS_TO_CHECK,\n    workingDays: freeSlots.reduce((acc, slot) => {\n      const dates = acc.filter(d => d === slot.date);\n      return dates.length === 0 ? [...acc, slot.date] : acc;\n    }, []).length,\n    slotsPerDay: freeSlots.reduce((acc, slot) => {\n      acc[slot.date] = (acc[slot.date] || 0) + 1;\n      return acc;\n    }, {})\n  }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          624,
+          -80
+        ],
+        "id": "3161812a-2f9f-4dea-8e43-7d0ebb0161d0",
+        "name": "retorna os horários livres da agenda"
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -32,
+          -80
+        ],
+        "id": "b49c5d43-c5cf-4bb0-8757-4416c670d50c",
+        "name": "consulta_agenda"
+      },
+      {
+        "parameters": {
+          "jsCode": "// O código espera receber um array de 'freeSlots'\nconst freeSlots = $input.all().map(item => item.json.freeSlots).flat();\n\nif (!freeSlots || freeSlots.length === 0) {\n  return [{ json: { message: 'Nenhum horário livre encontrado para formatar.' } }];\n}\n\n// Objeto para agrupar os horários por data\nconst groupedSlots = {};\n\nfreeSlots.forEach(slot => {\n  const dateKey = slot.date;\n  \n  if (!groupedSlots[dateKey]) {\n    groupedSlots[dateKey] = {\n      date: dateKey,\n      dayOfWeek: slot.dayOfWeek,\n      times: []\n    };\n  }\n  \n  groupedSlots[dateKey].times.push(`${slot.start} às ${slot.end}`);\n});\n\n// Converte o objeto agrupado em um array de objetos formatados para a IA\nconst outputForAI = Object.values(groupedSlots).map(day => {\n  // Converte a data de 'YYYY-MM-DD' para 'Dia <Dia> de <Mês>'\n  const dateParts = day.date.split('-');\n  const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);\n  \n  const options = { day: 'numeric', month: 'long' };\n  const formattedDate = date.toLocaleDateString('pt-BR', options);\n\n  // Formato final para a IA\n  return {\n    dia: formattedDate,\n    diaSemana: day.dayOfWeek,\n    horariosDisponiveis: day.times\n  };\n});\n\n// A saída do nó será um array de objetos JSON\nreturn outputForAI.map(item => ({ json: item }));"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          832,
+          -80
+        ],
+        "id": "f3d01a72-1151-4acc-b6d9-01e6352c009f",
+        "name": "Ajusta comunicação para ia"
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1040,
+          -80
+        ],
+        "id": "3ef83764-dbc7-43da-9763-8fb7b9355161",
+        "name": "Aggregate1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "a80ec82b-12f9-43b7-a4b8-f692b228251f",
+                "name": "response",
+                "value": "={{ $json.data }}",
+                "type": "array"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1248,
+          -80
+        ],
+        "id": "a593636a-4bc9-4b14-b9c8-e0f794920bc5",
+        "name": "response"
+      }
+    ],
+    "connections": {
+      "Get many events": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "retorna os horários livres da agenda",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "retorna os horários livres da agenda": {
+        "main": [
+          [
+            {
+              "node": "Ajusta comunicação para ia",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "consulta_agenda": {
+        "main": [
+          [
+            {
+              "node": "Get many events",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ajusta comunicação para ia": {
+        "main": [
+          [
+            {
+              "node": "Aggregate1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate1": {
+        "main": [
+          [
+            {
+              "node": "response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
