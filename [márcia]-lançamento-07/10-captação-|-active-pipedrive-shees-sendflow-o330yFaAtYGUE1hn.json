@@ -1,0 +1,1196 @@
+{
+  "updatedAt": "2026-01-07T17:58:59.241Z",
+  "createdAt": "2025-09-10T14:17:50.497Z",
+  "id": "o330yFaAtYGUE1hn",
+  "name": "[Márcia] Lançamento 07/10 Captação | Active Pipedrive Shees Sendflow",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\n// Telefone bruto\nconst rawPhone = String(data.body.WhatsApp || '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\nlet ddd = null;\nlet ddd_id = null;\n\n// 📌 Mapa de DDDs para o ID no Pipedrive\nconst dddMap = {\n  '11': 6115, '12': 6116, '13': 6117, '14': 6118, '15': 6119,\n  '16': 6120, '17': 6121, '18': 6122, '19': 6123, '21': 6124,\n  '22': 6125, '24': 6126, '27': 6127, '28': 6128, '31': 6129,\n  '32': 6130, '33': 6131, '34': 6132, '35': 6133, '37': 6134,\n  '38': 6135, '41': 6136, '42': 6137, '43': 6138, '44': 6139,\n  '45': 6140, '46': 6141, '47': 6142, '48': 6143, '49': 6144,\n  '51': 6145, '53': 6146, '54': 6147, '55': 6148, '61': 6149,\n  '62': 6150, '63': 6151, '64': 6152, '65': 6153, '66': 6154,\n  '67': 6155, '68': 6156, '69': 6157, '71': 6158, '73': 6159,\n  '74': 6160, '75': 6161, '77': 6162, '79': 6163, '81': 6164,\n  '82': 6165, '83': 6166, '84': 6167, '85': 6168, '86': 6169,\n  '87': 6170, '88': 6171, '89': 6172, '91': 6173, '92': 6174,\n  '93': 6175, '94': 6176, '95': 6177, '96': 6178, '97': 6179,\n  '98': 6180, '99': 6181\n};\n\n// 📌 Mapa de fontes UTM normalizadas para stage_id\nconst stageMap = {\n  'email': 1409,\n  'wpp_grupos': 1409,\n  'api': 1409,\n  'manychat': 1414,\n  'comercial': 1420,\n  'suporte': 1420,\n  'fran': 1420,\n  'dani': 1420,\n  'trafego': 1411,\n  'fb': 1411,\n  'ig': 1411,\n  'story': 1411,\n  'bio_insta': 1411\n};\n\n// 👉 Função para remover acentos e normalizar string\nfunction normalizeUTM(source) {\n  return String(source || '')\n    .toLowerCase()\n    .normalize('NFD')               // transforma acentos em caracteres compostos\n    .replace(/[\\u0300-\\u036f]/g, '')// remove acentos\n    .replace(/\\s+/g, '')            // remove espaços\n    .replace(/[^a-z0-9_]/g, '');    // remove símbolos\n}\n\n// ✅ Extrai e normaliza UTM\nconst utmSource = normalizeUTM(data.body.utm_source);\nconst stage_id = stageMap[utmSource] || 1409;\n\n// ✅ Trata telefone\nif (/^\\d{10,11}$/.test(cleaned)) {\n  cleaned = '55' + cleaned;\n}\nif (cleaned.startsWith('5555')) {\n  cleaned = '55' + cleaned.slice(4);\n}\nif (/^55\\d{10,11}$/.test(cleaned)) {\n  ddd = cleaned.slice(2, 4);\n  ddd_id = dddMap[ddd] || null;\n} else {\n  if (!/^\\d{8,15}$/.test(cleaned)) {\n    cleaned = '';\n  }\n}\n\n// ✅ Retorno final\nreturn [{\n  json: {\n    telefoneOriginal: rawPhone,\n    telefoneFormatado: cleaned,\n    ddd: ddd,\n    ddd_id: ddd_id,\n    stage_id: stage_id\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        0
+      ],
+      "id": "0240edd0-8381-4c11-8143-47717a6ad59d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+              "name": "Data",
+              "value": "={{ \n  new Date().toLocaleString('pt-BR', { \n    timeZone: 'America/Sao_Paulo',\n    day: '2-digit',\n    month: '2-digit',\n    year: 'numeric',\n    hour: '2-digit',\n    minute: '2-digit'\n  }).replace(',', '')\n}}",
+              "type": "string"
+            },
+            {
+              "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.Nome }}",
+              "type": "string"
+            },
+            {
+              "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "31cdadf9-fa7c-4f7c-b988-92d0009182c6",
+              "name": "DDD",
+              "value": "={{ $json.ddd }}",
+              "type": "string"
+            },
+            {
+              "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+              "name": "Telefone",
+              "value": "={{ $json.telefoneFormatado }}",
+              "type": "string"
+            },
+            {
+              "id": "02fb411b-69b9-4a00-9268-e9ca64b985cb",
+              "name": "utm source",
+              "value": "={{ $('Webhook').item.json.body.utm_source }}",
+              "type": "string"
+            },
+            {
+              "id": "65a364ed-cac6-4850-b096-f40610fe9a7e",
+              "name": "utm medium",
+              "value": "={{ $('Webhook').item.json.body.utm_medium }}",
+              "type": "string"
+            },
+            {
+              "id": "e535ab60-6b07-41df-9b9b-eb02e027bcd4",
+              "name": "utm campaign",
+              "value": "={{ $('Webhook').item.json.body.utm_campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "5a1035f6-47b6-4d9a-95cf-22ceef5d01e2",
+              "name": "utm content",
+              "value": "={{ $('Webhook').item.json.body.utm_content }}",
+              "type": "string"
+            },
+            {
+              "id": "8b38b887-3a60-4485-8806-282499538b3a",
+              "name": "utm term",
+              "value": "={{ $('Webhook').item.json.body.utm_term }}",
+              "type": "string"
+            },
+            {
+              "id": "0d71ff73-651d-4ed3-83fb-ddbd85c2ec6c",
+              "name": "ddd id",
+              "value": "={{ $json.ddd_id }}",
+              "type": "string"
+            },
+            {
+              "id": "780627ae-ee44-4c52-83b9-d3dddd835185",
+              "name": "Stage ID",
+              "value": "={{ $json.stage_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        0
+      ],
+      "id": "cdbe72d9-1f2f-42dd-a474-293bb471a005",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        0
+      ],
+      "id": "7a2c0669-fdff-456c-8605-d53c6ac0a409",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.Email }}",
+        "updateIfExists": true,
+        "additionalFields": {
+          "fieldValues": {
+            "property": [
+              {
+                "field": "4",
+                "value": "={{ $json.DDD }}"
+              },
+              {
+                "field": "8",
+                "value": "={{ $json['utm source'] }}"
+              },
+              {
+                "field": "9",
+                "value": "={{ $json['utm medium'] }}"
+              },
+              {
+                "field": "10",
+                "value": "={{ $json['utm campaign'] }}"
+              },
+              {
+                "field": "11",
+                "value": "={{ $json['utm content'] }}"
+              },
+              {
+                "field": "12",
+                "value": "={{ $json['utm term'] }}"
+              }
+            ]
+          },
+          "firstName": "={{ $json.Nome }}",
+          "phone": "={{ $json.Telefone }}"
+        }
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -96
+      ],
+      "id": "c74af872-cb16-4285-a77c-3aa370ed8394",
+      "name": "ActiveCampaign",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactTag",
+        "tagId": "14",
+        "contactId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -96
+      ],
+      "id": "f92e52ab-2a70-4ffe-ba5a-b9179685e78b",
+      "name": "ActiveCampaign1",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "listId": 4,
+        "contactId": "={{ $json.contact }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        -96
+      ],
+      "id": "bea321b5-c554-436b-934a-ad59b9ac9331",
+      "name": "ActiveCampaign2",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit?gid=1340147515#gid=1340147515",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data e Hora": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "DDD": "={{ $json.DDD }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "utm soource": "={{ $json['utm source'] }}",
+            "utm campaign": "={{ $json['utm campaign'] }}",
+            "utm medium": "={{ $json['utm medium'] }}",
+            "utm content": "={{ $json['utm content'] }}",
+            "utm term": "={{ $json['utm term'] }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Data e Hora",
+              "displayName": "Data e Hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DDD",
+              "displayName": "DDD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm soource",
+              "displayName": "utm soource",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm campaign",
+              "displayName": "utm campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm medium",
+              "displayName": "utm medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm content",
+              "displayName": "utm content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm term",
+              "displayName": "utm term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        928,
+        -336
+      ],
+      "id": "741c1e6e-91cc-4c25-b9f7-5ebf2963d0e7",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lançamento-qi-mental-leigos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        0
+      ],
+      "id": "ac3269c2-61b3-4f1c-817c-f12ca2f1c5f0",
+      "name": "Webhook",
+      "webhookId": "72e48efc-d202-408b-909b-43e642f4eaae"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pipedrive.com/v1/persons?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json.Nome }}\",\n  \"email\": \"{{ $json.Email }}\",\n  \"phone\": \"{{ $json.Telefone }}\",\n\n  \"f78cd083b84a2074eac1527b995d1cd18f05d274\": {{ $json['ddd id'] }},\n\n  \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n  \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n  \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n  \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n  \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        784,
+        80
+      ],
+      "id": "5cd7e138-b0df-4b67-8094-61c29d5f4ac3",
+      "name": "HTTP Pipedrive Person"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pipedrive.com/v1/deals?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"QI Mental para Leigos - {{ $json.data.name }}\",\n  \"pipeline_id\": 212,\n  \"stage_id\": {{ $('Edit Fields').item.json['Stage ID'] }},\n  \"person_id\": {{ $json.data.id }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        80
+      ],
+      "id": "7045e9c3-a2c2-4d7f-821f-d1aeb7e69c4f",
+      "name": "HTTP Pipedrive Deal"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/YdP0VhwwTEzAlyHvdOVo",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"f3f043f0-a70d-4ad4-aac6-fd295108f837\",\n  \"phoneNumber\": \"{{ $('Edit Fields').item.json.telefone }}\",\n  \"name\": \"{{ $('Edit Fields').item.json.nome }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        768,
+        256
+      ],
+      "id": "7cab7231-4830-4893-8d1b-21bae78e5dcd",
+      "name": "Onboarding liberdade"
+    }
+  ],
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Pipedrive Person",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Onboarding liberdade",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign1": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Person": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pipedrive Deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Deal": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Onboarding liberdade": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+  },
+  "staticData": {
+    "node:Pipedrive Trigger": {},
+    "node:Pipedrive Trigger1": {}
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.8.2; https://center-ao.com.br",
+            "content-length": "196",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "45.126.210.82",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "45.126.210.82"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Nome": "teste",
+            "Email": "teste@teste.com.br",
+            "WhatsApp": "+5531991257953",
+            "utm_source": "Dani",
+            "utm_campaign": "",
+            "utm_medium": "",
+            "utm_content": "",
+            "utm_term": "",
+            "slug_pagina": "encontro",
+            "form_id": "b5dffe1",
+            "form_name": "FORM_LP TRÁFEGO"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/lançamento-qi-mental-leigos",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "ef844abb-f69f-4fe6-a483-748bb478616a",
+  "activeVersionId": "ef844abb-f69f-4fe6-a483-748bb478616a",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-09-10T14:17:50.497Z",
+      "createdAt": "2025-09-10T14:17:50.497Z",
+      "role": "workflow:owner",
+      "workflowId": "o330yFaAtYGUE1hn",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-07T17:58:59.273Z",
+    "createdAt": "2026-01-07T17:58:59.273Z",
+    "versionId": "ef844abb-f69f-4fe6-a483-748bb478616a",
+    "workflowId": "o330yFaAtYGUE1hn",
+    "nodes": [
+      {
+        "parameters": {
+          "jsCode": "const data = $input.first().json;\n\n// Telefone bruto\nconst rawPhone = String(data.body.WhatsApp || '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\nlet ddd = null;\nlet ddd_id = null;\n\n// 📌 Mapa de DDDs para o ID no Pipedrive\nconst dddMap = {\n  '11': 6115, '12': 6116, '13': 6117, '14': 6118, '15': 6119,\n  '16': 6120, '17': 6121, '18': 6122, '19': 6123, '21': 6124,\n  '22': 6125, '24': 6126, '27': 6127, '28': 6128, '31': 6129,\n  '32': 6130, '33': 6131, '34': 6132, '35': 6133, '37': 6134,\n  '38': 6135, '41': 6136, '42': 6137, '43': 6138, '44': 6139,\n  '45': 6140, '46': 6141, '47': 6142, '48': 6143, '49': 6144,\n  '51': 6145, '53': 6146, '54': 6147, '55': 6148, '61': 6149,\n  '62': 6150, '63': 6151, '64': 6152, '65': 6153, '66': 6154,\n  '67': 6155, '68': 6156, '69': 6157, '71': 6158, '73': 6159,\n  '74': 6160, '75': 6161, '77': 6162, '79': 6163, '81': 6164,\n  '82': 6165, '83': 6166, '84': 6167, '85': 6168, '86': 6169,\n  '87': 6170, '88': 6171, '89': 6172, '91': 6173, '92': 6174,\n  '93': 6175, '94': 6176, '95': 6177, '96': 6178, '97': 6179,\n  '98': 6180, '99': 6181\n};\n\n// 📌 Mapa de fontes UTM normalizadas para stage_id\nconst stageMap = {\n  'email': 1409,\n  'wpp_grupos': 1409,\n  'api': 1409,\n  'manychat': 1414,\n  'comercial': 1420,\n  'suporte': 1420,\n  'fran': 1420,\n  'dani': 1420,\n  'trafego': 1411,\n  'fb': 1411,\n  'ig': 1411,\n  'story': 1411,\n  'bio_insta': 1411\n};\n\n// 👉 Função para remover acentos e normalizar string\nfunction normalizeUTM(source) {\n  return String(source || '')\n    .toLowerCase()\n    .normalize('NFD')               // transforma acentos em caracteres compostos\n    .replace(/[\\u0300-\\u036f]/g, '')// remove acentos\n    .replace(/\\s+/g, '')            // remove espaços\n    .replace(/[^a-z0-9_]/g, '');    // remove símbolos\n}\n\n// ✅ Extrai e normaliza UTM\nconst utmSource = normalizeUTM(data.body.utm_source);\nconst stage_id = stageMap[utmSource] || 1409;\n\n// ✅ Trata telefone\nif (/^\\d{10,11}$/.test(cleaned)) {\n  cleaned = '55' + cleaned;\n}\nif (cleaned.startsWith('5555')) {\n  cleaned = '55' + cleaned.slice(4);\n}\nif (/^55\\d{10,11}$/.test(cleaned)) {\n  ddd = cleaned.slice(2, 4);\n  ddd_id = dddMap[ddd] || null;\n} else {\n  if (!/^\\d{8,15}$/.test(cleaned)) {\n    cleaned = '';\n  }\n}\n\n// ✅ Retorno final\nreturn [{\n  json: {\n    telefoneOriginal: rawPhone,\n    telefoneFormatado: cleaned,\n    ddd: ddd,\n    ddd_id: ddd_id,\n    stage_id: stage_id\n  }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          256,
+          0
+        ],
+        "id": "0240edd0-8381-4c11-8143-47717a6ad59d",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+                "name": "Data",
+                "value": "={{ \n  new Date().toLocaleString('pt-BR', { \n    timeZone: 'America/Sao_Paulo',\n    day: '2-digit',\n    month: '2-digit',\n    year: 'numeric',\n    hour: '2-digit',\n    minute: '2-digit'\n  }).replace(',', '')\n}}",
+                "type": "string"
+              },
+              {
+                "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+                "name": "Nome",
+                "value": "={{ $('Webhook').item.json.body.Nome }}",
+                "type": "string"
+              },
+              {
+                "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+                "name": "Email",
+                "value": "={{ $('Webhook').item.json.body.Email }}",
+                "type": "string"
+              },
+              {
+                "id": "31cdadf9-fa7c-4f7c-b988-92d0009182c6",
+                "name": "DDD",
+                "value": "={{ $json.ddd }}",
+                "type": "string"
+              },
+              {
+                "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+                "name": "Telefone",
+                "value": "={{ $json.telefoneFormatado }}",
+                "type": "string"
+              },
+              {
+                "id": "02fb411b-69b9-4a00-9268-e9ca64b985cb",
+                "name": "utm source",
+                "value": "={{ $('Webhook').item.json.body.utm_source }}",
+                "type": "string"
+              },
+              {
+                "id": "65a364ed-cac6-4850-b096-f40610fe9a7e",
+                "name": "utm medium",
+                "value": "={{ $('Webhook').item.json.body.utm_medium }}",
+                "type": "string"
+              },
+              {
+                "id": "e535ab60-6b07-41df-9b9b-eb02e027bcd4",
+                "name": "utm campaign",
+                "value": "={{ $('Webhook').item.json.body.utm_campaign }}",
+                "type": "string"
+              },
+              {
+                "id": "5a1035f6-47b6-4d9a-95cf-22ceef5d01e2",
+                "name": "utm content",
+                "value": "={{ $('Webhook').item.json.body.utm_content }}",
+                "type": "string"
+              },
+              {
+                "id": "8b38b887-3a60-4485-8806-282499538b3a",
+                "name": "utm term",
+                "value": "={{ $('Webhook').item.json.body.utm_term }}",
+                "type": "string"
+              },
+              {
+                "id": "0d71ff73-651d-4ed3-83fb-ddbd85c2ec6c",
+                "name": "ddd id",
+                "value": "={{ $json.ddd_id }}",
+                "type": "string"
+              },
+              {
+                "id": "780627ae-ee44-4c52-83b9-d3dddd835185",
+                "name": "Stage ID",
+                "value": "={{ $json.stage_id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          512,
+          0
+        ],
+        "id": "cdbe72d9-1f2f-42dd-a474-293bb471a005",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1536,
+          0
+        ],
+        "id": "7a2c0669-fdff-456c-8605-d53c6ac0a409",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "email": "={{ $json.Email }}",
+          "updateIfExists": true,
+          "additionalFields": {
+            "fieldValues": {
+              "property": [
+                {
+                  "field": "4",
+                  "value": "={{ $json.DDD }}"
+                },
+                {
+                  "field": "8",
+                  "value": "={{ $json['utm source'] }}"
+                },
+                {
+                  "field": "9",
+                  "value": "={{ $json['utm medium'] }}"
+                },
+                {
+                  "field": "10",
+                  "value": "={{ $json['utm campaign'] }}"
+                },
+                {
+                  "field": "11",
+                  "value": "={{ $json['utm content'] }}"
+                },
+                {
+                  "field": "12",
+                  "value": "={{ $json['utm term'] }}"
+                }
+              ]
+            },
+            "firstName": "={{ $json.Nome }}",
+            "phone": "={{ $json.Telefone }}"
+          }
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          784,
+          -96
+        ],
+        "id": "c74af872-cb16-4285-a77c-3aa370ed8394",
+        "name": "ActiveCampaign",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "contactTag",
+          "tagId": "14",
+          "contactId": "={{ $json.id }}"
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          960,
+          -96
+        ],
+        "id": "f92e52ab-2a70-4ffe-ba5a-b9179685e78b",
+        "name": "ActiveCampaign1",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "contactList",
+          "listId": 4,
+          "contactId": "={{ $json.contact }}"
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          1184,
+          -96
+        ],
+        "id": "bea321b5-c554-436b-934a-ad59b9ac9331",
+        "name": "ActiveCampaign2",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit?gid=1340147515#gid=1340147515",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Leads",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bOrk004cSgMj0ms0pb0WsgiXrSy-pZQQQHJCJAjHcls/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data e Hora": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "DDD": "={{ $json.DDD }}",
+              "Telefone": "={{ $json.Telefone }}",
+              "utm soource": "={{ $json['utm source'] }}",
+              "utm campaign": "={{ $json['utm campaign'] }}",
+              "utm medium": "={{ $json['utm medium'] }}",
+              "utm content": "={{ $json['utm content'] }}",
+              "utm term": "={{ $json['utm term'] }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Data e Hora",
+                "displayName": "Data e Hora",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "DDD",
+                "displayName": "DDD",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Telefone",
+                "displayName": "Telefone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "utm soource",
+                "displayName": "utm soource",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm campaign",
+                "displayName": "utm campaign",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm medium",
+                "displayName": "utm medium",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm content",
+                "displayName": "utm content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm term",
+                "displayName": "utm term",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          928,
+          -336
+        ],
+        "id": "741c1e6e-91cc-4c25-b9f7-5ebf2963d0e7",
+        "name": "Append or update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "lançamento-qi-mental-leigos",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          16,
+          0
+        ],
+        "id": "ac3269c2-61b3-4f1c-817c-f12ca2f1c5f0",
+        "name": "Webhook",
+        "webhookId": "72e48efc-d202-408b-909b-43e642f4eaae"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pipedrive.com/v1/persons?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"name\": \"{{ $json.Nome }}\",\n  \"email\": \"{{ $json.Email }}\",\n  \"phone\": \"{{ $json.Telefone }}\",\n\n  \"f78cd083b84a2074eac1527b995d1cd18f05d274\": {{ $json['ddd id'] }},\n\n  \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n  \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n  \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n  \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n  \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\"\n}\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          784,
+          80
+        ],
+        "id": "5cd7e138-b0df-4b67-8094-61c29d5f4ac3",
+        "name": "HTTP Pipedrive Person"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pipedrive.com/v1/deals?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"title\": \"QI Mental para Leigos - {{ $json.data.name }}\",\n  \"pipeline_id\": 212,\n  \"stage_id\": {{ $('Edit Fields').item.json['Stage ID'] }},\n  \"person_id\": {{ $json.data.id }}\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          960,
+          80
+        ],
+        "id": "7045e9c3-a2c2-4d7f-821f-d1aeb7e69c4f",
+        "name": "HTTP Pipedrive Deal"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://sendflow.pro/a/YdP0VhwwTEzAlyHvdOVo",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"apiKey\": \"f3f043f0-a70d-4ad4-aac6-fd295108f837\",\n  \"phoneNumber\": \"{{ $('Edit Fields').item.json.telefone }}\",\n  \"name\": \"{{ $('Edit Fields').item.json.nome }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          768,
+          256
+        ],
+        "id": "7cab7231-4830-4893-8d1b-21bae78e5dcd",
+        "name": "Onboarding liberdade"
+      }
+    ],
+    "connections": {
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Append or update row in sheet",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTTP Pipedrive Person",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Onboarding liberdade",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign1": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign2": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Append or update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Person": {
+        "main": [
+          [
+            {
+              "node": "HTTP Pipedrive Deal",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Pipedrive Deal": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Onboarding liberdade": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
