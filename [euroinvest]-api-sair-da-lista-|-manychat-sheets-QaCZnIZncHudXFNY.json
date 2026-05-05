@@ -1,0 +1,550 @@
+{
+  "updatedAt": "2026-01-30T12:50:51.656Z",
+  "createdAt": "2025-11-13T17:40:42.592Z",
+  "id": "QaCZnIZncHudXFNY",
+  "name": "[Euroinvest] Api Sair da Lista | Manychat Sheets",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "euro-api-sair",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "26c72e3a-ad50-4786-bbe8-e9aeb6b9540d",
+      "name": "Webhook",
+      "webhookId": "3952bfe1-d86c-4b44-b60c-6d3a86a8b643"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "486cd2a7-333a-47e0-9d21-ff5ce8a8b523",
+              "name": "Nome",
+              "value": "={{ $('Webhook').item.json.body.contact.name }}",
+              "type": "string"
+            },
+            {
+              "id": "18b5c48e-5c62-4ff9-81df-43abff145b79",
+              "name": "Email",
+              "value": "={{ $('Webhook').item.json.body.contact.email }}",
+              "type": "string"
+            },
+            {
+              "id": "80582d1c-9fdb-4956-947a-be302188968b",
+              "name": "Telefone",
+              "value": "={{ $json.telefone }}",
+              "type": "string"
+            },
+            {
+              "id": "eae0aa45-c7d0-414c-91d9-8330ca3cc0f6",
+              "name": "Instagram",
+              "value": "={{ $('Webhook').item.json.body.contact.instaName }}",
+              "type": "string"
+            },
+            {
+              "id": "51873ce0-32c0-4075-a2b3-bd673ac9416d",
+              "name": "Data",
+              "value": "={{   new Date().toLocaleString('pt-BR', {     timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit',     hour12: false   }).replace(',', '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ebc0d297-cb47-4ca1-8bd8-dcbfa7535398",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZxJ-R_OGXm-b5UPV2sdfVTa7P81On-w_wqVBb2wEifg",
+          "mode": "list",
+          "cachedResultName": "[Euro] Sair da Lista",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZxJ-R_OGXm-b5UPV2sdfVTa7P81On-w_wqVBb2wEifg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZxJ-R_OGXm-b5UPV2sdfVTa7P81On-w_wqVBb2wEifg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Telefone": "={{ $json.Telefone }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Instagram": "={{ $json.Instagram }}"
+          },
+          "matchingColumns": [
+            "Telefone"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "31dcdbd5-673b-48a9-8ae5-29f427775fed",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "215b6dc9-11b0-45c2-ab29-4daaa0f20411",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Captura o número do JSON recebido\nconst telefoneOriginal = $input.first().json.body.contact.phoneNumber || '';\n\n// Remove caracteres especiais, espaços e letras\nconst telefoneLimpo = telefoneOriginal.toString().replace(/[^0-9]/g, '');\n\nlet telefoneFinal = '';\n\nif (telefoneLimpo.startsWith('55')) {\n\n  // Remove o DDI\n  const numeroSem55 = telefoneLimpo.slice(2);\n\n  // Caso brasileiro com 10 dígitos (celular sem o 9)\n  if (numeroSem55.length === 10) {\n    const ddd = numeroSem55.slice(0, 2);\n    const numero = numeroSem55.slice(2);\n    telefoneFinal = '55' + ddd + '9' + numero;\n\n  // Caso já esteja correto (11 dígitos)\n  } else if (numeroSem55.length === 11) {\n    telefoneFinal = '55' + numeroSem55;\n\n  } else {\n    telefoneFinal = telefoneLimpo;\n  }\n\n} else if (telefoneLimpo.length === 10) {\n  // Sem DDI e sem o 9\n  const ddd = telefoneLimpo.slice(0, 2);\n  const numero = telefoneLimpo.slice(2);\n  telefoneFinal = '55' + ddd + '9' + numero;\n\n} else if (telefoneLimpo.length === 11) {\n  // Sem DDI, mas já correto\n  telefoneFinal = '55' + telefoneLimpo;\n\n} else {\n  // Estrangeiro ou formato inesperado\n  telefoneFinal = telefoneLimpo;\n}\n\n// === Retorno ===\nreturn [\n  {\n    json: {\n      telefone: telefoneFinal\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        0
+      ],
+      "id": "38e44c92-042d-4930-8e9b-2a505e8ec80d",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "axios/1.13.2",
+            "content-length": "352",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "34.34.231.145",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "34.34.231.145"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "contact": {
+              "id": "019be644-d88e-75fb-bdbb-9cb0aafb8ee1",
+              "name": "Isabella",
+              "email": "",
+              "phoneNumber": "553184617540",
+              "tags": "teste, api-remover",
+              "fields": {},
+              "lastMessage": "Saber mais",
+              "lastMessageData": {
+                "message": "Saber mais",
+                "messageType": "message",
+                "id": "uhNHa2fOBOpKkWz2GhzZ"
+              },
+              "instaName": "",
+              "profilePicUrl": ""
+            },
+            "event_date": 1769777197,
+            "triggerData": {}
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/euro-api-sair",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "3156e390-4a5a-4c2e-8d55-8c09aa926024",
+  "activeVersionId": "3156e390-4a5a-4c2e-8d55-8c09aa926024",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-11-13T17:40:42.592Z",
+      "createdAt": "2025-11-13T17:40:42.592Z",
+      "role": "workflow:owner",
+      "workflowId": "QaCZnIZncHudXFNY",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-30T12:52:33.668Z",
+    "createdAt": "2026-01-30T12:50:51.657Z",
+    "versionId": "3156e390-4a5a-4c2e-8d55-8c09aa926024",
+    "workflowId": "QaCZnIZncHudXFNY",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "euro-api-sair",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -160,
+          0
+        ],
+        "id": "26c72e3a-ad50-4786-bbe8-e9aeb6b9540d",
+        "name": "Webhook",
+        "webhookId": "3952bfe1-d86c-4b44-b60c-6d3a86a8b643"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "486cd2a7-333a-47e0-9d21-ff5ce8a8b523",
+                "name": "Nome",
+                "value": "={{ $('Webhook').item.json.body.contact.name }}",
+                "type": "string"
+              },
+              {
+                "id": "18b5c48e-5c62-4ff9-81df-43abff145b79",
+                "name": "Email",
+                "value": "={{ $('Webhook').item.json.body.contact.email }}",
+                "type": "string"
+              },
+              {
+                "id": "80582d1c-9fdb-4956-947a-be302188968b",
+                "name": "Telefone",
+                "value": "={{ $json.telefone }}",
+                "type": "string"
+              },
+              {
+                "id": "eae0aa45-c7d0-414c-91d9-8330ca3cc0f6",
+                "name": "Instagram",
+                "value": "={{ $('Webhook').item.json.body.contact.instaName }}",
+                "type": "string"
+              },
+              {
+                "id": "51873ce0-32c0-4075-a2b3-bd673ac9416d",
+                "name": "Data",
+                "value": "={{   new Date().toLocaleString('pt-BR', {     timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit',     hour12: false   }).replace(',', '') }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          208,
+          0
+        ],
+        "id": "ebc0d297-cb47-4ca1-8bd8-dcbfa7535398",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1ZxJ-R_OGXm-b5UPV2sdfVTa7P81On-w_wqVBb2wEifg",
+            "mode": "list",
+            "cachedResultName": "[Euro] Sair da Lista",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZxJ-R_OGXm-b5UPV2sdfVTa7P81On-w_wqVBb2wEifg/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZxJ-R_OGXm-b5UPV2sdfVTa7P81On-w_wqVBb2wEifg/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Telefone": "={{ $json.Telefone }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Instagram": "={{ $json.Instagram }}"
+            },
+            "matchingColumns": [
+              "Telefone"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Telefone",
+                "displayName": "Telefone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Instagram",
+                "displayName": "Instagram",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          416,
+          0
+        ],
+        "id": "31dcdbd5-673b-48a9-8ae5-29f427775fed",
+        "name": "Append or update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          624,
+          0
+        ],
+        "id": "215b6dc9-11b0-45c2-ab29-4daaa0f20411",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Captura o número do JSON recebido\nconst telefoneOriginal = $input.first().json.body.contact.phoneNumber || '';\n\n// Remove caracteres especiais, espaços e letras\nconst telefoneLimpo = telefoneOriginal.toString().replace(/[^0-9]/g, '');\n\nlet telefoneFinal = '';\n\nif (telefoneLimpo.startsWith('55')) {\n\n  // Remove o DDI\n  const numeroSem55 = telefoneLimpo.slice(2);\n\n  // Caso brasileiro com 10 dígitos (celular sem o 9)\n  if (numeroSem55.length === 10) {\n    const ddd = numeroSem55.slice(0, 2);\n    const numero = numeroSem55.slice(2);\n    telefoneFinal = '55' + ddd + '9' + numero;\n\n  // Caso já esteja correto (11 dígitos)\n  } else if (numeroSem55.length === 11) {\n    telefoneFinal = '55' + numeroSem55;\n\n  } else {\n    telefoneFinal = telefoneLimpo;\n  }\n\n} else if (telefoneLimpo.length === 10) {\n  // Sem DDI e sem o 9\n  const ddd = telefoneLimpo.slice(0, 2);\n  const numero = telefoneLimpo.slice(2);\n  telefoneFinal = '55' + ddd + '9' + numero;\n\n} else if (telefoneLimpo.length === 11) {\n  // Sem DDI, mas já correto\n  telefoneFinal = '55' + telefoneLimpo;\n\n} else {\n  // Estrangeiro ou formato inesperado\n  telefoneFinal = telefoneLimpo;\n}\n\n// === Retorno ===\nreturn [\n  {\n    json: {\n      telefone: telefoneFinal\n    }\n  }\n];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          48,
+          0
+        ],
+        "id": "38e44c92-042d-4930-8e9b-2a505e8ec80d",
+        "name": "Code in JavaScript"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Append or update row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Append or update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Letícia Piazzetta",
+    "name": "Version 3156e390",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}
