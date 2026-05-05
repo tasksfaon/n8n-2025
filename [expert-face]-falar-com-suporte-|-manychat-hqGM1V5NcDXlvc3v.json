@@ -1,0 +1,1184 @@
+{
+  "updatedAt": "2025-11-03T18:53:24.843Z",
+  "createdAt": "2025-11-03T17:45:43.398Z",
+  "id": "hqGM1V5NcDXlvc3v",
+  "name": "[Expert Face] Falar com suporte | Manychat",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "expert-suporte",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        16
+      ],
+      "id": "c3b03c0d-f5cb-44c9-9d4a-001a611922c0",
+      "name": "Webhook",
+      "webhookId": "64b6c082-b4bd-412f-aad7-56a36bccc981"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "de624567-1237-4bab-9161-e0a525eff5ea",
+              "name": "Nome",
+              "value": "={{ $json.body.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "faeaffbe-f932-4bb0-8915-cb4ddb68e0d8",
+              "name": "Data",
+              "value": "={{\n  $json.body.hora\n    ? new Date($json.body.hora).toLocaleString('pt-BR', {\n        timeZone: 'America/Sao_Paulo',\n        day: '2-digit',\n        month: '2-digit',\n        year: 'numeric',\n        hour: '2-digit',\n        minute: '2-digit',\n        hour12: false\n      }).replace(',', '')\n    : '—'\n}}",
+              "type": "string"
+            },
+            {
+              "id": "35e98a1e-5750-4479-aaf5-547b417573fb",
+              "name": "Instagram",
+              "value": "=@{{ $json.body.instagram }}",
+              "type": "string"
+            },
+            {
+              "id": "82460945-3b2a-4ca4-94cc-c42353eab99e",
+              "name": "Comercial",
+              "value": "5551991754472",
+              "type": "string"
+            },
+            {
+              "id": "8d99cf69-bc05-46e2-b14b-09135d1b7516",
+              "name": "token",
+              "value": "125860587270359:cf32a6e96eb7a57bb4519f020bb5ef0b",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        16
+      ],
+      "id": "6a683967-17d1-4ab6-810d-8afef5cfa221",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/createSubscriber",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "authorization",
+              "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "has_opt_in_sms",
+              "value": "true"
+            },
+            {
+              "name": "has_opt_in_email",
+              "value": "true"
+            },
+            {
+              "name": "whatsapp_phone",
+              "value": "={{ $('Edit Fields').item.json.Comercial }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ $('Edit Fields').item.json.Comercial }}"
+            },
+            {
+              "name": "consent_phrase",
+              "value": "Olá, aqui é da Expert Face. Posso ter seu contato?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "efaae53a-ca00-454a-87cd-e61f44fa9608",
+      "name": "cria_contato_manychat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        880,
+        -16
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/subscriber/findByCustomField",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "field_id",
+              "value": "=13845741"
+            },
+            {
+              "name": "field_value",
+              "value": "={{ $json.Comercial }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.token }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "1143788f-7875-4ffd-823d-5a491491e6b2",
+      "name": "procura_id_manychat_pelo_telefone",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        416,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.data }}",
+              "operation": "isEmpty"
+            }
+          ]
+        }
+      },
+      "id": "e16dbdf6-7366-4454-97a2-f1f1739a1de5",
+      "name": "nao_existe_manychat1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        624,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/updateSubscriber",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "authorization",
+              "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "has_opt_in_email",
+              "value": "true"
+            },
+            {
+              "name": "whatsapp_phone",
+              "value": "={{ $('Edit Fields').item.json.Comercial }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ $('Edit Fields').item.json.Comercial }}"
+            },
+            {
+              "name": "consent_phrase",
+              "value": "Olá, aqui é da Expert Face. Posso ter seu contato?"
+            },
+            {
+              "name": "subscriber_id",
+              "value": "={{ $json.data[0].id }}"
+            },
+            {
+              "name": "has_opt_in_sms",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "edb831bb-a626-4b4b-a1d0-26852a8619a4",
+      "name": "atualiza_contato_manychat1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        928,
+        304
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomField",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "authorization",
+              "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "subscriber_id",
+              "value": "={{ $node[\"cria_contato_manychat\"].json[\"data\"][\"id\"] }}"
+            },
+            {
+              "name": "field_id",
+              "value": "=13845741"
+            },
+            {
+              "name": "field_value",
+              "value": "={{ $('Edit Fields').item.json.Comercial }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "213ed332-2ff6-44b0-8fb4-325ee4a34291",
+      "name": "define_campo_telefone",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1408,
+        -16
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "id": "1c6b9474-d3e1-44cf-859a-692075c1d0e4",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "subscriber_id",
+              "value": "={{ $('cria_contato_manychat').item.json.data.id }}"
+            },
+            {
+              "name": "flow_ns",
+              "value": "content20251103181902_805431"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2aa6ab16-09e1-48c4-ab3d-aa0b29c054b2",
+      "name": "envia_automação_manychat-exec",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1216,
+        -16
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "subscriber_id",
+              "value": "={{ $('atualiza_contato_manychat1').item.json.data.id }}"
+            },
+            {
+              "name": "flow_ns",
+              "value": "content20251103181902_805431"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "54ff9201-2eec-4f34-bc23-c79a0ec918eb",
+      "name": "envia_automação_manychat-exec1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1360,
+        304
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "authorization",
+              "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": {{ $json.data.id }},\n  \"fields\": [\n    {\n      \"field_id\": 13799586,\n      \"field_name\": \"{Variável 1}\",\n      \"field_value\": \"A {{ $('Edit Fields').item.json.Nome }} - {{ $('Edit Fields').item.json.Instagram }} tem uma dúvida no instagram\"\n    },\n {\n      \"field_id\": 13799587,\n      \"field_name\": \"{Variável 2}\",\n      \"field_value\": \"Está esperando o nosso retorno.\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "254ee036-9073-454d-ad15-fd0423cb95b2",
+      "name": "atualiza_campos_personalizados",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1168,
+        304
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "authorization",
+              "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": {{ $json.data.id }},\n  \"fields\": [\n    {\n      \"field_id\": 13799586,\n      \"field_name\": \"{Variável 1}\",\n      \"field_value\": \"A {{ $('Edit Fields').item.json.Nome }} - {{ $('Edit Fields').item.json.Instagram }} tem uma dúvida no instagram.\"\n    },\n {\n      \"field_id\": 13799587,\n      \"field_name\": \"{Variável 2}\",\n      \"field_value\": \"Está esperando o nosso retorno\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "6e407f6f-7f62-44c0-bc0c-40f1afaf0b2e",
+      "name": "atualiza_campos_personalizados1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1056,
+        -16
+      ],
+      "continueOnFail": true
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cria_contato_manychat": {
+      "main": [
+        [
+          {
+            "node": "atualiza_campos_personalizados1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "procura_id_manychat_pelo_telefone": {
+      "main": [
+        [
+          {
+            "node": "nao_existe_manychat1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nao_existe_manychat1": {
+      "main": [
+        [
+          {
+            "node": "cria_contato_manychat",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "atualiza_contato_manychat1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "atualiza_contato_manychat1": {
+      "main": [
+        [
+          {
+            "node": "atualiza_campos_personalizados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "define_campo_telefone": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "envia_automação_manychat-exec": {
+      "main": [
+        [
+          {
+            "node": "define_campo_telefone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "envia_automação_manychat-exec1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "procura_id_manychat_pelo_telefone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "atualiza_campos_personalizados": {
+      "main": [
+        [
+          {
+            "node": "envia_automação_manychat-exec1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "atualiza_campos_personalizados1": {
+      "main": [
+        [
+          {
+            "node": "envia_automação_manychat-exec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "ManyChat",
+            "content-length": "120",
+            "authorization": "Bearer 125860587270359:cf32a6e96eb7a57bb4519f020bb5ef0b",
+            "content-type": "application/json",
+            "x-forwarded-for": "54.93.225.205",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "54.93.225.205",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "nome": "Teste Teste",
+            "email": "{{email}}",
+            "hora": "2025-10-24 16:44:00.096234",
+            "instagram": "teste"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/expert-suporte",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "86916534-c29c-4d98-a318-6e809df7e119",
+  "activeVersionId": "86916534-c29c-4d98-a318-6e809df7e119",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-11-03T17:45:43.398Z",
+      "createdAt": "2025-11-03T17:45:43.398Z",
+      "role": "workflow:owner",
+      "workflowId": "hqGM1V5NcDXlvc3v",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-25T16:33:10.313Z",
+    "createdAt": "2025-11-25T16:33:10.313Z",
+    "versionId": "86916534-c29c-4d98-a318-6e809df7e119",
+    "workflowId": "hqGM1V5NcDXlvc3v",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "expert-suporte",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          16
+        ],
+        "id": "c3b03c0d-f5cb-44c9-9d4a-001a611922c0",
+        "name": "Webhook",
+        "webhookId": "64b6c082-b4bd-412f-aad7-56a36bccc981"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "de624567-1237-4bab-9161-e0a525eff5ea",
+                "name": "Nome",
+                "value": "={{ $json.body.nome }}",
+                "type": "string"
+              },
+              {
+                "id": "faeaffbe-f932-4bb0-8915-cb4ddb68e0d8",
+                "name": "Data",
+                "value": "={{\n  $json.body.hora\n    ? new Date($json.body.hora).toLocaleString('pt-BR', {\n        timeZone: 'America/Sao_Paulo',\n        day: '2-digit',\n        month: '2-digit',\n        year: 'numeric',\n        hour: '2-digit',\n        minute: '2-digit',\n        hour12: false\n      }).replace(',', '')\n    : '—'\n}}",
+                "type": "string"
+              },
+              {
+                "id": "35e98a1e-5750-4479-aaf5-547b417573fb",
+                "name": "Instagram",
+                "value": "=@{{ $json.body.instagram }}",
+                "type": "string"
+              },
+              {
+                "id": "82460945-3b2a-4ca4-94cc-c42353eab99e",
+                "name": "Comercial",
+                "value": "5551991754472",
+                "type": "string"
+              },
+              {
+                "id": "8d99cf69-bc05-46e2-b14b-09135d1b7516",
+                "name": "token",
+                "value": "125860587270359:cf32a6e96eb7a57bb4519f020bb5ef0b",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          208,
+          16
+        ],
+        "id": "6a683967-17d1-4ab6-810d-8afef5cfa221",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.manychat.com/fb/subscriber/createSubscriber",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "authorization",
+                "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "has_opt_in_sms",
+                "value": "true"
+              },
+              {
+                "name": "has_opt_in_email",
+                "value": "true"
+              },
+              {
+                "name": "whatsapp_phone",
+                "value": "={{ $('Edit Fields').item.json.Comercial }}"
+              },
+              {
+                "name": "phone",
+                "value": "={{ $('Edit Fields').item.json.Comercial }}"
+              },
+              {
+                "name": "consent_phrase",
+                "value": "Olá, aqui é da Expert Face. Posso ter seu contato?"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "efaae53a-ca00-454a-87cd-e61f44fa9608",
+        "name": "cria_contato_manychat",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          880,
+          -16
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "url": "https://api.manychat.com/fb/subscriber/findByCustomField",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "field_id",
+                "value": "=13845741"
+              },
+              {
+                "name": "field_value",
+                "value": "={{ $json.Comercial }}"
+              }
+            ]
+          },
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "accept",
+                "value": "application/json"
+              },
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $json.token }}"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "id": "1143788f-7875-4ffd-823d-5a491491e6b2",
+        "name": "procura_id_manychat_pelo_telefone",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          416,
+          16
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{ $json.data }}",
+                "operation": "isEmpty"
+              }
+            ]
+          }
+        },
+        "id": "e16dbdf6-7366-4454-97a2-f1f1739a1de5",
+        "name": "nao_existe_manychat1",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          624,
+          16
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.manychat.com/fb/subscriber/updateSubscriber",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "authorization",
+                "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "has_opt_in_email",
+                "value": "true"
+              },
+              {
+                "name": "whatsapp_phone",
+                "value": "={{ $('Edit Fields').item.json.Comercial }}"
+              },
+              {
+                "name": "phone",
+                "value": "={{ $('Edit Fields').item.json.Comercial }}"
+              },
+              {
+                "name": "consent_phrase",
+                "value": "Olá, aqui é da Expert Face. Posso ter seu contato?"
+              },
+              {
+                "name": "subscriber_id",
+                "value": "={{ $json.data[0].id }}"
+              },
+              {
+                "name": "has_opt_in_sms",
+                "value": "true"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "edb831bb-a626-4b4b-a1d0-26852a8619a4",
+        "name": "atualiza_contato_manychat1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          928,
+          304
+        ],
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.manychat.com/fb/subscriber/setCustomField",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "authorization",
+                "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "subscriber_id",
+                "value": "={{ $node[\"cria_contato_manychat\"].json[\"data\"][\"id\"] }}"
+              },
+              {
+                "name": "field_id",
+                "value": "=13845741"
+              },
+              {
+                "name": "field_value",
+                "value": "={{ $('Edit Fields').item.json.Comercial }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "213ed332-2ff6-44b0-8fb4-325ee4a34291",
+        "name": "define_campo_telefone",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1408,
+          -16
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {},
+        "id": "1c6b9474-d3e1-44cf-859a-692075c1d0e4",
+        "name": "No Operation, do nothing",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1712,
+          -16
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.manychat.com/fb/sending/sendFlow",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "accept",
+                "value": "application/json"
+              },
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "subscriber_id",
+                "value": "={{ $('cria_contato_manychat').item.json.data.id }}"
+              },
+              {
+                "name": "flow_ns",
+                "value": "content20251103181902_805431"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "2aa6ab16-09e1-48c4-ab3d-aa0b29c054b2",
+        "name": "envia_automação_manychat-exec",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1216,
+          -16
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.manychat.com/fb/sending/sendFlow",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "accept",
+                "value": "application/json"
+              },
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "subscriber_id",
+                "value": "={{ $('atualiza_contato_manychat1').item.json.data.id }}"
+              },
+              {
+                "name": "flow_ns",
+                "value": "content20251103181902_805431"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "54ff9201-2eec-4f34-bc23-c79a0ec918eb",
+        "name": "envia_automação_manychat-exec1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1360,
+          304
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "authorization",
+                "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"subscriber_id\": {{ $json.data.id }},\n  \"fields\": [\n    {\n      \"field_id\": 13799586,\n      \"field_name\": \"{Variável 1}\",\n      \"field_value\": \"A {{ $('Edit Fields').item.json.Nome }} - {{ $('Edit Fields').item.json.Instagram }} tem uma dúvida no instagram\"\n    },\n {\n      \"field_id\": 13799587,\n      \"field_name\": \"{Variável 2}\",\n      \"field_value\": \"Está esperando o nosso retorno.\"\n    }\n  ]\n}",
+          "options": {}
+        },
+        "id": "254ee036-9073-454d-ad15-fd0423cb95b2",
+        "name": "atualiza_campos_personalizados",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1168,
+          304
+        ],
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "authorization",
+                "value": "=Bearer {{ $('Edit Fields').item.json.token }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"subscriber_id\": {{ $json.data.id }},\n  \"fields\": [\n    {\n      \"field_id\": 13799586,\n      \"field_name\": \"{Variável 1}\",\n      \"field_value\": \"A {{ $('Edit Fields').item.json.Nome }} - {{ $('Edit Fields').item.json.Instagram }} tem uma dúvida no instagram.\"\n    },\n {\n      \"field_id\": 13799587,\n      \"field_name\": \"{Variável 2}\",\n      \"field_value\": \"Está esperando o nosso retorno\"\n    }\n  ]\n}",
+          "options": {}
+        },
+        "id": "6e407f6f-7f62-44c0-bc0c-40f1afaf0b2e",
+        "name": "atualiza_campos_personalizados1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1056,
+          -16
+        ],
+        "continueOnFail": true
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cria_contato_manychat": {
+        "main": [
+          [
+            {
+              "node": "atualiza_campos_personalizados1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "procura_id_manychat_pelo_telefone": {
+        "main": [
+          [
+            {
+              "node": "nao_existe_manychat1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "nao_existe_manychat1": {
+        "main": [
+          [
+            {
+              "node": "cria_contato_manychat",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "atualiza_contato_manychat1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualiza_contato_manychat1": {
+        "main": [
+          [
+            {
+              "node": "atualiza_campos_personalizados",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "define_campo_telefone": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "envia_automação_manychat-exec": {
+        "main": [
+          [
+            {
+              "node": "define_campo_telefone",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "envia_automação_manychat-exec1": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "procura_id_manychat_pelo_telefone",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualiza_campos_personalizados": {
+        "main": [
+          [
+            {
+              "node": "envia_automação_manychat-exec1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualiza_campos_personalizados1": {
+        "main": [
+          [
+            {
+              "node": "envia_automação_manychat-exec",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
