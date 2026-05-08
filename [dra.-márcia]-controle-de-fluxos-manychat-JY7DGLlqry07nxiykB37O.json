@@ -1,0 +1,343 @@
+{
+  "updatedAt": "2026-05-07T17:08:58.847Z",
+  "createdAt": "2026-05-07T16:57:57.931Z",
+  "id": "JY7DGLlqry07nxiykB37O",
+  "name": "[Dra. Márcia] Controle de fluxos manychat",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ca5734b7-cdda-4b69-83af-99f8eb599df6",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/page/getFlows",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 278334835679102:67cf656f4e74b99c87b53da6a2c6f587"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        144,
+        0
+      ],
+      "id": "6942cf0c-2ffc-47cd-a38e-3eff6a390250",
+      "name": "HTTP Pegar fluxos"
+    },
+    {
+      "parameters": {
+        "jsCode": "const pageId = 'SEU_PAGE_ID_AQUI'; // substitua pelo ID da sua página\n\nconst raw = $input.first().json;\n\n// Suporta tanto array quanto objeto direto\nconst body = Array.isArray(raw) ? raw[0] : raw;\nconst flows = body?.data?.flows ?? body?.flows ?? [];\n\nconst systemNs = new Set([\n  'system_wa_unsubscribe',\n  'system_ig_unsubscribe',\n  'system_ig_subscribe',\n  'system_unsubscribe',\n  'system_subscribe',\n  'wa_default',\n]);\n\nfunction parseNsDate(ns) {\n  // Extrai timestamp do ns: content20260504173034_666165\n  const match = ns.match(/content(\\d{4})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})/);\n  if (!match) return null;\n  const [, year, month, day, hour, min, sec] = match;\n  return `${day}/${month}/${year} ${hour}:${min}:${sec}`;\n}\n\nfunction buildLink(ns, pageId) {\n  if (ns.startsWith('system_') || ns === 'wa_default') return null;\n  return `https://manychat.com/fb/${pageId}/cms/files/${ns}`;\n}\n\nconst result = flows\n  .filter(f => !systemNs.has(f.ns)) // remove fluxos de sistema\n  .map(f => ({\n    ns: f.ns,\n    nome: f.name,\n    data_criacao: parseNsDate(f.ns) ?? 'Sistema/indefinido',\n    link: buildLink(f.ns, pageId) ?? 'N/A',\n  }));\n\nreturn result.map(item => ({ json: item }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        0
+      ],
+      "id": "6092d7e0-a966-4642-8a9f-03ffb2be3509",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a9e05110-4855-4ae7-899c-39263075e50a",
+              "name": "Nome",
+              "value": "={{ $json.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "9a5022bd-20de-425f-8933-6bb8e5bafe9c",
+              "name": "Data criação",
+              "value": "={{ $json.data_criacao }}",
+              "type": "string"
+            },
+            {
+              "id": "ccb24e90-c15a-423b-85eb-ac69838ad4ac",
+              "name": "Link",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "4ccc2527-e343-49f3-9ad2-821394f034ec",
+              "name": "Código",
+              "value": "={{ $json.ns }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        0
+      ],
+      "id": "2745c993-7949-473a-9686-57bcfea97ea9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1r6QOCfJLKn34_6wqC4S13Xy7Jsil0rJz9cWzerMAz6Y",
+          "mode": "list",
+          "cachedResultName": "Cópia de CONTROLE GERAL - CENTER AO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r6QOCfJLKn34_6wqC4S13Xy7Jsil0rJz9cWzerMAz6Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1867852288,
+          "mode": "list",
+          "cachedResultName": "Manychat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r6QOCfJLKn34_6wqC4S13Xy7Jsil0rJz9cWzerMAz6Y/edit#gid=1867852288"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "DATA INÍCIO VEICULAÇÃO": "={{ $json['Data criação'] }}",
+            "NOMENCLATURA": "={{ $json.Nome }}",
+            "Link fluxo": "={{ $json.Link }}",
+            "Código": "={{ $json['Código'] }}"
+          },
+          "matchingColumns": [
+            "NOMENCLATURA"
+          ],
+          "schema": [
+            {
+              "id": "DATA INÍCIO VEICULAÇÃO",
+              "displayName": "DATA INÍCIO VEICULAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DATA FIM VEICULAÇÃO",
+              "displayName": "DATA FIM VEICULAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PALAVRA(S) DE ATIVAÇÃO",
+              "displayName": "PALAVRA(S) DE ATIVAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "STATUS",
+              "displayName": "STATUS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "OBSERVAÇÃO",
+              "displayName": "OBSERVAÇÃO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NOMENCLATURA",
+              "displayName": "NOMENCLATURA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ASSUNTO",
+              "displayName": "ASSUNTO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Link botão redireciona para:",
+              "displayName": "Link botão redireciona para:",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Link fluxo",
+              "displayName": "Link fluxo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Código",
+              "displayName": "Código",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        768,
+        0
+      ],
+      "id": "a00e1777-54d6-4013-99db-2d72ca7fb7cf",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        976,
+        0
+      ],
+      "id": "9e777aea-5c9c-4b8f-bcec-c6f3c2eac656",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pegar fluxos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pegar fluxos": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "2177232c-07b6-4e18-b84d-c90ceae797e3",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-05-07T16:57:57.931Z",
+      "createdAt": "2026-05-07T16:57:57.931Z",
+      "role": "workflow:owner",
+      "workflowId": "JY7DGLlqry07nxiykB37O",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
