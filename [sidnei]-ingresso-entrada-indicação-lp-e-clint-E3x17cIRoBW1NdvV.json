@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-04-16T19:27:20.024Z",
+  "updatedAt": "2026-05-19T12:24:14.251Z",
   "createdAt": "2025-05-15T13:37:00.345Z",
   "id": "E3x17cIRoBW1NdvV",
   "name": "[sidnei] Ingresso Entrada Indicação lp e clint",
-  "active": true,
-  "isArchived": false,
+  "active": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -234,8 +234,8 @@
       }
     ]
   },
-  "versionId": "ff4ad497-7c1c-4709-9791-56e433f0ca9b",
-  "activeVersionId": "ff4ad497-7c1c-4709-9791-56e433f0ca9b",
+  "versionId": "0c3fd782-2a7f-4169-9a9f-882d63fff80d",
+  "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
     {
@@ -246,180 +246,6 @@
       "projectId": "lrLYIwetv42aAH7x"
     }
   ],
-  "activeVersion": {
-    "updatedAt": "2026-04-16T19:27:22.707Z",
-    "createdAt": "2026-04-16T19:27:20.026Z",
-    "versionId": "ff4ad497-7c1c-4709-9791-56e433f0ca9b",
-    "workflowId": "E3x17cIRoBW1NdvV",
-    "nodes": [
-      {
-        "parameters": {
-          "httpMethod": "POST",
-          "path": "sidnei-entrada-indicacao-cae",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.webhook",
-        "typeVersion": 2,
-        "position": [
-          0,
-          0
-        ],
-        "id": "35e88e92-ea4e-4489-b0c2-9bfcafd5614d",
-        "name": "Webhook",
-        "webhookId": "286a48ab-9293-4fc1-8ea2-0c69b37bdd44"
-      },
-      {
-        "parameters": {
-          "jsCode": "const body = $input.first().json.body;\n\n// Extrai nome e e-mail diretamente\nconst nome = body.input_text;\nconst email = body.email;\n\n// Formata telefone no padrão 55DDDTelefone\nlet telefone = body.phone || '';\ntelefone = telefone.replace(/\\D/g, ''); // Remove tudo que não for número\nif (telefone.startsWith('55')) {\n  telefone = telefone;\n} else if (telefone.length === 11) {\n  telefone = '55' + telefone;\n} else if (telefone.length === 13 && telefone.startsWith('550')) {\n  telefone = telefone.replace(/^550/, '55');\n}\n\nreturn [\n  {\n    json: {\n      nome: nome,\n      email: email,\n      telefone: telefone,\n    }\n  }\n];\n"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          224,
-          0
-        ],
-        "id": "34fa94d5-767b-45e1-ab89-a6edf01a62ab",
-        "name": "Code"
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "e3b7870b-c8e6-49c1-a90f-1da0270ebc6c",
-                "name": "Nome",
-                "value": "={{ $json.nome }}",
-                "type": "string"
-              },
-              {
-                "id": "130c62d4-4fcf-48b0-a2ae-4b82e7bfdf7c",
-                "name": "Email",
-                "value": "={{ $json.email }}",
-                "type": "string"
-              },
-              {
-                "id": "24dcba61-5c0c-4642-b4c4-3b9809f98f6c",
-                "name": "Telefone",
-                "value": "={{ $json.telefone }}",
-                "type": "string"
-              },
-              {
-                "id": "c1cf1165-8b1d-48e1-82d1-70f2f99172fe",
-                "name": "Vendedor",
-                "value": "jonathanandrepires@gmail.com",
-                "type": "string"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [
-          448,
-          0
-        ],
-        "id": "41da30d6-a7b4-4273-ab8a-d53eb286b184",
-        "name": "Edit Fields"
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/53c8d3eb-4fea-40c9-9b61-af73f64190e7",
-          "sendBody": true,
-          "bodyParameters": {
-            "parameters": [
-              {
-                "name": "Nome",
-                "value": "={{ $json.Nome }}"
-              },
-              {
-                "name": "Email",
-                "value": "={{ $json.Email }}"
-              },
-              {
-                "name": "Telefone",
-                "value": "={{ $json.Telefone }}"
-              },
-              {
-                "name": "Vendedor",
-                "value": "jonathanandrepires@gmail.com"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          672,
-          0
-        ],
-        "id": "7307c244-5be1-4263-80b5-48bddae6fd06",
-        "name": "HTTP Clint"
-      },
-      {
-        "parameters": {},
-        "type": "n8n-nodes-base.noOp",
-        "typeVersion": 1,
-        "position": [
-          880,
-          0
-        ],
-        "id": "6eeb37ed-2260-4aa0-b90e-922af08ed9d4",
-        "name": "No Operation, do nothing"
-      }
-    ],
-    "connections": {
-      "Webhook": {
-        "main": [
-          [
-            {
-              "node": "Code",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Code": {
-        "main": [
-          [
-            {
-              "node": "Edit Fields",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Edit Fields": {
-        "main": [
-          [
-            {
-              "node": "HTTP Clint",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "HTTP Clint": {
-        "main": [
-          [
-            {
-              "node": "No Operation, do nothing",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      }
-    },
-    "authors": "Letícia Piazzetta",
-    "name": "Version ff4ad497",
-    "description": "",
-    "autosaved": false
-  },
+  "activeVersion": null,
   "tags": []
 }
