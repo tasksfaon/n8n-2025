@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-04-16T19:25:58.987Z",
+  "updatedAt": "2026-05-19T12:24:07.059Z",
   "createdAt": "2025-10-03T20:42:25.455Z",
   "id": "Lk93sM1RC2cc1zER",
   "name": "[Sidnei] Captação Rota do empresário",
-  "active": true,
-  "isArchived": false,
+  "active": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -189,8 +189,8 @@
       }
     ]
   },
-  "versionId": "55d7d076-33cb-4ef0-902c-bfeaa8f98ac2",
-  "activeVersionId": "55d7d076-33cb-4ef0-902c-bfeaa8f98ac2",
+  "versionId": "45c9637e-6cac-4519-839b-ae807e49f102",
+  "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
     {
@@ -201,134 +201,6 @@
       "projectId": "lrLYIwetv42aAH7x"
     }
   ],
-  "activeVersion": {
-    "updatedAt": "2026-04-16T19:26:02.505Z",
-    "createdAt": "2026-04-16T19:25:58.989Z",
-    "versionId": "55d7d076-33cb-4ef0-902c-bfeaa8f98ac2",
-    "workflowId": "Lk93sM1RC2cc1zER",
-    "nodes": [
-      {
-        "parameters": {
-          "httpMethod": "POST",
-          "path": "rota-do-empresario",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.webhook",
-        "typeVersion": 2.1,
-        "position": [
-          0,
-          0
-        ],
-        "id": "c1c58f0f-1cbf-4d26-ae6f-ab7d481d540f",
-        "name": "Webhook",
-        "webhookId": "07dfc10b-1fc8-4867-b50f-6db4fb53fa14"
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "a1ddd7ec-e5ab-4d95-bb84-64d5904f064c",
-                "name": "Nome",
-                "value": "={{ $json.body[\"fields[name][value]\"] }}",
-                "type": "string"
-              },
-              {
-                "id": "25426e33-9365-46ff-82e3-1b8bd66c1d2d",
-                "name": "Telefone",
-                "value": "={{ $json.body[\"fields[message][value]\"] }}",
-                "type": "string"
-              },
-              {
-                "id": "fb0322a1-1909-4edd-9c4e-2cfbc382745b",
-                "name": "Email",
-                "value": "={{ $json.body[\"fields[email][value]\"] }}",
-                "type": "string"
-              },
-              {
-                "id": "bbf8a655-aa56-4662-a5f6-9dcaca851b83",
-                "name": "empresa",
-                "value": "={{ $json.body[\"fields[field_cf5ea88][value]\"] }}",
-                "type": "string"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [
-          208,
-          0
-        ],
-        "id": "5284caa4-52b6-4cb2-9386-669bafb9c2cb",
-        "name": "Edit Fields"
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/d0fe608a-c2a8-4e63-a353-284f58a6e1fa",
-          "sendBody": true,
-          "bodyParameters": {
-            "parameters": [
-              {
-                "name": "Nome",
-                "value": "={{ $json.Nome }}"
-              },
-              {
-                "name": "Email",
-                "value": "={{ $json.Email }}"
-              },
-              {
-                "name": "Telefone",
-                "value": "={{ $json.Telefone }}"
-              },
-              {
-                "name": "Empresa",
-                "value": "={{ $json.empresa }}"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          416,
-          0
-        ],
-        "id": "f14b374f-b5b0-431f-8abf-0a86b0b2b89b",
-        "name": "HTTP Request"
-      }
-    ],
-    "connections": {
-      "Webhook": {
-        "main": [
-          [
-            {
-              "node": "Edit Fields",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Edit Fields": {
-        "main": [
-          [
-            {
-              "node": "HTTP Request",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      }
-    },
-    "authors": "Letícia Piazzetta",
-    "name": "Version 55d7d076",
-    "description": "",
-    "autosaved": false
-  },
+  "activeVersion": null,
   "tags": []
 }
