@@ -1,0 +1,594 @@
+{
+  "updatedAt": "2026-05-22T17:44:45.589Z",
+  "createdAt": "2026-05-22T17:11:46.627Z",
+  "id": "b2VBwFVpeT9Metfd",
+  "name": "Importar Drive → Supabase (sem duplicatas)",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "id": "e8af7812-3612-4815-b480-fea5c4dfe40d",
+      "name": "Sticky Note cde1ee1f",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -120
+      ],
+      "parameters": {
+        "content": "## 📋 Importação via Google Drive → Supabase\n\n**Antes de executar:**\n1. Edite o nó **\"Configurar Credenciais\"** com sua URL e service_role key do Supabase\n2. Conecte sua conta Google Drive nos nós de download\n3. Certifique-se que as tabelas `cadastros` e `pedidos` existem no Supabase com `id_cadastro` e `id_pagamento` como PRIMARY KEY\n\n**Arquivos configurados:**\n- cadastros → ID: 1JVTcdDrU1AEowE5P5iyx92NUJUCk4PwBBR1VrTyWeU0\n- pix_cartao → ID: 1-jM9AJLZfYF3FYyizHASKLZwIpJEgL5Bf3RHZPW-pBg\n- boletos → ID: 1I0TXMXe1u_lqrCiDyqLqp867RaU4fnMqtnXdRgs6UA8",
+        "color": 3,
+        "width": 520,
+        "height": 360
+      }
+    },
+    {
+      "id": "911eac2f-9c7e-487a-bc0f-dbe794f9399c",
+      "name": "Iniciar Importação",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "id": "6ad65926-4adc-4c91-a57a-e9d1d38fb957",
+      "name": "Configurar Credenciais",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -220,
+        300
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "fields": {
+          "values": [
+            {
+              "name": "supabaseUrl",
+              "type": "stringValue",
+              "string": "https://SEU_PROJETO.supabase.co"
+            },
+            {
+              "name": "supabaseKey",
+              "type": "stringValue",
+              "string": "sua_service_role_key_aqui"
+            }
+          ]
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "5995eeb7-0113-47e9-9c3b-c05866f033c4",
+      "name": "Baixar Cadastros do Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        220,
+        100
+      ],
+      "parameters": {
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1JVTcdDrU1AEowE5P5iyx92NUJUCk4PwBBR1VrTyWeU0"
+        },
+        "options": {
+          "binaryPropertyName": "data",
+          "googleFileConversion": {
+            "conversion": {
+              "sheetsToFormat": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+          },
+          "fileName": "cadastros.xlsx"
+        }
+      }
+    },
+    {
+      "id": "3f488260-1eed-4d88-a3f7-e95c30fb5c7e",
+      "name": "Extrair Cadastros",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        100
+      ],
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "data",
+        "options": {
+          "headerRow": true
+        }
+      }
+    },
+    {
+      "id": "853ef17b-ee2d-4312-a6bc-bff1f8ab7011",
+      "name": "Cadastros Concluídos",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        100
+      ]
+    },
+    {
+      "id": "da16d712-a624-4d4a-90b0-6cd1a13cb74a",
+      "name": "Upsert Cadastros no Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        940,
+        100
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"Configurar Credenciais\").item.json.supabaseUrl }}/rest/v1/cadastros",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $(\"Configurar Credenciais\").item.json.supabaseKey }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=minimal"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $input.all().map(i => ({ id_cadastro: i.json.id_cadastro, nome: i.json.nome, email: i.json.email, telefone: i.json.telefone, data_cadastro: i.json.data_cadastro, uid_mh: i.json.uid_mh, utm_source: i.json.utm_source, utm_medium: i.json.utm_medium, utm_campaign: i.json.utm_campaign, utm_term: i.json.utm_term, utm_content: i.json.utm_content, lp_venda: i.json.lp_venda })) }}"
+      }
+    },
+    {
+      "id": "a7e817ae-670a-4f1b-9148-c6a50c12e77b",
+      "name": "Loop Cadastros",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        700,
+        100
+      ],
+      "parameters": {
+        "batchSize": 500
+      }
+    },
+    {
+      "id": "4c8036b4-820e-4c39-9495-2d7e2ac3c16e",
+      "name": "Baixar Pix Cartão do Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1-jM9AJLZfYF3FYyizHASKLZwIpJEgL5Bf3RHZPW-pBg"
+        },
+        "options": {
+          "binaryPropertyName": "data",
+          "googleFileConversion": {
+            "conversion": {
+              "sheetsToFormat": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+          },
+          "fileName": "checkout_pix_cartao.xlsx"
+        }
+      }
+    },
+    {
+      "id": "3263a5c0-9b22-45a7-955a-301224a41ee6",
+      "name": "Extrair Pix Cartão",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "data",
+        "options": {
+          "headerRow": true
+        }
+      }
+    },
+    {
+      "id": "6932b908-0007-45fe-b4d7-3e859db59a32",
+      "name": "Pix Cartão Concluído",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        300
+      ]
+    },
+    {
+      "id": "3d89c369-7047-489d-8d76-9a06e902062f",
+      "name": "Upsert Pix Cartão no Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        940,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"Configurar Credenciais\").item.json.supabaseUrl }}/rest/v1/pedidos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $(\"Configurar Credenciais\").item.json.supabaseKey }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=minimal"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $input.all().map(i => ({ nome: i.json.nome, email: i.json.email, telefone: i.json.telefone, data_compra: i.json.data_compra, metodo_pagamento: i.json.metodo_pagamento, parcela: i.json.parcela, status: i.json.status, nome_produto: i.json.nome_produto, id_pedido: i.json.id_pedido, id_produto: i.json.id_produto, id_pagamento: i.json.id_pagamento, uid_mh: i.json.uid_mh, id_cadastro: i.json.id_cadastro, data_pagamento: i.json.data_pagamento })) }}"
+      }
+    },
+    {
+      "id": "f17b2045-a033-4b82-b7fb-a4bd514038c8",
+      "name": "Loop Pix Cartão",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        700,
+        300
+      ],
+      "parameters": {
+        "batchSize": 500
+      }
+    },
+    {
+      "id": "278ada4e-5d60-416f-ae0d-41f515a210b8",
+      "name": "Baixar Boletos do Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        220,
+        500
+      ],
+      "parameters": {
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1I0TXMXe1u_lqrCiDyqLqp867RaU4fnMqtnXdRgs6UA8"
+        },
+        "options": {
+          "binaryPropertyName": "data",
+          "googleFileConversion": {
+            "conversion": {
+              "sheetsToFormat": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+          },
+          "fileName": "checkout_boletos.xlsx"
+        }
+      }
+    },
+    {
+      "id": "d23d4da1-9bb5-4aaf-87ea-4f6448209dbd",
+      "name": "Extrair Boletos",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        500
+      ],
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "data",
+        "options": {
+          "headerRow": true
+        }
+      }
+    },
+    {
+      "id": "c6eb12d9-c92d-4bd7-9db3-1a666409ea79",
+      "name": "Boletos Concluídos",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        500
+      ]
+    },
+    {
+      "id": "37651d75-4411-4651-aa26-666c3159729e",
+      "name": "Upsert Boletos no Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        940,
+        500
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"Configurar Credenciais\").item.json.supabaseUrl }}/rest/v1/pedidos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $(\"Configurar Credenciais\").item.json.supabaseKey }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=minimal"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $input.all().map(i => ({ nome: i.json.nome, email: i.json.email, telefone: i.json.telefone, data_compra: i.json.data_compra, metodo_pagamento: i.json.metodo_pagamento, parcela: i.json.parcela, status: i.json.status, nome_produto: i.json.nome_produto, id_pedido: i.json.id_pedido, id_produto: i.json.id_produto, id_pagamento: i.json.id_pagamento, uid_mh: i.json.uid_mh, id_cadastro: i.json.id_cadastro, data_pagamento: i.json.data_pagamento })) }}"
+      }
+    },
+    {
+      "id": "00ac435d-0a86-499c-a55f-29ca66ff8cba",
+      "name": "Loop Boletos",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        700,
+        500
+      ],
+      "parameters": {
+        "batchSize": 500
+      }
+    }
+  ],
+  "connections": {
+    "Iniciar Importação": {
+      "main": [
+        [
+          {
+            "node": "Configurar Credenciais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configurar Credenciais": {
+      "main": [
+        [
+          {
+            "node": "Baixar Cadastros do Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Baixar Pix Cartão do Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Baixar Boletos do Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar Cadastros do Drive": {
+      "main": [
+        [
+          {
+            "node": "Extrair Cadastros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Cadastros": {
+      "main": [
+        [
+          {
+            "node": "Loop Cadastros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Cadastros no Supabase": {
+      "main": [
+        [
+          {
+            "node": "Loop Cadastros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Cadastros": {
+      "main": [
+        [
+          {
+            "node": "Cadastros Concluídos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upsert Cadastros no Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar Pix Cartão do Drive": {
+      "main": [
+        [
+          {
+            "node": "Extrair Pix Cartão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Pix Cartão": {
+      "main": [
+        [
+          {
+            "node": "Loop Pix Cartão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Pix Cartão no Supabase": {
+      "main": [
+        [
+          {
+            "node": "Loop Pix Cartão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Pix Cartão": {
+      "main": [
+        [
+          {
+            "node": "Pix Cartão Concluído",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upsert Pix Cartão no Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar Boletos do Drive": {
+      "main": [
+        [
+          {
+            "node": "Extrair Boletos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Boletos": {
+      "main": [
+        [
+          {
+            "node": "Loop Boletos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Boletos no Supabase": {
+      "main": [
+        [
+          {
+            "node": "Loop Boletos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Boletos": {
+      "main": [
+        [
+          {
+            "node": "Boletos Concluídos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upsert Boletos no Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "pinData": null,
+  "versionId": "05948554-ac3f-443d-84ed-2696760f1218",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-05-22T17:11:46.627Z",
+      "createdAt": "2026-05-22T17:11:46.627Z",
+      "role": "workflow:owner",
+      "workflowId": "b2VBwFVpeT9Metfd",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
