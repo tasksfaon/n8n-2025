@@ -1,0 +1,93 @@
+{
+  "updatedAt": "2026-05-22T16:59:30.504Z",
+  "createdAt": "2026-05-22T16:59:30.504Z",
+  "id": "10muz9W7e2oMdBG7",
+  "name": "Teste Webhook + Set",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "fe8e3594-3d97-493f-b57d-e444254f6afb",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teste",
+        "responseMode": "onReceived"
+      },
+      "webhookId": "2051e980-0a47-4b6a-a12f-67fcd96a04f6"
+    },
+    {
+      "id": "02f2038d-2b87-4272-9886-e4a458423385",
+      "name": "teste",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "campo-1",
+              "name": "mensagem",
+              "value": "Webhook recebido com sucesso!",
+              "type": "string"
+            },
+            {
+              "id": "campo-2",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "teste",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "pinData": null,
+  "versionId": "989ff7a7-8830-42fc-9920-55a40acb9cf7",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-05-22T16:59:30.504Z",
+      "createdAt": "2026-05-22T16:59:30.504Z",
+      "role": "workflow:owner",
+      "workflowId": "10muz9W7e2oMdBG7",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
