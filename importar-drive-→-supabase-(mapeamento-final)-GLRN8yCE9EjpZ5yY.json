@@ -1,0 +1,906 @@
+{
+  "updatedAt": "2026-05-22T17:56:36.498Z",
+  "createdAt": "2026-05-22T17:56:36.498Z",
+  "id": "GLRN8yCE9EjpZ5yY",
+  "name": "Importar Drive → Supabase (mapeamento final)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "77481b57-6458-4731-a033-539367cca56e",
+      "name": "Sticky Note 05b14f86",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -200
+      ],
+      "parameters": {
+        "content": "## 📋 Importação Drive → Supabase (v4 final)\n\n**Tabela cadastros:**\n- id_cadastro (planilha) → id_cadastro_externo (string)\n- utm_source → utm_source_cadastro\n- id_usuario gerado pelo Supabase automaticamente\n\n**Tabela eventos_checkout:**\n- id_pagamento → id_pedido (chave upsert)\n- id_produto → id_externo_curso\n- data_pagamento → timestamp\n- id_usuario, id_curso, valor → null por ora\n\n⚠️ Atualize a supabaseKey em \"Configurar Credenciais\"\n⚠️ Rode no Supabase antes de executar:\nALTER TABLE eventos_checkout ADD CONSTRAINT eventos_checkout_id_pedido_key UNIQUE (id_pedido);\nALTER TABLE cadastros ADD CONSTRAINT cadastros_id_cadastro_externo_key UNIQUE (id_cadastro_externo);",
+        "color": 3,
+        "width": 540,
+        "height": 440
+      }
+    },
+    {
+      "id": "e5ef6f37-1813-4ea9-a6dd-4df39f83f254",
+      "name": "Iniciar Importação",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "id": "d69fa1b5-d528-44e7-aaa4-a42266e29d04",
+      "name": "Configurar Credenciais",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -220,
+        300
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "fields": {
+          "values": [
+            {
+              "name": "supabaseUrl",
+              "type": "stringValue",
+              "string": "https://jjuybmzzlnedoonjucet.supabase.co"
+            },
+            {
+              "name": "supabaseKey",
+              "type": "stringValue",
+              "string": "sua_service_role_key_aqui"
+            }
+          ]
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "e76d5a2e-ce7f-4c38-83b5-a9050988765e",
+      "name": "Baixar Cadastros do Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        220,
+        100
+      ],
+      "parameters": {
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1JVTcdDrU1AEowE5P5iyx92NUJUCk4PwBBR1VrTyWeU0"
+        },
+        "options": {
+          "binaryPropertyName": "data",
+          "googleFileConversion": {
+            "conversion": {
+              "sheetsToFormat": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+          },
+          "fileName": "cadastros.xlsx"
+        }
+      }
+    },
+    {
+      "id": "9a0a72a2-2208-47cb-9e6b-94b00f280243",
+      "name": "Extrair Cadastros",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        100
+      ],
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "data",
+        "options": {
+          "headerRow": true
+        }
+      }
+    },
+    {
+      "id": "59c46260-8e90-432c-bd65-3faf762b91ac",
+      "name": "Mapear Cadastros",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        100
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "fields": {
+          "values": [
+            {
+              "name": "id_cadastro_externo",
+              "type": "stringValue",
+              "string": "={{ String($json.id_cadastro).trim() }}"
+            },
+            {
+              "name": "nome",
+              "type": "stringValue",
+              "string": "={{ $json.nome ?? null }}"
+            },
+            {
+              "name": "email",
+              "type": "stringValue",
+              "string": "={{ $json.email ?? null }}"
+            },
+            {
+              "name": "telefone",
+              "type": "stringValue",
+              "string": "={{ $json.telefone ?? null }}"
+            },
+            {
+              "name": "data_cadastro",
+              "type": "stringValue",
+              "string": "={{ $json.data_cadastro ?? null }}"
+            },
+            {
+              "name": "uid_mh",
+              "type": "stringValue",
+              "string": "={{ $json.uid_mh ?? null }}"
+            },
+            {
+              "name": "utm_source_cadastro",
+              "type": "stringValue",
+              "string": "={{ $json.utm_source ?? null }}"
+            },
+            {
+              "name": "utm_medium_cadastro",
+              "type": "stringValue",
+              "string": "={{ $json.utm_medium ?? null }}"
+            },
+            {
+              "name": "utm_campaign_cadastro",
+              "type": "stringValue",
+              "string": "={{ $json.utm_campaign ?? null }}"
+            },
+            {
+              "name": "utm_content_cadastro",
+              "type": "stringValue",
+              "string": "={{ $json.utm_content ?? null }}"
+            },
+            {
+              "name": "utm_term_cadastro",
+              "type": "stringValue",
+              "string": "={{ $json.utm_term ?? null }}"
+            },
+            {
+              "name": "lp_venda",
+              "type": "stringValue",
+              "string": "={{ $json.lp_venda ?? null }}"
+            },
+            {
+              "name": "endereco",
+              "type": "stringValue",
+              "string": "={{ null }}"
+            },
+            {
+              "name": "estado",
+              "type": "stringValue",
+              "string": "={{ null }}"
+            },
+            {
+              "name": "pais",
+              "type": "stringValue",
+              "string": "={{ null }}"
+            },
+            {
+              "name": "cidade",
+              "type": "stringValue",
+              "string": "={{ null }}"
+            },
+            {
+              "name": "ultimo_acesso",
+              "type": "stringValue",
+              "string": "={{ null }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "906e86d2-7070-4b09-9528-e398fc7bdc9a",
+      "name": "Cadastros Concluídos",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        100
+      ]
+    },
+    {
+      "id": "01523307-dcf6-4f89-911f-e3306463f167",
+      "name": "Upsert Cadastros no Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1180,
+        100
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"Configurar Credenciais\").item.json.supabaseUrl }}/rest/v1/cadastros",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $(\"Configurar Credenciais\").item.json.supabaseKey }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=minimal"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $input.all().map(i => ({ id_cadastro_externo: i.json.id_cadastro_externo, nome: i.json.nome ?? null, email: i.json.email ?? null, telefone: i.json.telefone ?? null, data_cadastro: i.json.data_cadastro ?? null, uid_mh: i.json.uid_mh ?? null, utm_source_cadastro: i.json.utm_source_cadastro ?? null, utm_medium_cadastro: i.json.utm_medium_cadastro ?? null, utm_campaign_cadastro: i.json.utm_campaign_cadastro ?? null, utm_content_cadastro: i.json.utm_content_cadastro ?? null, utm_term_cadastro: i.json.utm_term_cadastro ?? null, lp_venda: i.json.lp_venda ?? null, endereco: null, estado: null, pais: null, cidade: null, ultimo_acesso: null })) }}"
+      }
+    },
+    {
+      "id": "31dc2368-871a-4b08-b410-e86d81bc3e71",
+      "name": "Loop Cadastros",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        940,
+        100
+      ],
+      "parameters": {
+        "batchSize": 500
+      }
+    },
+    {
+      "id": "b48c0f0b-a8d9-4610-983b-77ee5a82aa42",
+      "name": "Baixar Pix Cartão do Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1-jM9AJLZfYF3FYyizHASKLZwIpJEgL5Bf3RHZPW-pBg"
+        },
+        "options": {
+          "binaryPropertyName": "data",
+          "googleFileConversion": {
+            "conversion": {
+              "sheetsToFormat": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+          },
+          "fileName": "checkout_pix_cartao.xlsx"
+        }
+      }
+    },
+    {
+      "id": "f247949b-4078-4696-a160-b5afc257f7ae",
+      "name": "Extrair Pix Cartão",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "data",
+        "options": {
+          "headerRow": true
+        }
+      }
+    },
+    {
+      "id": "adade745-6c98-4b8a-8497-afaba63f8848",
+      "name": "Mapear Pix Cartão",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        300
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "fields": {
+          "values": [
+            {
+              "name": "id_pedido",
+              "type": "stringValue",
+              "string": "={{ String($json.id_pagamento).trim() }}"
+            },
+            {
+              "name": "id_externo_curso",
+              "type": "stringValue",
+              "string": "={{ $json.id_produto ?? null }}"
+            },
+            {
+              "name": "id_usuario",
+              "type": "numberValue",
+              "number": "={{ null }}"
+            },
+            {
+              "name": "id_curso",
+              "type": "numberValue",
+              "number": "={{ null }}"
+            },
+            {
+              "name": "timestamp",
+              "type": "stringValue",
+              "string": "={{ $json.data_pagamento ?? null }}"
+            },
+            {
+              "name": "status",
+              "type": "stringValue",
+              "string": "={{ $json.status ?? null }}"
+            },
+            {
+              "name": "metodo_pagamento",
+              "type": "stringValue",
+              "string": "={{ $json.metodo_pagamento ?? null }}"
+            },
+            {
+              "name": "valor",
+              "type": "numberValue",
+              "number": "={{ null }}"
+            },
+            {
+              "name": "utm_source",
+              "type": "stringValue",
+              "string": "={{ $json.utm_source ?? null }}"
+            },
+            {
+              "name": "utm_medium",
+              "type": "stringValue",
+              "string": "={{ $json.utm_medium ?? null }}"
+            },
+            {
+              "name": "utm_campaign",
+              "type": "stringValue",
+              "string": "={{ $json.utm_campaign ?? null }}"
+            },
+            {
+              "name": "utm_content",
+              "type": "stringValue",
+              "string": "={{ $json.utm_content ?? null }}"
+            },
+            {
+              "name": "utm_term",
+              "type": "stringValue",
+              "string": "={{ $json.utm_term ?? null }}"
+            },
+            {
+              "name": "lp_venda",
+              "type": "stringValue",
+              "string": "={{ $json.lp_venda ?? null }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "106f969c-61fa-444a-9c65-6d45200edc63",
+      "name": "Pix Cartão Concluído",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        300
+      ]
+    },
+    {
+      "id": "027cf711-97ef-4262-9536-cfd38095ff30",
+      "name": "Upsert Pix Cartão no Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1180,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"Configurar Credenciais\").item.json.supabaseUrl }}/rest/v1/eventos_checkout",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $(\"Configurar Credenciais\").item.json.supabaseKey }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=minimal"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $input.all().map(i => ({ id_pedido: i.json.id_pedido, id_externo_curso: i.json.id_externo_curso ?? null, id_usuario: null, id_curso: null, timestamp: i.json.timestamp ?? null, status: i.json.status ?? null, metodo_pagamento: i.json.metodo_pagamento ?? null, valor: null, utm_source: i.json.utm_source ?? null, utm_medium: i.json.utm_medium ?? null, utm_campaign: i.json.utm_campaign ?? null, utm_content: i.json.utm_content ?? null, utm_term: i.json.utm_term ?? null, lp_venda: i.json.lp_venda ?? null })) }}"
+      }
+    },
+    {
+      "id": "665e11da-4caa-4ecd-b3b6-c9a153112bda",
+      "name": "Loop Pix Cartão",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        940,
+        300
+      ],
+      "parameters": {
+        "batchSize": 500
+      }
+    },
+    {
+      "id": "26c3f5aa-b71e-4282-b690-3fd5701522e9",
+      "name": "Baixar Boletos do Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        220,
+        500
+      ],
+      "parameters": {
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1I0TXMXe1u_lqrCiDyqLqp867RaU4fnMqtnXdRgs6UA8"
+        },
+        "options": {
+          "binaryPropertyName": "data",
+          "googleFileConversion": {
+            "conversion": {
+              "sheetsToFormat": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+          },
+          "fileName": "checkout_boletos.xlsx"
+        }
+      }
+    },
+    {
+      "id": "14be624c-94c4-49e9-b5b0-944bccda27ac",
+      "name": "Extrair Boletos",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        500
+      ],
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "data",
+        "options": {
+          "headerRow": true
+        }
+      }
+    },
+    {
+      "id": "8f01eee0-d12b-4aba-af86-7fd8ca6cd07d",
+      "name": "Mapear Boletos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        500
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "fields": {
+          "values": [
+            {
+              "name": "id_pedido",
+              "type": "stringValue",
+              "string": "={{ String($json.id_pagamento).trim() }}"
+            },
+            {
+              "name": "id_externo_curso",
+              "type": "stringValue",
+              "string": "={{ $json.id_produto ?? null }}"
+            },
+            {
+              "name": "id_usuario",
+              "type": "numberValue",
+              "number": "={{ null }}"
+            },
+            {
+              "name": "id_curso",
+              "type": "numberValue",
+              "number": "={{ null }}"
+            },
+            {
+              "name": "timestamp",
+              "type": "stringValue",
+              "string": "={{ $json.data_pagamento ?? null }}"
+            },
+            {
+              "name": "status",
+              "type": "stringValue",
+              "string": "={{ $json.status ?? null }}"
+            },
+            {
+              "name": "metodo_pagamento",
+              "type": "stringValue",
+              "string": "={{ $json.metodo_pagamento ?? null }}"
+            },
+            {
+              "name": "valor",
+              "type": "numberValue",
+              "number": "={{ null }}"
+            },
+            {
+              "name": "utm_source",
+              "type": "stringValue",
+              "string": "={{ $json.utm_source ?? null }}"
+            },
+            {
+              "name": "utm_medium",
+              "type": "stringValue",
+              "string": "={{ $json.utm_medium ?? null }}"
+            },
+            {
+              "name": "utm_campaign",
+              "type": "stringValue",
+              "string": "={{ $json.utm_campaign ?? null }}"
+            },
+            {
+              "name": "utm_content",
+              "type": "stringValue",
+              "string": "={{ $json.utm_content ?? null }}"
+            },
+            {
+              "name": "utm_term",
+              "type": "stringValue",
+              "string": "={{ $json.utm_term ?? null }}"
+            },
+            {
+              "name": "lp_venda",
+              "type": "stringValue",
+              "string": "={{ $json.lp_venda ?? null }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "86652d4d-57dc-4317-bb2a-94470d8e3226",
+      "name": "Boletos Concluídos",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        500
+      ]
+    },
+    {
+      "id": "77c8dd0b-445c-4042-8028-9d3a73de8621",
+      "name": "Upsert Boletos no Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1180,
+        500
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"Configurar Credenciais\").item.json.supabaseUrl }}/rest/v1/eventos_checkout",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $(\"Configurar Credenciais\").item.json.supabaseKey }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=minimal"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $input.all().map(i => ({ id_pedido: i.json.id_pedido, id_externo_curso: i.json.id_externo_curso ?? null, id_usuario: null, id_curso: null, timestamp: i.json.timestamp ?? null, status: i.json.status ?? null, metodo_pagamento: i.json.metodo_pagamento ?? null, valor: null, utm_source: i.json.utm_source ?? null, utm_medium: i.json.utm_medium ?? null, utm_campaign: i.json.utm_campaign ?? null, utm_content: i.json.utm_content ?? null, utm_term: i.json.utm_term ?? null, lp_venda: i.json.lp_venda ?? null })) }}"
+      }
+    },
+    {
+      "id": "69bcfe25-06ed-468d-9dfc-cde7728dd443",
+      "name": "Loop Boletos",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        940,
+        500
+      ],
+      "parameters": {
+        "batchSize": 500
+      }
+    }
+  ],
+  "connections": {
+    "Iniciar Importação": {
+      "main": [
+        [
+          {
+            "node": "Configurar Credenciais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configurar Credenciais": {
+      "main": [
+        [
+          {
+            "node": "Baixar Cadastros do Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Baixar Pix Cartão do Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Baixar Boletos do Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar Cadastros do Drive": {
+      "main": [
+        [
+          {
+            "node": "Extrair Cadastros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Cadastros": {
+      "main": [
+        [
+          {
+            "node": "Mapear Cadastros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapear Cadastros": {
+      "main": [
+        [
+          {
+            "node": "Loop Cadastros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Cadastros no Supabase": {
+      "main": [
+        [
+          {
+            "node": "Loop Cadastros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Cadastros": {
+      "main": [
+        [
+          {
+            "node": "Cadastros Concluídos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upsert Cadastros no Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar Pix Cartão do Drive": {
+      "main": [
+        [
+          {
+            "node": "Extrair Pix Cartão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Pix Cartão": {
+      "main": [
+        [
+          {
+            "node": "Mapear Pix Cartão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapear Pix Cartão": {
+      "main": [
+        [
+          {
+            "node": "Loop Pix Cartão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Pix Cartão no Supabase": {
+      "main": [
+        [
+          {
+            "node": "Loop Pix Cartão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Pix Cartão": {
+      "main": [
+        [
+          {
+            "node": "Pix Cartão Concluído",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upsert Pix Cartão no Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar Boletos do Drive": {
+      "main": [
+        [
+          {
+            "node": "Extrair Boletos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Boletos": {
+      "main": [
+        [
+          {
+            "node": "Mapear Boletos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapear Boletos": {
+      "main": [
+        [
+          {
+            "node": "Loop Boletos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Boletos no Supabase": {
+      "main": [
+        [
+          {
+            "node": "Loop Boletos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Boletos": {
+      "main": [
+        [
+          {
+            "node": "Boletos Concluídos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upsert Boletos no Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "pinData": null,
+  "versionId": "7168e14e-faf8-4256-bf9e-a1a195f0a740",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-05-22T17:56:36.498Z",
+      "createdAt": "2026-05-22T17:56:36.498Z",
+      "role": "workflow:owner",
+      "workflowId": "GLRN8yCE9EjpZ5yY",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
