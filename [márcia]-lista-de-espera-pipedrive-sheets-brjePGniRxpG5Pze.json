@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-12-16T16:22:17.816Z",
+  "updatedAt": "2026-05-25T15:09:40.674Z",
   "createdAt": "2025-07-29T14:18:46.499Z",
   "id": "brjePGniRxpG5Pze",
   "name": "[Márcia] Lista de Espera Pipedrive Sheets",
@@ -26,7 +26,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Pega o telefone da entrada e transforma em string\nconst rawPhone = String( $input.first().json.phone[0].value|| '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+        "jsCode": "// ================================\n// 1. Captura telefone em qualquer estrutura\n// ================================\nconst item = $input.first().json;\n\nconst rawPhone = String(\n  item.phone?.[0]?.value || \n  item.person_id?.phone?.[0]?.value || \n  ''\n);\n\n// ================================\n// 2. Remove tudo que não for número\n// ================================\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// ================================\n// 3. Remove 55 duplicado\n// ================================\nif (cleaned.startsWith('55') && cleaned.length > 13) {\n  cleaned = cleaned.substring(2);\n}\n\n// ================================\n// 4. Ajusta formato\n// ================================\nif (cleaned.length === 11) {\n\n  // Celular sem 55\n  // Ex: 11999998888\n  cleaned = '55' + cleaned;\n\n} else if (cleaned.length === 10) {\n\n  // Fixo sem 55\n  // Ex: 1133334444\n  cleaned = '55' + cleaned;\n\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n\n  // Já correto\n  // Ex: 5511999998888\n\n} else if (cleaned.length === 12 && cleaned.startsWith('55')) {\n\n  // Telefone fixo com 55\n  // Ex: 551133334444\n\n} else {\n\n  // Formato inválido\n  cleaned = '';\n}\n\n// ================================\n// 5. Retorno\n// ================================\nreturn [{\n  json: {\n    telefoneOriginal: rawPhone,\n    telefoneFormatado: cleaned\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -88,7 +88,7 @@
       "parameters": {
         "resource": "person",
         "operation": "get",
-        "personId": "={{ $json.previous.person_id }}"
+        "personId": "={{ $json.data.person_id }}"
       },
       "type": "n8n-nodes-base.pipedrive",
       "typeVersion": 1,
@@ -214,7 +214,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 183,
                     "operator": {
                       "type": "number",
@@ -239,7 +239,7 @@
                 "conditions": [
                   {
                     "id": "d6bc2a60-a7aa-40e6-81b4-10e132b02f01",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 196,
                     "operator": {
                       "type": "number",
@@ -263,7 +263,7 @@
                 "conditions": [
                   {
                     "id": "30c3c822-0097-4ea5-919a-b4cd6463fcb0",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 209,
                     "operator": {
                       "type": "number",
@@ -287,7 +287,7 @@
                 "conditions": [
                   {
                     "id": "1c2b83ee-4b79-4463-8b61-f099c64b0e5b",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 197,
                     "operator": {
                       "type": "number",
@@ -311,7 +311,7 @@
                 "conditions": [
                   {
                     "id": "d26859a8-aacf-4d38-a3c1-0166cbbaba82",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 195,
                     "operator": {
                       "type": "number",
@@ -335,7 +335,7 @@
                 "conditions": [
                   {
                     "id": "8d1171a4-dd9b-4d33-a036-3a050a4be4e4",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 206,
                     "operator": {
                       "type": "number",
@@ -359,7 +359,7 @@
                 "conditions": [
                   {
                     "id": "452c1434-458a-4567-93c1-393c4f4e4959",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 200,
                     "operator": {
                       "type": "number",
@@ -383,7 +383,7 @@
                 "conditions": [
                   {
                     "id": "f1a34efe-f864-4feb-bbf4-4e55e500fd25",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 202,
                     "operator": {
                       "type": "number",
@@ -407,7 +407,7 @@
                 "conditions": [
                   {
                     "id": "125812d1-a8b4-4640-b08a-94e7203124f5",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 208,
                     "operator": {
                       "type": "number",
@@ -431,7 +431,7 @@
                 "conditions": [
                   {
                     "id": "1bd56c4b-34fc-47fb-9ef6-6bad087d8d13",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 203,
                     "operator": {
                       "type": "number",
@@ -455,7 +455,7 @@
                 "conditions": [
                   {
                     "id": "37a253f7-75b5-4a79-acdb-049198edf697",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 201,
                     "operator": {
                       "type": "number",
@@ -479,7 +479,7 @@
                 "conditions": [
                   {
                     "id": "3a708415-d69b-4a65-a578-d21e296c2f01",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 140,
                     "operator": {
                       "type": "number",
@@ -503,7 +503,7 @@
                 "conditions": [
                   {
                     "id": "2ee98b88-ee26-4c21-8924-2ade8643fc5e",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 137,
                     "operator": {
                       "type": "number",
@@ -527,7 +527,7 @@
                 "conditions": [
                   {
                     "id": "84fd74d9-46af-4eae-b6d1-1982c95c3d25",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 205,
                     "operator": {
                       "type": "number",
@@ -551,7 +551,7 @@
                 "conditions": [
                   {
                     "id": "59664fde-7b54-48a2-9596-3283c64f0c74",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 117,
                     "operator": {
                       "type": "number",
@@ -575,7 +575,7 @@
                 "conditions": [
                   {
                     "id": "bbd6853c-3153-455b-a9c8-056cdfd9f5d9",
-                    "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                    "leftValue": "={{ $json.pipeline_id }}",
                     "rightValue": 178,
                     "operator": {
                       "type": "number",
@@ -595,7 +595,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        496,
+        608,
         1152
       ],
       "id": "81e09a6b-22f3-40f6-a0de-4225c29db9f7",
@@ -1941,6 +1941,26 @@
       ],
       "id": "50a1c0a9-af0e-45c8-b078-bb7bfd56de1a",
       "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dealId": "={{ $('Pipedrive Trigger').item.json.data.deal_id }}"
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 2,
+      "position": [
+        432,
+        1376
+      ],
+      "id": "331dc963-9ffe-4a78-989b-113d722af733",
+      "name": "Get a deal",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
     }
   ],
   "connections": {
@@ -1970,7 +1990,7 @@
       "main": [
         [
           {
-            "node": "Switch",
+            "node": "Get a deal",
             "type": "main",
             "index": 0
           }
@@ -2262,14 +2282,26 @@
           }
         ]
       ]
+    },
+    "Get a deal": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "binaryMode": "separate"
   },
   "staticData": {
     "node:Pipedrive Trigger": {
-      "webhookId": 1854430
+      "webhookId": 1872183
     },
     "node:Schedule Trigger": {
       "recurrenceRules": []
@@ -2283,54 +2315,37 @@
     "Pipedrive Trigger": [
       {
         "json": {
-          "data": null,
-          "previous": {
-            "add_time": "2025-12-15T12:29:22Z",
-            "channel": null,
-            "channel_id": null,
-            "close_time": null,
-            "creator_user_id": 3559832,
-            "currency": "BRL",
-            "custom_fields": {
-              "31ae0f90cc1b3ee3da765f9c9decf2321022a7cf": null
-            },
-            "expected_close_date": null,
-            "first_won_time": null,
-            "id": 66139,
-            "label_ids": [],
-            "lost_reason": null,
-            "lost_time": null,
+          "data": {
+            "id": 6248,
+            "user_id": 3559832,
+            "deal_id": 67732,
+            "person_id": 71015,
             "org_id": null,
-            "origin": "API",
-            "origin_id": null,
-            "owner_id": 3559832,
-            "person_id": 73914,
-            "pipeline_id": 196,
-            "probability": null,
-            "stage_change_time": null,
-            "stage_id": 1496,
-            "status": "open",
-            "title": "INTERESSE ESPECIALIZAÇÃO 2026 - Letícia Piazzetta",
-            "update_time": "2025-12-15T12:29:22Z",
-            "value": 0,
-            "visible_to": "3",
-            "won_time": null,
-            "is_archived": false,
-            "archive_time": null
+            "lead_id": null,
+            "project_id": null,
+            "task_id": null,
+            "active_flag": true,
+            "content": "<p style=\"margin-top:0pt;margin-bottom:0pt;\"><b><u>INSCRIÇÃO TEAC 2026</u></b></p><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Informações cadastrais:&nbsp;</b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>CPF:</b><span style=\"font-weight:normal;\">&nbsp;</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>RG:</b><span style=\"font-weight:normal;\">&nbsp;</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Data de Nascimento:</b><span style=\"font-weight:normal;\">&nbsp;</span></p><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Nome:</b> <span style=\"font-weight:normal;\">Jose Augusto Santana</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>E-mail:</b> <span style=\"font-weight:normal;\"><a href=\"mailto:joseortopedista@yahoo.com.br\">joseortopedista@yahoo.com.br</a></span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Celular:</b> <span style=\"font-weight:normal;\">44991460066</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Endereço:</b> <span style=\"font-weight:normal;\">Rua Clementina Basseto, 260, apartamento 602 - Zona 7, Maringá/PR – CEP: 87030-110</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>CRM/UF:</b> <span style=\"font-weight:normal;\">17882 / PR</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Acupunturista:</b> Cursando<span style=\"font-weight:400; color:rgb\"><br></span><b>Em qual faculdade e ano se formou em medicina:</b> <span style=\"font-weight:normal;\">Fac.Evangelica Curitiba/Mackenzie 2000</span></p><br><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b><u>FORMA DE PAGAMENTO</u></b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>6x de R$ 1.516,00</b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Total: R$ 9.096,00</b></p><br>",
+            "add_time": "2026-05-25T14:31:20Z",
+            "update_time": "2026-05-25T14:31:20Z",
+            "pinned_to_deal_flag": false,
+            "pinned_to_person_flag": false,
+            "pinned_to_organization_flag": false
           },
+          "previous": null,
           "meta": {
-            "action": "delete",
+            "action": "create",
             "company_id": "2396659",
-            "correlation_id": "bc941b63-d3f1-49f2-8ec3-9814e47a16cf",
-            "entity_id": "66139",
-            "entity": "deal",
-            "id": "8a1f3d5c-e990-4a21-a2e3-5758d69735cc",
+            "correlation_id": "cc6d7282-b536-4689-b701-978894d575ea",
+            "entity_id": "6248",
+            "entity": "note",
+            "id": "8d58ae28-cded-4a8c-b265-e65174c97b05",
             "is_bulk_edit": false,
-            "timestamp": "2025-12-16T16:13:36.745Z",
+            "timestamp": "2026-05-25T14:31:21.033Z",
             "type": "general",
             "user_id": "3559832",
             "version": "2.0",
-            "webhook_id": "2115250",
+            "webhook_id": "1854430",
             "webhook_owner_id": "3559832",
             "change_source": "app",
             "permitted_user_ids": [
@@ -2344,8 +2359,8 @@
       }
     ]
   },
-  "versionId": "e1342bc6-932a-47be-abab-b9abd51e9e3d",
-  "activeVersionId": "e1342bc6-932a-47be-abab-b9abd51e9e3d",
+  "versionId": "20b1e4d8-1a80-43e3-8fc3-2adf4a65c00f",
+  "activeVersionId": "20b1e4d8-1a80-43e3-8fc3-2adf4a65c00f",
   "triggerCount": 1,
   "shared": [
     {
@@ -2357,9 +2372,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2025-12-16T16:22:17.819Z",
-    "createdAt": "2025-12-16T16:22:17.819Z",
-    "versionId": "e1342bc6-932a-47be-abab-b9abd51e9e3d",
+    "updatedAt": "2026-05-25T15:08:42.818Z",
+    "createdAt": "2026-05-25T15:08:28.867Z",
+    "versionId": "20b1e4d8-1a80-43e3-8fc3-2adf4a65c00f",
     "workflowId": "brjePGniRxpG5Pze",
     "nodes": [
       {
@@ -2382,7 +2397,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Pega o telefone da entrada e transforma em string\nconst rawPhone = String( $input.first().json.phone[0].value|| '');\n\n// Remove tudo que não for número\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// Verifica se já tem o formato correto ou ajusta\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n  // Já está correto\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else {\n  // Se não encaixar em nenhum formato esperado, retorna vazio para sinalizar erro\n  cleaned = '';\n}\n\n// Retorno\nreturn [{\n  json: {\n    telefoneFormatado: cleaned\n  }\n}];\n"
+          "jsCode": "// ================================\n// 1. Captura telefone em qualquer estrutura\n// ================================\nconst item = $input.first().json;\n\nconst rawPhone = String(\n  item.phone?.[0]?.value || \n  item.person_id?.phone?.[0]?.value || \n  ''\n);\n\n// ================================\n// 2. Remove tudo que não for número\n// ================================\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\n// ================================\n// 3. Remove 55 duplicado\n// ================================\nif (cleaned.startsWith('55') && cleaned.length > 13) {\n  cleaned = cleaned.substring(2);\n}\n\n// ================================\n// 4. Ajusta formato\n// ================================\nif (cleaned.length === 11) {\n\n  // Celular sem 55\n  // Ex: 11999998888\n  cleaned = '55' + cleaned;\n\n} else if (cleaned.length === 10) {\n\n  // Fixo sem 55\n  // Ex: 1133334444\n  cleaned = '55' + cleaned;\n\n} else if (cleaned.length === 13 && cleaned.startsWith('55')) {\n\n  // Já correto\n  // Ex: 5511999998888\n\n} else if (cleaned.length === 12 && cleaned.startsWith('55')) {\n\n  // Telefone fixo com 55\n  // Ex: 551133334444\n\n} else {\n\n  // Formato inválido\n  cleaned = '';\n}\n\n// ================================\n// 5. Retorno\n// ================================\nreturn [{\n  json: {\n    telefoneOriginal: rawPhone,\n    telefoneFormatado: cleaned\n  }\n}];"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -2444,7 +2459,7 @@
         "parameters": {
           "resource": "person",
           "operation": "get",
-          "personId": "={{ $json.previous.person_id }}"
+          "personId": "={{ $json.data.person_id }}"
         },
         "type": "n8n-nodes-base.pipedrive",
         "typeVersion": 1,
@@ -2570,7 +2585,7 @@
                   },
                   "conditions": [
                     {
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 183,
                       "operator": {
                         "type": "number",
@@ -2595,7 +2610,7 @@
                   "conditions": [
                     {
                       "id": "d6bc2a60-a7aa-40e6-81b4-10e132b02f01",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 196,
                       "operator": {
                         "type": "number",
@@ -2619,7 +2634,7 @@
                   "conditions": [
                     {
                       "id": "30c3c822-0097-4ea5-919a-b4cd6463fcb0",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 209,
                       "operator": {
                         "type": "number",
@@ -2643,7 +2658,7 @@
                   "conditions": [
                     {
                       "id": "1c2b83ee-4b79-4463-8b61-f099c64b0e5b",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 197,
                       "operator": {
                         "type": "number",
@@ -2667,7 +2682,7 @@
                   "conditions": [
                     {
                       "id": "d26859a8-aacf-4d38-a3c1-0166cbbaba82",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 195,
                       "operator": {
                         "type": "number",
@@ -2691,7 +2706,7 @@
                   "conditions": [
                     {
                       "id": "8d1171a4-dd9b-4d33-a036-3a050a4be4e4",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 206,
                       "operator": {
                         "type": "number",
@@ -2715,7 +2730,7 @@
                   "conditions": [
                     {
                       "id": "452c1434-458a-4567-93c1-393c4f4e4959",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 200,
                       "operator": {
                         "type": "number",
@@ -2739,7 +2754,7 @@
                   "conditions": [
                     {
                       "id": "f1a34efe-f864-4feb-bbf4-4e55e500fd25",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 202,
                       "operator": {
                         "type": "number",
@@ -2763,7 +2778,7 @@
                   "conditions": [
                     {
                       "id": "125812d1-a8b4-4640-b08a-94e7203124f5",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 208,
                       "operator": {
                         "type": "number",
@@ -2787,7 +2802,7 @@
                   "conditions": [
                     {
                       "id": "1bd56c4b-34fc-47fb-9ef6-6bad087d8d13",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 203,
                       "operator": {
                         "type": "number",
@@ -2811,7 +2826,7 @@
                   "conditions": [
                     {
                       "id": "37a253f7-75b5-4a79-acdb-049198edf697",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 201,
                       "operator": {
                         "type": "number",
@@ -2835,7 +2850,7 @@
                   "conditions": [
                     {
                       "id": "3a708415-d69b-4a65-a578-d21e296c2f01",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 140,
                       "operator": {
                         "type": "number",
@@ -2859,7 +2874,7 @@
                   "conditions": [
                     {
                       "id": "2ee98b88-ee26-4c21-8924-2ade8643fc5e",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 137,
                       "operator": {
                         "type": "number",
@@ -2883,7 +2898,7 @@
                   "conditions": [
                     {
                       "id": "84fd74d9-46af-4eae-b6d1-1982c95c3d25",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 205,
                       "operator": {
                         "type": "number",
@@ -2907,7 +2922,7 @@
                   "conditions": [
                     {
                       "id": "59664fde-7b54-48a2-9596-3283c64f0c74",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 117,
                       "operator": {
                         "type": "number",
@@ -2931,7 +2946,7 @@
                   "conditions": [
                     {
                       "id": "bbd6853c-3153-455b-a9c8-056cdfd9f5d9",
-                      "leftValue": "={{ $('Pipedrive Trigger').item.json.previous.pipeline_id }}",
+                      "leftValue": "={{ $json.pipeline_id }}",
                       "rightValue": 178,
                       "operator": {
                         "type": "number",
@@ -2951,7 +2966,7 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.2,
         "position": [
-          496,
+          608,
           1152
         ],
         "id": "81e09a6b-22f3-40f6-a0de-4225c29db9f7",
@@ -4297,6 +4312,26 @@
         ],
         "id": "50a1c0a9-af0e-45c8-b078-bb7bfd56de1a",
         "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "dealId": "={{ $('Pipedrive Trigger').item.json.data.deal_id }}"
+        },
+        "type": "n8n-nodes-base.pipedrive",
+        "typeVersion": 2,
+        "position": [
+          432,
+          1376
+        ],
+        "id": "331dc963-9ffe-4a78-989b-113d722af733",
+        "name": "Get a deal",
+        "credentials": {
+          "pipedriveApi": {
+            "id": "TLwmrhoVoFR3pFMt",
+            "name": "Pipedrive account"
+          }
+        }
       }
     ],
     "connections": {
@@ -4326,7 +4361,7 @@
         "main": [
           [
             {
-              "node": "Switch",
+              "node": "Get a deal",
               "type": "main",
               "index": 0
             }
@@ -4618,12 +4653,23 @@
             }
           ]
         ]
+      },
+      "Get a deal": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Letícia Piazzetta",
-    "name": null,
-    "description": null,
-    "autosaved": false
+    "name": "Version 20b1e4d8",
+    "description": "",
+    "autosaved": true
   },
   "tags": []
 }
