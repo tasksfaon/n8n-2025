@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-05T21:01:06.742Z",
+  "updatedAt": "2026-05-27T13:31:09.364Z",
   "createdAt": "2025-03-18T14:06:53.034Z",
   "id": "D4h7X1XaggLGCReW",
   "name": "[Geral] Backup n8n Github",
@@ -112,12 +112,12 @@
         "conditions": {
           "string": [
             {
-              "value1": "={{ $('Code in JavaScript').item.json.fileName }}",
-              "value2": "={{ $('Confere se arquivo existe GitHub').item.binary.data.fileName }}"
+              "value1": "={{ $json.fileName }}",
+              "operation": "contains",
+              "value2": "={{ $('Code in JavaScript').item.json.fileName }}"
             }
           ]
-        },
-        "combineOperation": "any"
+        }
       },
       "id": "570cb102-7bd0-4651-ba4a-68607aa6f803",
       "name": "Separa no if",
@@ -492,7 +492,8 @@
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
-    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx",
+    "binaryMode": "separate"
   },
   "staticData": {
     "node:Schedule Trigger": {
@@ -503,8 +504,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "d2932d83-3fa0-4666-b7c3-198f9a21b5a9",
-  "activeVersionId": "d2932d83-3fa0-4666-b7c3-198f9a21b5a9",
+  "versionId": "270003bd-2afa-46cb-b1b8-5e5fd6d0507d",
+  "activeVersionId": "270003bd-2afa-46cb-b1b8-5e5fd6d0507d",
   "triggerCount": 1,
   "shared": [
     {
@@ -516,9 +517,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-05-05T21:02:09.121Z",
-    "createdAt": "2026-05-05T21:01:06.743Z",
-    "versionId": "d2932d83-3fa0-4666-b7c3-198f9a21b5a9",
+    "updatedAt": "2026-05-27T13:31:26.644Z",
+    "createdAt": "2026-05-27T13:31:09.366Z",
+    "versionId": "270003bd-2afa-46cb-b1b8-5e5fd6d0507d",
     "workflowId": "D4h7X1XaggLGCReW",
     "nodes": [
       {
@@ -627,12 +628,12 @@
           "conditions": {
             "string": [
               {
-                "value1": "={{ $('Code in JavaScript').item.json.fileName }}",
-                "value2": "={{ $('Confere se arquivo existe GitHub').item.binary.data.fileName }}"
+                "value1": "={{ $json.fileName }}",
+                "operation": "contains",
+                "value2": "={{ $('Code in JavaScript').item.json.fileName }}"
               }
             ]
-          },
-          "combineOperation": "any"
+          }
         },
         "id": "570cb102-7bd0-4651-ba4a-68607aa6f803",
         "name": "Separa no if",
@@ -1005,9 +1006,9 @@
       }
     },
     "authors": "Letícia Piazzetta",
-    "name": "Version d2932d83",
+    "name": "Version 270003bd",
     "description": "",
-    "autosaved": true
+    "autosaved": false
   },
   "tags": []
 }
