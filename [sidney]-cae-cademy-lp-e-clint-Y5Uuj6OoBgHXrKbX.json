@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-04-16T19:23:08.674Z",
+  "updatedAt": "2026-05-19T12:24:00.462Z",
   "createdAt": "2025-05-09T20:15:54.982Z",
   "id": "Y5Uuj6OoBgHXrKbX",
   "name": "[sidney] cae cademy lp e clint",
-  "active": true,
-  "isArchived": false,
+  "active": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -224,8 +224,8 @@
       }
     ]
   },
-  "versionId": "fd909c7b-6827-4f3a-b1b7-555f5919e997",
-  "activeVersionId": "fd909c7b-6827-4f3a-b1b7-555f5919e997",
+  "versionId": "42b8b2a6-6f26-4e8d-9e49-0b65c2786f4e",
+  "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
     {
@@ -236,170 +236,6 @@
       "projectId": "lrLYIwetv42aAH7x"
     }
   ],
-  "activeVersion": {
-    "updatedAt": "2026-04-16T19:23:46.184Z",
-    "createdAt": "2026-04-16T19:23:08.676Z",
-    "versionId": "fd909c7b-6827-4f3a-b1b7-555f5919e997",
-    "workflowId": "Y5Uuj6OoBgHXrKbX",
-    "nodes": [
-      {
-        "parameters": {
-          "httpMethod": "POST",
-          "path": "cae-academi-clint-lp",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.webhook",
-        "typeVersion": 2,
-        "position": [
-          0,
-          0
-        ],
-        "id": "65e40aa8-bae0-42ad-83ae-c3942c065be4",
-        "name": "Webhook",
-        "webhookId": "a36dc5dd-cb13-4de7-a996-47c09793f5a8"
-      },
-      {
-        "parameters": {
-          "jsCode": "const body = $input.first().json.body;\n\n// Extrai nome e e-mail diretamente\nconst nome = body.input_text;\nconst email = body.email;\n\n// Formata telefone no padrão 55DDDTelefone\nlet telefone = body.phone || '';\ntelefone = telefone.replace(/\\D/g, ''); // Remove tudo que não for número\nif (telefone.startsWith('55')) {\n  telefone = telefone;\n} else if (telefone.length === 11) {\n  telefone = '55' + telefone;\n} else if (telefone.length === 13 && telefone.startsWith('550')) {\n  telefone = telefone.replace(/^550/, '55');\n}\n\nreturn [\n  {\n    json: {\n      nome: nome,\n      email: email,\n      telefone: telefone,\n    }\n  }\n];\n"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          220,
-          0
-        ],
-        "id": "2321edd2-4c30-41e3-985c-25aa98fc8859",
-        "name": "Code"
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "e3b7870b-c8e6-49c1-a90f-1da0270ebc6c",
-                "name": "Nome",
-                "value": "={{ $json.nome }}",
-                "type": "string"
-              },
-              {
-                "id": "130c62d4-4fcf-48b0-a2ae-4b82e7bfdf7c",
-                "name": "Email",
-                "value": "={{ $json.email }}",
-                "type": "string"
-              },
-              {
-                "id": "24dcba61-5c0c-4642-b4c4-3b9809f98f6c",
-                "name": "Telefone",
-                "value": "={{ $json.telefone }}",
-                "type": "string"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [
-          440,
-          0
-        ],
-        "id": "54b2e755-805f-4f05-bb2d-0287aa644e36",
-        "name": "Edit Fields"
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://functions-api.clint.digital/endpoints/integration/webhook/66f5599b-4592-46c7-a1e2-218dd07a8fe5",
-          "sendBody": true,
-          "bodyParameters": {
-            "parameters": [
-              {
-                "name": "Nome",
-                "value": "={{ $json.Nome }}"
-              },
-              {
-                "name": "Email",
-                "value": "={{ $json.Email }}"
-              },
-              {
-                "name": "Telefone",
-                "value": "={{ $json.Telefone }}"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          660,
-          0
-        ],
-        "id": "fdf51668-073c-418a-88af-9810e4bea3a3",
-        "name": "HTTP Clint"
-      },
-      {
-        "parameters": {},
-        "type": "n8n-nodes-base.noOp",
-        "typeVersion": 1,
-        "position": [
-          880,
-          0
-        ],
-        "id": "f3eaaf8a-b2eb-4cd5-bb21-b7f4a5e8ceea",
-        "name": "No Operation, do nothing"
-      }
-    ],
-    "connections": {
-      "Webhook": {
-        "main": [
-          [
-            {
-              "node": "Code",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Code": {
-        "main": [
-          [
-            {
-              "node": "Edit Fields",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Edit Fields": {
-        "main": [
-          [
-            {
-              "node": "HTTP Clint",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "HTTP Clint": {
-        "main": [
-          [
-            {
-              "node": "No Operation, do nothing",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      }
-    },
-    "authors": "Letícia Piazzetta",
-    "name": "Version fd909c7b",
-    "description": "",
-    "autosaved": false
-  },
+  "activeVersion": null,
   "tags": []
 }
