@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-04-09T16:48:53.466Z",
+  "updatedAt": "2026-05-22T16:49:08.487Z",
   "createdAt": "2025-04-01T14:04:21.529Z",
   "id": "R4PKrZVfbBJTskBw",
   "name": "[Lucas Ahmad] [Mai_25] Grupos",
@@ -468,7 +468,8 @@
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
-    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx",
+    "availableInMCP": false
   },
   "staticData": null,
   "meta": {
