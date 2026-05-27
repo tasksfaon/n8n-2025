@@ -1,0 +1,72 @@
+{
+  "updatedAt": "2026-05-22T16:41:13.082Z",
+  "createdAt": "2026-05-22T16:41:13.082Z",
+  "id": "zNuZBP4rQ94cArRxeRFhq",
+  "name": "My workflow 7",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "f1a9a47e-9069-4f01-a226-e2b39b68f7f1"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5a5114f2-f460-47b0-8977-6e310c62487b",
+      "name": "MCP Server Trigger",
+      "webhookId": "f1a9a47e-9069-4f01-a226-e2b39b68f7f1"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "023418b4-ba5c-4068-b424-a8386e6ac4c4",
+  "activeVersionId": "023418b4-ba5c-4068-b424-a8386e6ac4c4",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-05-22T16:41:13.082Z",
+      "createdAt": "2026-05-22T16:41:13.082Z",
+      "role": "workflow:owner",
+      "workflowId": "zNuZBP4rQ94cArRxeRFhq",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-05-22T16:41:47.027Z",
+    "createdAt": "2026-05-22T16:41:13.082Z",
+    "versionId": "023418b4-ba5c-4068-b424-a8386e6ac4c4",
+    "workflowId": "zNuZBP4rQ94cArRxeRFhq",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "f1a9a47e-9069-4f01-a226-e2b39b68f7f1"
+        },
+        "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "5a5114f2-f460-47b0-8977-6e310c62487b",
+        "name": "MCP Server Trigger",
+        "webhookId": "f1a9a47e-9069-4f01-a226-e2b39b68f7f1"
+      }
+    ],
+    "connections": {},
+    "authors": "Letícia Piazzetta",
+    "name": "Version 023418b4",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}
