@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-25T15:09:40.674Z",
+  "updatedAt": "2026-05-26T14:12:53.758Z",
   "createdAt": "2025-07-29T14:18:46.499Z",
   "id": "brjePGniRxpG5Pze",
   "name": "[Márcia] Lista de Espera Pipedrive Sheets",
@@ -7,7 +7,9 @@
   "isArchived": false,
   "nodes": [
     {
-      "parameters": {},
+      "parameters": {
+        "entity": "note"
+      },
       "type": "n8n-nodes-base.pipedriveTrigger",
       "typeVersion": 1.1,
       "position": [
@@ -2301,7 +2303,7 @@
   },
   "staticData": {
     "node:Pipedrive Trigger": {
-      "webhookId": 1872183
+      "webhookId": 1872451
     },
     "node:Schedule Trigger": {
       "recurrenceRules": []
@@ -2316,18 +2318,18 @@
       {
         "json": {
           "data": {
-            "id": 6248,
+            "id": 6255,
             "user_id": 3559832,
-            "deal_id": 67732,
-            "person_id": 71015,
+            "deal_id": 68140,
+            "person_id": 68663,
             "org_id": null,
             "lead_id": null,
             "project_id": null,
             "task_id": null,
             "active_flag": true,
-            "content": "<p style=\"margin-top:0pt;margin-bottom:0pt;\"><b><u>INSCRIÇÃO TEAC 2026</u></b></p><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Informações cadastrais:&nbsp;</b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>CPF:</b><span style=\"font-weight:normal;\">&nbsp;</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>RG:</b><span style=\"font-weight:normal;\">&nbsp;</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Data de Nascimento:</b><span style=\"font-weight:normal;\">&nbsp;</span></p><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Nome:</b> <span style=\"font-weight:normal;\">Jose Augusto Santana</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>E-mail:</b> <span style=\"font-weight:normal;\"><a href=\"mailto:joseortopedista@yahoo.com.br\">joseortopedista@yahoo.com.br</a></span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Celular:</b> <span style=\"font-weight:normal;\">44991460066</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Endereço:</b> <span style=\"font-weight:normal;\">Rua Clementina Basseto, 260, apartamento 602 - Zona 7, Maringá/PR – CEP: 87030-110</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>CRM/UF:</b> <span style=\"font-weight:normal;\">17882 / PR</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Acupunturista:</b> Cursando<span style=\"font-weight:400; color:rgb\"><br></span><b>Em qual faculdade e ano se formou em medicina:</b> <span style=\"font-weight:normal;\">Fac.Evangelica Curitiba/Mackenzie 2000</span></p><br><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b><u>FORMA DE PAGAMENTO</u></b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>6x de R$ 1.516,00</b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Total: R$ 9.096,00</b></p><br>",
-            "add_time": "2026-05-25T14:31:20Z",
-            "update_time": "2026-05-25T14:31:20Z",
+            "content": "<p style=\"margin-top:0pt;margin-bottom:0pt;\"><b><u>INSCRIÇÃO TEAC 2026</u></b></p><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Informações cadastrais:&nbsp;</b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>CPF:</b> <span style=\"font-weight:normal;\">014.569.765-75</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>RG:</b> <span style=\"font-weight:normal;\">0845251503 / SSP-BA</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Data de Nascimento:</b> <span style=\"font-weight:normal;\">17/02/1984</span></p><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Nome:</b> <span style=\"font-weight:normal;\">Alexandre Cardoso Kates</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>E-mail:</b> <span style=\"font-weight:normal;\"><a href=\"mailto:alexandre.k.medicinaintegral@gmail.com\">alexandre.k.medicinaintegral@gmail.com</a></span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Celular:</b> <span style=\"font-weight:normal;\">71999152223</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Telefone fixo/Comercial:</b> <span style=\"font-weight:normal;\">71999152223</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Endereço:</b> <span style=\"font-weight:normal;\">Av. Praia de Itamaracá, S/N. Cond. Top Villa, casa 13 - Villas do Atlantico, Lauro de Freitas/BA – CEP: 42708-360</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>CRM/UF:</b> <span style=\"font-weight:normal;\">35901 / BA</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Acupunturista:</b> Cursando<span style=\"font-weight:400; color:rgb\"><br></span><b>Em qual faculdade e ano se formou em medicina:</b> <span style=\"font-weight:normal;\">UFAC (Federal do Acre) 2020</span></p><br><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b><u>FORMA DE PAGAMENTO</u></b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>6x de R$ 1.516,00</b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Total: R$ 9.096,00</b></p><br>",
+            "add_time": "2026-05-25T20:20:35Z",
+            "update_time": "2026-05-25T20:20:35Z",
             "pinned_to_deal_flag": false,
             "pinned_to_person_flag": false,
             "pinned_to_organization_flag": false
@@ -2336,16 +2338,16 @@
           "meta": {
             "action": "create",
             "company_id": "2396659",
-            "correlation_id": "cc6d7282-b536-4689-b701-978894d575ea",
-            "entity_id": "6248",
+            "correlation_id": "9045e1ad-d4e8-4b4c-97e0-fd30c430e7e8",
+            "entity_id": "6255",
             "entity": "note",
-            "id": "8d58ae28-cded-4a8c-b265-e65174c97b05",
+            "id": "685580b1-2e2e-4cd5-b11f-3d2fb8bb8075",
             "is_bulk_edit": false,
-            "timestamp": "2026-05-25T14:31:21.033Z",
+            "timestamp": "2026-05-25T20:20:35.499Z",
             "type": "general",
             "user_id": "3559832",
             "version": "2.0",
-            "webhook_id": "1854430",
+            "webhook_id": "1872183",
             "webhook_owner_id": "3559832",
             "change_source": "app",
             "permitted_user_ids": [
@@ -2359,8 +2361,8 @@
       }
     ]
   },
-  "versionId": "20b1e4d8-1a80-43e3-8fc3-2adf4a65c00f",
-  "activeVersionId": "20b1e4d8-1a80-43e3-8fc3-2adf4a65c00f",
+  "versionId": "df929a58-285c-4d5b-8e89-324ee98556e1",
+  "activeVersionId": "df929a58-285c-4d5b-8e89-324ee98556e1",
   "triggerCount": 1,
   "shared": [
     {
@@ -2372,13 +2374,15 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-05-25T15:08:42.818Z",
-    "createdAt": "2026-05-25T15:08:28.867Z",
-    "versionId": "20b1e4d8-1a80-43e3-8fc3-2adf4a65c00f",
+    "updatedAt": "2026-05-26T14:12:55.934Z",
+    "createdAt": "2026-05-26T14:12:53.760Z",
+    "versionId": "df929a58-285c-4d5b-8e89-324ee98556e1",
     "workflowId": "brjePGniRxpG5Pze",
     "nodes": [
       {
-        "parameters": {},
+        "parameters": {
+          "entity": "note"
+        },
         "type": "n8n-nodes-base.pipedriveTrigger",
         "typeVersion": 1.1,
         "position": [
@@ -4667,7 +4671,7 @@
       }
     },
     "authors": "Letícia Piazzetta",
-    "name": "Version 20b1e4d8",
+    "name": "Version df929a58",
     "description": "",
     "autosaved": true
   },
