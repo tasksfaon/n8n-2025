@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-09-10T20:20:06.806Z",
+  "updatedAt": "2026-05-29T19:30:38.228Z",
   "createdAt": "2025-09-10T20:16:45.646Z",
   "id": "yrjwtt9VzgtgCr7o",
   "name": "[Márcia] Lançamento 07/10 - Grupos",
@@ -15,8 +15,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -20,
-        -140
+        -16,
+        -144
       ],
       "id": "341b5c15-8ca2-4666-b47b-b354f7cbee95",
       "name": "Webhook",
@@ -31,8 +31,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -20,
-        60
+        -16,
+        64
       ],
       "id": "7aedb040-fd3f-4e6b-9290-762e10c47741",
       "name": "Webhook1",
@@ -45,8 +45,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        200,
-        -140
+        208,
+        -144
       ],
       "id": "0c005cd1-052b-4fe2-a25c-61ca0e148940",
       "name": "Code"
@@ -92,8 +92,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        420,
-        -140
+        432,
+        -144
       ],
       "id": "dcf7d424-152f-4823-a179-28be92e37dd1",
       "name": "Edit Fields"
@@ -182,7 +182,7 @@
       "typeVersion": 4.5,
       "position": [
         640,
-        -140
+        -144
       ],
       "id": "ac18dff7-fa4d-42d8-96b4-7f034541fd4e",
       "name": "Google Sheets",
@@ -198,8 +198,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        860,
-        -140
+        864,
+        -144
       ],
       "id": "453d430a-e13a-4961-b465-dc150f37d984",
       "name": "No Operation, do nothing"
@@ -209,8 +209,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        860,
-        60
+        864,
+        64
       ],
       "id": "472a985e-e4ad-4833-8870-378a8058afda",
       "name": "No Operation, do nothing1"
@@ -222,8 +222,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        200,
-        60
+        208,
+        64
       ],
       "id": "fbfe95a9-16e3-47b0-bf12-2c61c1133aa1",
       "name": "Code1"
@@ -269,8 +269,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        420,
-        60
+        432,
+        64
       ],
       "id": "a430b809-0f0c-4da6-af8b-3b7fd0dea60f",
       "name": "Edit Fields1"
@@ -359,7 +359,7 @@
       "typeVersion": 4.5,
       "position": [
         640,
-        60
+        64
       ],
       "id": "b1173c24-b29d-43de-a3e0-3621834a79e3",
       "name": "Google Sheets1",
@@ -464,7 +464,8 @@
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
-    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx",
+    "binaryMode": "separate"
   },
   "staticData": null,
   "meta": {
@@ -513,41 +514,44 @@
         "json": {
           "headers": {
             "host": "webhook2025.faondigital.com.br",
-            "user-agent": "axios/1.7.7",
-            "content-length": "275",
+            "user-agent": "axios/1.13.5",
+            "content-length": "436",
             "accept": "application/json, text/plain, */*",
             "accept-encoding": "gzip, compress, deflate, br",
             "content-type": "application/json",
-            "sendtok": "5DB47742869B5066BFBAA77C0ED3CC0C3456FE8C4E",
-            "x-forwarded-for": "150.230.69.75",
+            "sendtok": "F02BF07CD3372A3FD651FBAE43AEDE4376ACCE3876",
+            "x-forwarded-for": "152.67.45.156",
             "x-forwarded-host": "webhook2025.faondigital.com.br",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
             "x-forwarded-server": "252d6c58ebda",
-            "x-real-ip": "150.230.69.75"
+            "x-real-ip": "152.67.45.156"
           },
           "params": {},
           "query": {},
           "body": {
-            "id": "IOxrI8CE90GnapVB0E5L",
+            "id": "N2KV8lkkmw0z0xGM0Ljn",
             "event": "group.updated.members.removed",
             "data": {
-              "campaignName": "Instagram vendedor - Pago",
-              "groupName": "Instagram vendedor #10",
-              "campaignId": "4t68jDctEg4ws3ASI6nO",
-              "number": "553184617540",
-              "createdAt": "2025-04-04T15:13:06.064Z"
+              "campaignName": "Lançamento 07/10",
+              "groupName": "Interessados em cursos CENTER AO | Dra. Márcia Yamamura #2",
+              "groupJid": "120363419684917508@g.us",
+              "groupId": "52ZEiqQDdyNPGlZ39kUD",
+              "campaignId": "dOG7tU0Y0Y6MPaWoWdRt",
+              "number": "5524988088483",
+              "createdAt_with_timezone_br": "2026-05-28T16:18:25.323-03:00",
+              "createdAt": "2026-05-28T19:18:25.323Z"
             },
             "version": "1.0.0"
           },
-          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/ana-EVI0325-gr-saiu",
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/marcia-l0710",
           "executionMode": "production"
         }
       }
     ]
   },
-  "versionId": "ed06f34c-bd54-4f8e-b337-0ec1ee1ee7d5",
-  "activeVersionId": "ed06f34c-bd54-4f8e-b337-0ec1ee1ee7d5",
+  "versionId": "6b332a9f-d653-4298-a34c-03a7404e39f7",
+  "activeVersionId": "6b332a9f-d653-4298-a34c-03a7404e39f7",
   "triggerCount": 2,
   "shared": [
     {
@@ -559,9 +563,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2025-11-25T16:33:10.313Z",
-    "createdAt": "2025-11-25T16:33:10.313Z",
-    "versionId": "ed06f34c-bd54-4f8e-b337-0ec1ee1ee7d5",
+    "updatedAt": "2026-05-29T19:30:41.818Z",
+    "createdAt": "2026-05-29T19:30:37.833Z",
+    "versionId": "6b332a9f-d653-4298-a34c-03a7404e39f7",
     "workflowId": "yrjwtt9VzgtgCr7o",
     "nodes": [
       {
@@ -573,8 +577,8 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2,
         "position": [
-          -20,
-          -140
+          -16,
+          -144
         ],
         "id": "341b5c15-8ca2-4666-b47b-b354f7cbee95",
         "name": "Webhook",
@@ -589,8 +593,8 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2,
         "position": [
-          -20,
-          60
+          -16,
+          64
         ],
         "id": "7aedb040-fd3f-4e6b-9290-762e10c47741",
         "name": "Webhook1",
@@ -603,8 +607,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          200,
-          -140
+          208,
+          -144
         ],
         "id": "0c005cd1-052b-4fe2-a25c-61ca0e148940",
         "name": "Code"
@@ -650,8 +654,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          420,
-          -140
+          432,
+          -144
         ],
         "id": "dcf7d424-152f-4823-a179-28be92e37dd1",
         "name": "Edit Fields"
@@ -740,7 +744,7 @@
         "typeVersion": 4.5,
         "position": [
           640,
-          -140
+          -144
         ],
         "id": "ac18dff7-fa4d-42d8-96b4-7f034541fd4e",
         "name": "Google Sheets",
@@ -756,8 +760,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          860,
-          -140
+          864,
+          -144
         ],
         "id": "453d430a-e13a-4961-b465-dc150f37d984",
         "name": "No Operation, do nothing"
@@ -767,8 +771,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          860,
-          60
+          864,
+          64
         ],
         "id": "472a985e-e4ad-4833-8870-378a8058afda",
         "name": "No Operation, do nothing1"
@@ -780,8 +784,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          200,
-          60
+          208,
+          64
         ],
         "id": "fbfe95a9-16e3-47b0-bf12-2c61c1133aa1",
         "name": "Code1"
@@ -827,8 +831,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          420,
-          60
+          432,
+          64
         ],
         "id": "a430b809-0f0c-4da6-af8b-3b7fd0dea60f",
         "name": "Edit Fields1"
@@ -917,7 +921,7 @@
         "typeVersion": 4.5,
         "position": [
           640,
-          60
+          64
         ],
         "id": "b1173c24-b29d-43de-a3e0-3621834a79e3",
         "name": "Google Sheets1",
@@ -1019,10 +1023,10 @@
         ]
       }
     },
-    "authors": "system migration",
-    "name": null,
-    "description": null,
-    "autosaved": false
+    "authors": "Letícia Piazzetta",
+    "name": "Version 6b332a9f",
+    "description": "",
+    "autosaved": true
   },
   "tags": []
 }
