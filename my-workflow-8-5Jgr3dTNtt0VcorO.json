@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-29T21:37:39.165Z",
+  "updatedAt": "2026-05-30T16:40:46.918Z",
   "createdAt": "2026-05-29T21:31:48.704Z",
   "id": "5Jgr3dTNtt0VcorO",
   "name": "My workflow 8",
@@ -7,70 +7,79 @@
   "isArchived": false,
   "nodes": [
     {
-      "parameters": {
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
-      "typeVersion": 1.4,
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
       "position": [
         0,
         0
       ],
-      "id": "91713cd9-668b-4202-aefb-5c2ed721641f",
-      "name": "When chat message received",
-      "webhookId": "e69ee164-2f58-4da5-8941-9eef4f58c3ff"
+      "id": "d60da1bd-cacd-4f3c-b06c-3574399836a6",
+      "name": "When clicking ‘Execute workflow’"
     },
     {
       "parameters": {
+        "endpointUrl": "https://mcp.g1.datacrazy.io/api/mcp",
+        "authentication": "bearerAuth",
+        "tool": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "parameters": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
         "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3.1,
+      "type": "@n8n/n8n-nodes-langchain.mcpClient",
+      "typeVersion": 1,
       "position": [
         208,
         0
       ],
-      "id": "accc5bc3-4f53-492f-a178-270316fa5b29",
-      "name": "AI Agent"
+      "id": "cc8e1401-47f7-4d16-9ac0-a307f561b181",
+      "name": "MCP Client",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "mp8gLAhrSkIkrmDF",
+          "name": "mcp data crazy"
+        }
+      }
     },
     {
       "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "list",
-          "value": "claude-sonnet-4-6",
-          "cachedResultName": "Claude Sonnet 4.6"
-        },
-        "options": {}
+        "authentication": "bearerAuth",
+        "path": "6b34d9fb-391d-411f-ab93-1dfe1d5416fe"
       },
-      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-      "typeVersion": 1.5,
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
       "position": [
-        80,
-        208
+        416,
+        0
       ],
-      "id": "179efd98-04c5-4114-8848-08bf44667520",
-      "name": "Anthropic Chat Model"
+      "id": "b70518cb-6a33-4c44-bd8a-c9f9910f17cf",
+      "name": "MCP Server Trigger",
+      "webhookId": "6b34d9fb-391d-411f-ab93-1dfe1d5416fe",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "mp8gLAhrSkIkrmDF",
+          "name": "mcp data crazy"
+        }
+      }
     }
   ],
   "connections": {
-    "When chat message received": {
+    "When clicking ‘Execute workflow’": {
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "MCP Client",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Anthropic Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -82,9 +91,11 @@
     "binaryMode": "separate"
   },
   "staticData": null,
-  "meta": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "pinData": {},
-  "versionId": "70fc374f-502d-424b-88ff-8224062e763e",
+  "versionId": "ee99637c-f4f6-48c7-975d-9fb043b6c4ae",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
