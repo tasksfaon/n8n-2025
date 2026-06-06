@@ -1,0 +1,327 @@
+{
+  "updatedAt": "2026-06-05T19:17:18.506Z",
+  "createdAt": "2026-06-05T19:17:18.506Z",
+  "id": "2i0GbuXIWj7nsid8",
+  "name": "Fluxo 2 — Checkout Event → Supabase",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "3682f30e-32a7-4a1b-83dc-ba09f3a829ce",
+      "name": "Sticky Note 78894ee7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        120
+      ],
+      "parameters": {
+        "content": "## Fluxo 2 — Checkout Event\n\n**Trigger:** POST /webhook/checkout-event\n\n**Payload esperado:**\n```json\n{\n  \"email\": \"...\",\n  \"product_name\": \"nome exato do produto\",\n  \"transaction_id\": \"TXN123\",\n  \"amount\": 197.00,\n  \"payment_method\": \"pix|boleto|cartao_credito|outro\",\n  \"installments\": 1,\n  \"platform\": \"hotmart|pepper|assiny\",\n  \"occurred_at\": \"2025-01-15T10:30:00Z\"\n}\n```\n\n**O que faz:**\n1. Busca lead_id pelo email\n2. Busca product_id pelo nome\n3. Insere checkout_event (ignora se transaction_id ja existe)\n4. Atualiza status do lead para comprador",
+        "color": 4,
+        "width": 1120,
+        "height": 400
+      }
+    },
+    {
+      "id": "4311a0fe-6e45-4ffb-bb7a-2720dbabd9fe",
+      "name": "Webhook Checkout Event",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "checkout-event",
+        "responseMode": "onReceived"
+      },
+      "webhookId": "7463380d-1e54-4aea-a445-699a60cb979b"
+    },
+    {
+      "id": "0493984a-23f5-427c-876b-f69c6b72610c",
+      "name": "Normalizar Checkout",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        500,
+        300
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ { \"email\": ($json.body.email || \"\").trim().toLowerCase(), \"product_name\": $json.body.product_name || null, \"transaction_id\": $json.body.transaction_id || null, \"amount_cents\": $json.body.amount ? Math.round($json.body.amount * 100) : null, \"payment_method\": $json.body.payment_method || \"outro\", \"installments\": $json.body.installments || 1, \"platform\": $json.body.platform || null, \"utm_source\": $json.body.utm_source || null, \"utm_medium\": $json.body.utm_medium || null, \"utm_campaign\": $json.body.utm_campaign || null, \"utm_content\": $json.body.utm_content || null, \"utm_term\": $json.body.utm_term || null, \"occurred_at\": $json.body.occurred_at || $now.toISO() } }}"
+      }
+    },
+    {
+      "id": "a326663a-a8d3-421c-a103-d0827b3b001b",
+      "name": "Buscar Lead por Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        760,
+        300
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://yscegbszuckpdcopdszj.supabase.co/rest/v1/leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "=eq.{{ $json.email }}"
+            },
+            {
+              "name": "select",
+              "value": "id,email"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept-Profile",
+              "value": "public"
+            }
+          ]
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "cdcdcd9e-daeb-47ca-ab79-59b5ecd833b2",
+      "name": "Upsert Checkout Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1060,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://yscegbszuckpdcopdszj.supabase.co/rest/v1/checkout_events",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "on_conflict",
+              "value": "transaction_id"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=ignore-duplicates,return=minimal"
+            },
+            {
+              "name": "Accept-Profile",
+              "value": "public"
+            },
+            {
+              "name": "Content-Profile",
+              "value": "public"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"lead_id\": $(\"Buscar Lead por Email\").item.json.id || null, \"product_id\": $(\"Buscar Produto por Nome\").item.json.id || null, \"event_type\": \"compra_concluida\", \"platform\": $(\"Normalizar Checkout\").item.json.platform, \"transaction_id\": $(\"Normalizar Checkout\").item.json.transaction_id, \"amount_cents\": $(\"Normalizar Checkout\").item.json.amount_cents, \"currency\": \"BRL\", \"payment_method\": $(\"Normalizar Checkout\").item.json.payment_method, \"installments\": $(\"Normalizar Checkout\").item.json.installments, \"utm_source\": $(\"Normalizar Checkout\").item.json.utm_source, \"utm_medium\": $(\"Normalizar Checkout\").item.json.utm_medium, \"utm_campaign\": $(\"Normalizar Checkout\").item.json.utm_campaign, \"utm_content\": $(\"Normalizar Checkout\").item.json.utm_content, \"utm_term\": $(\"Normalizar Checkout\").item.json.utm_term, \"occurred_at\": $(\"Normalizar Checkout\").item.json.occurred_at } }}"
+      }
+    },
+    {
+      "id": "e0d87ef0-46dc-4482-a1d2-731dfff272aa",
+      "name": "Buscar Produto por Nome",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        760,
+        500
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://yscegbszuckpdcopdszj.supabase.co/rest/v1/products",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "=eq.{{ $(\"Normalizar Checkout\").item.json.product_name }}"
+            },
+            {
+              "name": "select",
+              "value": "id,name"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept-Profile",
+              "value": "public"
+            }
+          ]
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "75c5b0dd-cb25-4969-be00-5e5b712cc995",
+      "name": "Atualizar Status Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1060,
+        500
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://yscegbszuckpdcopdszj.supabase.co/rest/v1/leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "=eq.{{ $(\"Buscar Lead por Email\").item.json.id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            },
+            {
+              "name": "Accept-Profile",
+              "value": "public"
+            },
+            {
+              "name": "Content-Profile",
+              "value": "public"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"status\": \"comprador\" } }}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Checkout Event": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Checkout",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Checkout": {
+      "main": [
+        [
+          {
+            "node": "Buscar Lead por Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar Produto por Nome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Lead por Email": {
+      "main": [
+        [
+          {
+            "node": "Upsert Checkout Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Checkout Event": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Status Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Produto por Nome": {
+      "main": [
+        [
+          {
+            "node": "Upsert Checkout Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "pinData": null,
+  "versionId": "371e1040-e514-4208-bd05-a9200b4cbbba",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-06-05T19:17:18.506Z",
+      "createdAt": "2026-06-05T19:17:18.506Z",
+      "role": "workflow:owner",
+      "workflowId": "2i0GbuXIWj7nsid8",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
