@@ -1,0 +1,258 @@
+{
+  "updatedAt": "2026-06-05T19:17:41.501Z",
+  "createdAt": "2026-06-05T19:17:41.501Z",
+  "id": "okAcfzL3Pps7Zhgb",
+  "name": "Fluxo 3 — Membro WPP → Supabase",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "5a0ff3a0-dac7-4b38-afaa-291e9db9982e",
+      "name": "Sticky Note c096c9f7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        120
+      ],
+      "parameters": {
+        "content": "## Fluxo 3 — Membro Grupo WPP\n\n**Trigger:** POST /webhook/wpp-membro\n\n**Payload esperado:**\n```json\n{\n  \"group_name\": \"nome exato do grupo\",\n  \"phone\": \"5511999990000\",\n  \"is_active\": true\n}\n```\n\n**O que faz:**\n1. Busca group_id pelo nome do grupo\n2. Busca lead_id pelo telefone (opcional)\n3. Insere membro no grupo (ignora duplicatas)",
+        "color": 5,
+        "width": 1120,
+        "height": 400
+      }
+    },
+    {
+      "id": "33ffb043-d9ca-4545-97a1-fb41f04cf998",
+      "name": "Webhook Membro Grupo WPP",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wpp-membro",
+        "responseMode": "onReceived"
+      },
+      "webhookId": "88421f4f-1cfe-4fac-b97b-4be3de451559"
+    },
+    {
+      "id": "4d5ce748-05d5-4849-a886-1f74e3853326",
+      "name": "Normalizar Membro",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        500,
+        300
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ { \"group_name\": ($json.body.group_name || \"\").trim(), \"phone\": ($json.body.phone || \"\").replace(/\\D/g, \"\"), \"is_active\": $json.body.is_active !== false } }}"
+      }
+    },
+    {
+      "id": "f478c9b8-a6d5-41a5-a6ee-9db5f7bc0b72",
+      "name": "Buscar Grupo por Nome",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        760,
+        200
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://yscegbszuckpdcopdszj.supabase.co/rest/v1/wpp_groups",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "=eq.{{ $json.group_name }}"
+            },
+            {
+              "name": "select",
+              "value": "id,name"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept-Profile",
+              "value": "public"
+            }
+          ]
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "bb1b83f3-2b3e-4875-bb41-31e2772cbc82",
+      "name": "Upsert Membro no Grupo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1060,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://yscegbszuckpdcopdszj.supabase.co/rest/v1/wpp_group_members",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=ignore-duplicates,return=minimal"
+            },
+            {
+              "name": "Accept-Profile",
+              "value": "public"
+            },
+            {
+              "name": "Content-Profile",
+              "value": "public"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"group_id\": $(\"Buscar Grupo por Nome\").item.json.id, \"lead_id\": $(\"Buscar Lead por Telefone\").item.json.lead_id || null, \"phone\": $(\"Normalizar Membro\").item.json.phone, \"role\": \"member\", \"is_active\": $(\"Normalizar Membro\").item.json.is_active, \"joined_at\": $now.toISO(), \"created_at\": $now.toISO() } }}"
+      }
+    },
+    {
+      "id": "0cd82eea-d0f5-4cc9-853a-f698a97e5a7c",
+      "name": "Buscar Lead por Telefone",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        760,
+        400
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://yscegbszuckpdcopdszj.supabase.co/rest/v1/lead_phones",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "=eq.{{ $(\"Normalizar Membro\").item.json.phone }}"
+            },
+            {
+              "name": "select",
+              "value": "lead_id"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept-Profile",
+              "value": "public"
+            }
+          ]
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true
+    }
+  ],
+  "connections": {
+    "Webhook Membro Grupo WPP": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Membro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Membro": {
+      "main": [
+        [
+          {
+            "node": "Buscar Grupo por Nome",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar Lead por Telefone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Grupo por Nome": {
+      "main": [
+        [
+          {
+            "node": "Upsert Membro no Grupo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Lead por Telefone": {
+      "main": [
+        [
+          {
+            "node": "Upsert Membro no Grupo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "pinData": null,
+  "versionId": "ff188f15-3d61-4919-9463-5395f476734c",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-06-05T19:17:41.501Z",
+      "createdAt": "2026-06-05T19:17:41.501Z",
+      "role": "workflow:owner",
+      "workflowId": "okAcfzL3Pps7Zhgb",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
