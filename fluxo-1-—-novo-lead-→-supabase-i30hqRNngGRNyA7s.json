@@ -1,0 +1,272 @@
+{
+  "updatedAt": "2026-06-05T19:18:26.351Z",
+  "createdAt": "2026-06-05T19:16:45.061Z",
+  "id": "i30hqRNngGRNyA7s",
+  "name": "Fluxo 1 — Novo Lead → Supabase",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Fluxo 1 — Novo Lead\n\n**Trigger:** POST /webhook/novo-lead\n\n**Payload esperado:**\n```json\n{\n  \"email\": \"...\",\n  \"name\": \"...\",\n  \"phone\": \"5511999990000\",\n  \"utm_source\": \"...\",\n  \"utm_medium\": \"...\",\n  \"utm_campaign\": \"...\",\n  \"utm_content\": \"...\",\n  \"utm_term\": \"...\"\n}\n```\n\n**Credencial:** Configure \"Supabase API Key\" com Header Auth\n- Header: apikey\n- Value: sua service_role key",
+        "height": 400,
+        "width": 1080,
+        "color": 3
+      },
+      "id": "acb59e6e-500c-4142-800b-ba8ca904d8a0",
+      "name": "Sticky Note dcddb8df",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "novo-lead",
+        "options": {}
+      },
+      "id": "015d261e-e2ea-4c42-881d-8f339c6e6498",
+      "name": "Webhook Novo Lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        304
+      ],
+      "webhookId": "8ba63671-c457-43b0-8c99-f9a5f7e72375"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ { \"email\": ($json.body.email || \"\").trim().toLowerCase(), \"name\": $json.body.name || null, \"phone\": ($json.body.phone || \"\").replace(/\\D/g, \"\") || null, \"utm_source\": $json.body.utm_source || null, \"utm_medium\": $json.body.utm_medium || null, \"utm_campaign\": $json.body.utm_campaign || null, \"utm_content\": $json.body.utm_content || null, \"utm_term\": $json.body.utm_term || null } }}",
+        "options": {}
+      },
+      "id": "7ca91ece-e1c5-4020-8d64-c36b36a6b19d",
+      "name": "Normalizar Dados",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yscegbszuckpdcopdszj.supabase.co/rest/v1/leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "on_conflict",
+              "value": "email"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=representation"
+            },
+            {
+              "name": "Accept-Profile",
+              "value": "public"
+            },
+            {
+              "name": "Content-Profile",
+              "value": "public"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"email\": $json.email, \"name\": $json.name, \"status\": \"lead\", \"utm_source\": $json.utm_source, \"utm_medium\": $json.utm_medium, \"utm_campaign\": $json.utm_campaign, \"utm_content\": $json.utm_content, \"utm_term\": $json.utm_term } }}",
+        "options": {}
+      },
+      "id": "b6bc2893-0271-4b2e-b462-9c8268b97d47",
+      "name": "Upsert Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        768,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yscegbszuckpdcopdszj.supabase.co/rest/v1/lead_emails",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "on_conflict",
+              "value": "email"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=minimal"
+            },
+            {
+              "name": "Accept-Profile",
+              "value": "public"
+            },
+            {
+              "name": "Content-Profile",
+              "value": "public"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"lead_id\": $json[0].id, \"email\": $json[0].email, \"is_primary\": true, \"source\": \"webhook\" } }}",
+        "options": {}
+      },
+      "id": "8bbb3287-986d-4feb-a1ec-dc90b981abe9",
+      "name": "Upsert Lead Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1024,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yscegbszuckpdcopdszj.supabase.co/rest/v1/lead_phones",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "on_conflict",
+              "value": "lead_id,phone"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=ignore-duplicates,return=minimal"
+            },
+            {
+              "name": "Accept-Profile",
+              "value": "public"
+            },
+            {
+              "name": "Content-Profile",
+              "value": "public"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"lead_id\": $json[0].id, \"phone\": $(\"Normalizar Dados\").item.json.phone, \"is_primary\": true, \"is_whatsapp\": true, \"source\": \"webhook\" } }}",
+        "options": {}
+      },
+      "id": "650b6c8f-f960-4813-afcd-5af81c39daba",
+      "name": "Upsert Lead Phone",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1024,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Novo Lead": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Dados": {
+      "main": [
+        [
+          {
+            "node": "Upsert Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Lead": {
+      "main": [
+        [
+          {
+            "node": "Upsert Lead Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upsert Lead Phone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "pinData": {},
+  "versionId": "8324055d-e3a4-4b47-8e48-93e3717922c9",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-06-05T19:16:45.061Z",
+      "createdAt": "2026-06-05T19:16:45.061Z",
+      "role": "workflow:owner",
+      "workflowId": "i30hqRNngGRNyA7s",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
