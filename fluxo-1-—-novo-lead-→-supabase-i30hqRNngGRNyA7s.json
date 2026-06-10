@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-06-05T19:18:26.351Z",
+  "updatedAt": "2026-06-09T15:00:37.512Z",
   "createdAt": "2026-06-05T19:16:45.061Z",
   "id": "i30hqRNngGRNyA7s",
   "name": "Fluxo 1 — Novo Lead → Supabase",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -255,7 +255,7 @@
     "builderVariant": "mcp"
   },
   "pinData": {},
-  "versionId": "8324055d-e3a4-4b47-8e48-93e3717922c9",
+  "versionId": "41acb286-2e1b-4ebc-a854-27160aeb8038",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
