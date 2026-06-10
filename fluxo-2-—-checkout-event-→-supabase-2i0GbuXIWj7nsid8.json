@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-06-05T19:17:18.506Z",
+  "updatedAt": "2026-06-09T15:00:42.691Z",
   "createdAt": "2026-06-05T19:17:18.506Z",
   "id": "2i0GbuXIWj7nsid8",
   "name": "Fluxo 2 — Checkout Event → Supabase",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "id": "3682f30e-32a7-4a1b-83dc-ba09f3a829ce",
@@ -310,7 +310,7 @@
     "builderVariant": "mcp"
   },
   "pinData": null,
-  "versionId": "371e1040-e514-4208-bd05-a9200b4cbbba",
+  "versionId": "82061e91-4353-48e1-b3d8-515b36191fd4",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
