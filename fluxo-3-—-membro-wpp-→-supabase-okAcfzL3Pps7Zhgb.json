@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-06-05T19:17:41.501Z",
+  "updatedAt": "2026-06-09T15:00:40.174Z",
   "createdAt": "2026-06-05T19:17:41.501Z",
   "id": "okAcfzL3Pps7Zhgb",
   "name": "Fluxo 3 — Membro WPP → Supabase",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "id": "5a0ff3a0-dac7-4b38-afaa-291e9db9982e",
@@ -241,7 +241,7 @@
     "builderVariant": "mcp"
   },
   "pinData": null,
-  "versionId": "ff188f15-3d61-4919-9463-5395f476734c",
+  "versionId": "dc7a23f2-0d64-45e1-bc16-d535a0b56776",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
