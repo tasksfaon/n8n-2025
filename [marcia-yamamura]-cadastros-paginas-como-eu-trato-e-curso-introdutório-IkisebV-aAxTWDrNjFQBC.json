@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-13T15:46:41.559Z",
+  "updatedAt": "2026-06-10T13:23:02.809Z",
   "createdAt": "2026-03-20T18:21:40.788Z",
   "id": "IkisebV-aAxTWDrNjFQBC",
   "name": "[Marcia Yamamura] Cadastros paginas como eu trato e curso introdutório",
@@ -1001,7 +1001,8 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "binaryMode": "separate"
   },
   "staticData": null,
   "meta": {
@@ -1059,7 +1060,7 @@
           "headers": {
             "host": "webhook2025.faondigital.com.br",
             "user-agent": "WordPress/6.9.4; https://institutoacupuntura.com.br",
-            "content-length": "368",
+            "content-length": "391",
             "accept": "*/*",
             "accept-encoding": "deflate, gzip",
             "content-type": "application/x-www-form-urlencoded",
@@ -1073,20 +1074,20 @@
           "params": {},
           "query": {},
           "body": {
-            "Nome completo": "Michel Fardin Silva",
-            "E-mail": "micheldsfardin@hotmail.com",
-            "Telefone": "28998838138",
-            "Profissional": "Sou Médico",
-            "CRM": "342234",
-            "UF do CRM": "Acre",
-            "Mensagem (opcional)": "zdsc",
+            "Nome completo": "Danilo Neves",
+            "E-mail": "daniloneves2308@gmail.com",
+            "Telefone": "31997479394",
+            "Profissional": "Não sou médico",
+            "CRM": "0000",
+            "UF do CRM": "Bahia",
+            "Mensagem (opcional)": "",
             "No Label field_fa88c18": "",
-            "utm_source": "",
+            "utm_source": "google_search",
             "utm_campaign": "",
             "utm_content": "",
-            "utm_medium": "",
+            "utm_medium": "curso para dor",
             "utm_term": "",
-            "data": "13/04/2026",
+            "data": "10/06/2026",
             "form_id": "5ca8a43",
             "form_name": "Lista de espera - Turma 2026 - Pós acupuntura médica"
           },
