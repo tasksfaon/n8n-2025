@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-10T13:23:02.809Z",
+  "updatedAt": "2026-06-23T20:06:16.613Z",
   "createdAt": "2026-03-20T18:21:40.788Z",
   "id": "IkisebV-aAxTWDrNjFQBC",
   "name": "[Marcia Yamamura] Cadastros paginas como eu trato e curso introdutório",
@@ -409,7 +409,7 @@
           "parameters": [
             {
               "name": "accountId",
-              "value": "D6sYKIJ6g574l0vHredU"
+              "value": "ihcENuyMzSizt8EHuFjf"
             },
             {
               "name": "releaseId",
@@ -582,7 +582,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n    \"name\": \"{{ $json.Nome }}\",\n    \"email\": \"{{ $json.Email }}\",\n    \"phone\": \"{{ $json.Telefone }}\",\n\n    \"487088fb302d80a85669079afe41a91a21fd45ff\": \"{{ $json.CRM }}\",\n    \"f77f5009ce48d7b62427c2d0961522f1830eb66e\": \"{{ $json.UF }}\",\n    \"334747750ddbc82c2010b5a75da2d82b3bf71783\": \"{{ $json['Profissão'] }}\",\n\n    \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n    \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n    \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n    \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n    \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\",\n\n    \"a58c7a5981502e45f08c88ae54379fb16387547f\": \"{{ $json['utm source'] }}\",\n    \"53e2271622f39f32eecdb9e3c746fd69630e7366\": \"{{ $json.Mensagem }}\"\n  }",
+        "jsonBody": "={{\n({\n  name: $json.Nome,\n  email: $json.Email,\n  phone: $json.Telefone,\n\n  \"487088fb302d80a85669079afe41a91a21fd45ff\": $json['Pessoa - CRM (apenas No)'],\n  \"f77f5009ce48d80a85669079afe41a91a21fd45ff\": $json['Pessoa - UF do CRM'],\n  \"334747750ddbc82c2010b5a75da2d82b3bf71783\": $json['Pessoa - Profissional'],\n\n  \"7094f1773407a5218d265aafdd92b3d789d0b634\": $json['utm source'],\n  \"b86aa7687c10bc080c93a2286f7108395e82ff56\": $json['utm medium'],\n  \"380544a9344190f781b8b37cfbe18e3e56022cc2\": $json['utm campaign'],\n  \"e8679afb73fca6d5d127840349adb093c2643c17\": $json['utm content'],\n  \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": $json['utm term'],\n\n  \"a58c7a5981502e45f08c88ae54379fb16387547f\": $json['utm source'],\n\n  \"53e2271622f39f32eecdb9e3c746fd69630e7366\":\n    ($json.Mensagem || '')\n      .toString()\n      .replace(/[\\r\\n\\t]/g, ' ')\n      .trim()\n})\n}}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -819,7 +819,7 @@
           "parameters": [
             {
               "name": "accountId",
-              "value": "D6sYKIJ6g574l0vHredU"
+              "value": "ihcENuyMzSizt8EHuFjf"
             },
             {
               "name": "releaseId",
@@ -841,6 +841,20 @@
       ],
       "id": "0645fa93-7fee-45fa-a6f2-de00de0cede3",
       "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "url": "https://api.pipedrive.com/v1/personFields?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        688,
+        896
+      ],
+      "id": "18e3d385-b7bd-44d7-ac8b-37a55b9af171",
+      "name": "HTTP Pipedrive Pegar campos"
     }
   ],
   "connections": {
@@ -1060,7 +1074,7 @@
           "headers": {
             "host": "webhook2025.faondigital.com.br",
             "user-agent": "WordPress/6.9.4; https://institutoacupuntura.com.br",
-            "content-length": "391",
+            "content-length": "502",
             "accept": "*/*",
             "accept-encoding": "deflate, gzip",
             "content-type": "application/x-www-form-urlencoded",
@@ -1074,20 +1088,20 @@
           "params": {},
           "query": {},
           "body": {
-            "Nome completo": "Danilo Neves",
-            "E-mail": "daniloneves2308@gmail.com",
-            "Telefone": "31997479394",
+            "Nome completo": "ketty regina m f soares",
+            "E-mail": "kettyreginamfs@gmail.com",
+            "Telefone": "11984115206",
             "Profissional": "Não sou médico",
-            "CRM": "0000",
-            "UF do CRM": "Bahia",
-            "Mensagem (opcional)": "",
+            "CRM": "0000000000000",
+            "UF do CRM": "São Paulo",
+            "Mensagem (opcional)": "Boa tarde \r\nGostaria de fazer o curso de acumputura vc pode me passar valores",
             "No Label field_fa88c18": "",
             "utm_source": "google_search",
             "utm_campaign": "",
             "utm_content": "",
-            "utm_medium": "curso para dor",
+            "utm_medium": "curso para dores",
             "utm_term": "",
-            "data": "10/06/2026",
+            "data": "23/06/2026",
             "form_id": "5ca8a43",
             "form_name": "Lista de espera - Turma 2026 - Pós acupuntura médica"
           },
@@ -1097,8 +1111,8 @@
       }
     ]
   },
-  "versionId": "57b8c570-3a6c-4c6e-aedd-636ec2b75046",
-  "activeVersionId": "57b8c570-3a6c-4c6e-aedd-636ec2b75046",
+  "versionId": "aa40ae5e-2781-4601-a1e0-d1bc41905ee7",
+  "activeVersionId": "aa40ae5e-2781-4601-a1e0-d1bc41905ee7",
   "triggerCount": 3,
   "shared": [
     {
@@ -1110,9 +1124,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-13T15:46:44.413Z",
-    "createdAt": "2026-04-13T15:46:41.561Z",
-    "versionId": "57b8c570-3a6c-4c6e-aedd-636ec2b75046",
+    "updatedAt": "2026-06-23T20:06:25.734Z",
+    "createdAt": "2026-06-23T20:06:16.614Z",
+    "versionId": "aa40ae5e-2781-4601-a1e0-d1bc41905ee7",
     "workflowId": "IkisebV-aAxTWDrNjFQBC",
     "nodes": [
       {
@@ -1518,7 +1532,7 @@
             "parameters": [
               {
                 "name": "accountId",
-                "value": "D6sYKIJ6g574l0vHredU"
+                "value": "ihcENuyMzSizt8EHuFjf"
               },
               {
                 "name": "releaseId",
@@ -1691,7 +1705,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n    \"name\": \"{{ $json.Nome }}\",\n    \"email\": \"{{ $json.Email }}\",\n    \"phone\": \"{{ $json.Telefone }}\",\n\n    \"487088fb302d80a85669079afe41a91a21fd45ff\": \"{{ $json.CRM }}\",\n    \"f77f5009ce48d7b62427c2d0961522f1830eb66e\": \"{{ $json.UF }}\",\n    \"334747750ddbc82c2010b5a75da2d82b3bf71783\": \"{{ $json['Profissão'] }}\",\n\n    \"7094f1773407a5218d265aafdd92b3d789d0b634\": \"{{ $json['utm source'] }}\",\n    \"b86aa7687c10bc080c93a2286f7108395e82ff56\": \"{{ $json['utm medium'] }}\",\n    \"380544a9344190f781b8b37cfbe18e3e56022cc2\": \"{{ $json['utm campaign'] }}\",\n    \"e8679afb73fca6d5d127840349adb093c2643c17\": \"{{ $json['utm content'] }}\",\n    \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": \"{{ $json['utm term'] }}\",\n\n    \"a58c7a5981502e45f08c88ae54379fb16387547f\": \"{{ $json['utm source'] }}\",\n    \"53e2271622f39f32eecdb9e3c746fd69630e7366\": \"{{ $json.Mensagem }}\"\n  }",
+          "jsonBody": "={{\n({\n  name: $json.Nome,\n  email: $json.Email,\n  phone: $json.Telefone,\n\n  \"487088fb302d80a85669079afe41a91a21fd45ff\": $json['Pessoa - CRM (apenas No)'],\n  \"f77f5009ce48d80a85669079afe41a91a21fd45ff\": $json['Pessoa - UF do CRM'],\n  \"334747750ddbc82c2010b5a75da2d82b3bf71783\": $json['Pessoa - Profissional'],\n\n  \"7094f1773407a5218d265aafdd92b3d789d0b634\": $json['utm source'],\n  \"b86aa7687c10bc080c93a2286f7108395e82ff56\": $json['utm medium'],\n  \"380544a9344190f781b8b37cfbe18e3e56022cc2\": $json['utm campaign'],\n  \"e8679afb73fca6d5d127840349adb093c2643c17\": $json['utm content'],\n  \"8a1560997a6ab74317002c5d779a7bd8fcd48fed\": $json['utm term'],\n\n  \"a58c7a5981502e45f08c88ae54379fb16387547f\": $json['utm source'],\n\n  \"53e2271622f39f32eecdb9e3c746fd69630e7366\":\n    ($json.Mensagem || '')\n      .toString()\n      .replace(/[\\r\\n\\t]/g, ' ')\n      .trim()\n})\n}}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -1928,7 +1942,7 @@
             "parameters": [
               {
                 "name": "accountId",
-                "value": "D6sYKIJ6g574l0vHredU"
+                "value": "ihcENuyMzSizt8EHuFjf"
               },
               {
                 "name": "releaseId",
@@ -1950,6 +1964,20 @@
         ],
         "id": "0645fa93-7fee-45fa-a6f2-de00de0cede3",
         "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "url": "https://api.pipedrive.com/v1/personFields?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          688,
+          896
+        ],
+        "id": "18e3d385-b7bd-44d7-ac8b-37a55b9af171",
+        "name": "HTTP Pipedrive Pegar campos"
       }
     ],
     "connections": {
@@ -2109,9 +2137,9 @@
       }
     },
     "authors": "Letícia Piazzetta",
-    "name": "Version 57b8c570",
+    "name": "Version aa40ae5e",
     "description": "",
-    "autosaved": false
+    "autosaved": true
   },
   "tags": []
 }
