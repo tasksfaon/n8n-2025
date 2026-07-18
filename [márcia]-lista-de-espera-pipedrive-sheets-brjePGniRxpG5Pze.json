@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-26T14:12:53.758Z",
+  "updatedAt": "2026-07-17T13:54:09.656Z",
   "createdAt": "2025-07-29T14:18:46.499Z",
   "id": "brjePGniRxpG5Pze",
   "name": "[Márcia] Lista de Espera Pipedrive Sheets",
@@ -13,8 +13,8 @@
       "type": "n8n-nodes-base.pipedriveTrigger",
       "typeVersion": 1.1,
       "position": [
-        -288,
-        1376
+        -464,
+        1360
       ],
       "id": "d6313058-b2d7-4c34-8173-4f022a1f39fb",
       "name": "Pipedrive Trigger",
@@ -33,8 +33,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        96,
-        1376
+        -96,
+        1360
       ],
       "id": "f031ae54-73bb-430e-b6e4-2ea7a303acb7",
       "name": "Code"
@@ -80,8 +80,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        256,
-        1376
+        80,
+        1360
       ],
       "id": "652d3557-f214-4d41-b4b9-ff3d52bf115f",
       "name": "Edit Fields"
@@ -95,8 +95,8 @@
       "type": "n8n-nodes-base.pipedrive",
       "typeVersion": 1,
       "position": [
-        -80,
-        1376
+        -288,
+        1360
       ],
       "id": "e4c2cf3b-f821-430f-a1c8-2058f1fb5d56",
       "name": "Pipedrive",
@@ -1939,7 +1939,7 @@
       "typeVersion": 1,
       "position": [
         1856,
-        1216
+        1392
       ],
       "id": "50a1c0a9-af0e-45c8-b078-bb7bfd56de1a",
       "name": "No Operation, do nothing"
@@ -1952,8 +1952,8 @@
       "type": "n8n-nodes-base.pipedrive",
       "typeVersion": 2,
       "position": [
-        432,
-        1376
+        448,
+        1280
       ],
       "id": "331dc963-9ffe-4a78-989b-113d722af733",
       "name": "Get a deal",
@@ -1963,6 +1963,40 @@
           "name": "Pipedrive account"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "eb7c5309-4dfc-4297-ba9b-950ca35da7c4",
+              "leftValue": "={{ $('Pipedrive Trigger').item.json.data.deal_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        272,
+        1360
+      ],
+      "id": "a32f2fa4-d4b5-4d60-812a-ce9efa6d5cbe",
+      "name": "If"
     }
   ],
   "connections": {
@@ -1992,7 +2026,7 @@
       "main": [
         [
           {
-            "node": "Get a deal",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -2295,6 +2329,24 @@
           }
         ]
       ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get a deal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -2303,7 +2355,7 @@
   },
   "staticData": {
     "node:Pipedrive Trigger": {
-      "webhookId": 1872451
+      "webhookId": 1886977
     },
     "node:Schedule Trigger": {
       "recurrenceRules": []
@@ -2318,18 +2370,18 @@
       {
         "json": {
           "data": {
-            "id": 6255,
+            "id": 6394,
             "user_id": 3559832,
-            "deal_id": 68140,
-            "person_id": 68663,
+            "deal_id": null,
+            "person_id": 68834,
             "org_id": null,
             "lead_id": null,
             "project_id": null,
             "task_id": null,
             "active_flag": true,
-            "content": "<p style=\"margin-top:0pt;margin-bottom:0pt;\"><b><u>INSCRIÇÃO TEAC 2026</u></b></p><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Informações cadastrais:&nbsp;</b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>CPF:</b> <span style=\"font-weight:normal;\">014.569.765-75</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>RG:</b> <span style=\"font-weight:normal;\">0845251503 / SSP-BA</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Data de Nascimento:</b> <span style=\"font-weight:normal;\">17/02/1984</span></p><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Nome:</b> <span style=\"font-weight:normal;\">Alexandre Cardoso Kates</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>E-mail:</b> <span style=\"font-weight:normal;\"><a href=\"mailto:alexandre.k.medicinaintegral@gmail.com\">alexandre.k.medicinaintegral@gmail.com</a></span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Celular:</b> <span style=\"font-weight:normal;\">71999152223</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Telefone fixo/Comercial:</b> <span style=\"font-weight:normal;\">71999152223</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Endereço:</b> <span style=\"font-weight:normal;\">Av. Praia de Itamaracá, S/N. Cond. Top Villa, casa 13 - Villas do Atlantico, Lauro de Freitas/BA – CEP: 42708-360</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>CRM/UF:</b> <span style=\"font-weight:normal;\">35901 / BA</span></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Acupunturista:</b> Cursando<span style=\"font-weight:400; color:rgb\"><br></span><b>Em qual faculdade e ano se formou em medicina:</b> <span style=\"font-weight:normal;\">UFAC (Federal do Acre) 2020</span></p><br><br><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b><u>FORMA DE PAGAMENTO</u></b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>6x de R$ 1.516,00</b></p><p style=\"margin-top:0pt;margin-bottom:0pt;\"><b>Total: R$ 9.096,00</b></p><br>",
-            "add_time": "2026-05-25T20:20:35Z",
-            "update_time": "2026-05-25T20:20:35Z",
+            "content": "<p><b>WhatsApp chat:</b></p><p><br><i>Center AO (09:46, 07/17/2026):</i><br>Ta certo. Obrigada Dr! Estaremos aqui sempre que precisar. Tenha um excelente dia.</p><p><br><i>Carlos Yano (09:44, 07/17/2026):</i><br>Não tenho, pode me retirar do cadastro</p><p><br><i>Center AO (09:15, 07/17/2026):</i><br>O sr teria interesse para daqui 1 ano?</p><p><br><i>Carlos Yano (08:05, 07/17/2026):</i><br>Não tenho interesse</p>",
+            "add_time": "2026-07-17T12:46:56Z",
+            "update_time": "2026-07-17T12:46:56Z",
             "pinned_to_deal_flag": false,
             "pinned_to_person_flag": false,
             "pinned_to_organization_flag": false
@@ -2338,18 +2390,18 @@
           "meta": {
             "action": "create",
             "company_id": "2396659",
-            "correlation_id": "9045e1ad-d4e8-4b4c-97e0-fd30c430e7e8",
-            "entity_id": "6255",
+            "correlation_id": "d896829d-5dbc-4d70-ac6d-6fc090e6eb40",
+            "entity_id": "6394",
             "entity": "note",
-            "id": "685580b1-2e2e-4cd5-b11f-3d2fb8bb8075",
+            "id": "f96c6213-db74-4d84-9f17-8c97d7f95854",
             "is_bulk_edit": false,
-            "timestamp": "2026-05-25T20:20:35.499Z",
+            "timestamp": "2026-07-17T12:46:56.794Z",
             "type": "general",
             "user_id": "3559832",
             "version": "2.0",
-            "webhook_id": "1872183",
+            "webhook_id": "1872451",
             "webhook_owner_id": "3559832",
-            "change_source": "app",
+            "change_source": "api",
             "permitted_user_ids": [
               "3559832",
               "3559867"
@@ -2361,8 +2413,8 @@
       }
     ]
   },
-  "versionId": "df929a58-285c-4d5b-8e89-324ee98556e1",
-  "activeVersionId": "df929a58-285c-4d5b-8e89-324ee98556e1",
+  "versionId": "5d10b5a5-715f-4bc4-96fc-def81c0a0a41",
+  "activeVersionId": "5d10b5a5-715f-4bc4-96fc-def81c0a0a41",
   "triggerCount": 1,
   "shared": [
     {
@@ -2374,9 +2426,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-05-26T14:12:55.934Z",
-    "createdAt": "2026-05-26T14:12:53.760Z",
-    "versionId": "df929a58-285c-4d5b-8e89-324ee98556e1",
+    "updatedAt": "2026-07-17T13:54:12.065Z",
+    "createdAt": "2026-07-17T13:54:09.658Z",
+    "versionId": "5d10b5a5-715f-4bc4-96fc-def81c0a0a41",
     "workflowId": "brjePGniRxpG5Pze",
     "nodes": [
       {
@@ -2386,8 +2438,8 @@
         "type": "n8n-nodes-base.pipedriveTrigger",
         "typeVersion": 1.1,
         "position": [
-          -288,
-          1376
+          -464,
+          1360
         ],
         "id": "d6313058-b2d7-4c34-8173-4f022a1f39fb",
         "name": "Pipedrive Trigger",
@@ -2406,8 +2458,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          96,
-          1376
+          -96,
+          1360
         ],
         "id": "f031ae54-73bb-430e-b6e4-2ea7a303acb7",
         "name": "Code"
@@ -2453,8 +2505,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          256,
-          1376
+          80,
+          1360
         ],
         "id": "652d3557-f214-4d41-b4b9-ff3d52bf115f",
         "name": "Edit Fields"
@@ -2468,8 +2520,8 @@
         "type": "n8n-nodes-base.pipedrive",
         "typeVersion": 1,
         "position": [
-          -80,
-          1376
+          -288,
+          1360
         ],
         "id": "e4c2cf3b-f821-430f-a1c8-2058f1fb5d56",
         "name": "Pipedrive",
@@ -4312,7 +4364,7 @@
         "typeVersion": 1,
         "position": [
           1856,
-          1216
+          1392
         ],
         "id": "50a1c0a9-af0e-45c8-b078-bb7bfd56de1a",
         "name": "No Operation, do nothing"
@@ -4325,8 +4377,8 @@
         "type": "n8n-nodes-base.pipedrive",
         "typeVersion": 2,
         "position": [
-          432,
-          1376
+          448,
+          1280
         ],
         "id": "331dc963-9ffe-4a78-989b-113d722af733",
         "name": "Get a deal",
@@ -4336,6 +4388,40 @@
             "name": "Pipedrive account"
           }
         }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "eb7c5309-4dfc-4297-ba9b-950ca35da7c4",
+                "leftValue": "={{ $('Pipedrive Trigger').item.json.data.deal_id }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          272,
+          1360
+        ],
+        "id": "a32f2fa4-d4b5-4d60-812a-ce9efa6d5cbe",
+        "name": "If"
       }
     ],
     "connections": {
@@ -4365,7 +4451,7 @@
         "main": [
           [
             {
-              "node": "Get a deal",
+              "node": "If",
               "type": "main",
               "index": 0
             }
@@ -4668,12 +4754,30 @@
             }
           ]
         ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Get a deal",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Letícia Piazzetta",
-    "name": "Version df929a58",
+    "name": "Version 5d10b5a5",
     "description": "",
-    "autosaved": true
+    "autosaved": false
   },
   "tags": []
 }
