@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-17T13:54:09.656Z",
+  "updatedAt": "2026-07-22T18:34:23.936Z",
   "createdAt": "2025-07-29T14:18:46.499Z",
   "id": "brjePGniRxpG5Pze",
   "name": "[Márcia] Lista de Espera Pipedrive Sheets",
@@ -1979,7 +1979,7 @@
               "leftValue": "={{ $('Pipedrive Trigger').item.json.data.deal_id }}",
               "rightValue": "",
               "operator": {
-                "type": "string",
+                "type": "number",
                 "operation": "exists",
                 "singleValue": true
               }
@@ -2355,7 +2355,7 @@
   },
   "staticData": {
     "node:Pipedrive Trigger": {
-      "webhookId": 1886977
+      "webhookId": 1888442
     },
     "node:Schedule Trigger": {
       "recurrenceRules": []
@@ -2370,18 +2370,18 @@
       {
         "json": {
           "data": {
-            "id": 6394,
+            "id": 6395,
             "user_id": 3559832,
-            "deal_id": null,
-            "person_id": 68834,
+            "deal_id": 68555,
+            "person_id": 74533,
             "org_id": null,
             "lead_id": null,
             "project_id": null,
             "task_id": null,
             "active_flag": true,
-            "content": "<p><b>WhatsApp chat:</b></p><p><br><i>Center AO (09:46, 07/17/2026):</i><br>Ta certo. Obrigada Dr! Estaremos aqui sempre que precisar. Tenha um excelente dia.</p><p><br><i>Carlos Yano (09:44, 07/17/2026):</i><br>Não tenho, pode me retirar do cadastro</p><p><br><i>Center AO (09:15, 07/17/2026):</i><br>O sr teria interesse para daqui 1 ano?</p><p><br><i>Carlos Yano (08:05, 07/17/2026):</i><br>Não tenho interesse</p>",
-            "add_time": "2026-07-17T12:46:56Z",
-            "update_time": "2026-07-17T12:46:56Z",
+            "content": "<p><b>WhatsApp chat:</b></p><p><br><i>Center AO (12:11, 07/20/2026):</i><br>Imagina, é só aguardar.</p><p><br><i>Kaique Alvim G. (12:08, 07/20/2026):</i><br>Tudo ótimo e com você? Meu nome é Kaique Amancio Alvim Gouvêa, e-mail <a href=\"mailto:kaiquegouvea@ymail.com\">kaiquegouvea@ymail.com</a> (yahoo) Muito obrgado pelo retorno, fico aguardando</p><p><br><i>Center AO (12:05, 07/20/2026):</i><br>Vou te encaminha para falar com a Danielle, ela é responsável pela apresentação dos cursos.</p><p><br><i>Center AO (12:04, 07/20/2026):</i><br>Antes poderia me enviar seu nome completo e email para registrar aqui?</p><p><br><i>Center AO (12:04, 07/20/2026):</i><br>Olá, bom dia Dr, tudo bem? Me chamo Francyelle, sou secretária do Center Ao. Claro, ja vou te passar todas as informações.</p><p><br><i>Kaique Alvim G. (11:40, 07/20/2026):</i><br>Bom dia! Tudo bem? Sou médico e gostaria de informações sobre o curso de pós-graduação em acupuntura. Há previsão de turmas apra quando? Quais os valores e cronograma das práticas?</p>",
+            "add_time": "2026-07-20T15:11:57Z",
+            "update_time": "2026-07-20T15:11:57Z",
             "pinned_to_deal_flag": false,
             "pinned_to_person_flag": false,
             "pinned_to_organization_flag": false
@@ -2390,16 +2390,16 @@
           "meta": {
             "action": "create",
             "company_id": "2396659",
-            "correlation_id": "d896829d-5dbc-4d70-ac6d-6fc090e6eb40",
-            "entity_id": "6394",
+            "correlation_id": "5a273535-eaed-43d3-acd5-975c410479cb",
+            "entity_id": "6395",
             "entity": "note",
-            "id": "f96c6213-db74-4d84-9f17-8c97d7f95854",
+            "id": "f4cf8b3a-0526-440a-9513-9e2b7411fd1d",
             "is_bulk_edit": false,
-            "timestamp": "2026-07-17T12:46:56.794Z",
+            "timestamp": "2026-07-20T15:11:58.065Z",
             "type": "general",
             "user_id": "3559832",
             "version": "2.0",
-            "webhook_id": "1872451",
+            "webhook_id": "1886977",
             "webhook_owner_id": "3559832",
             "change_source": "api",
             "permitted_user_ids": [
@@ -2413,8 +2413,8 @@
       }
     ]
   },
-  "versionId": "5d10b5a5-715f-4bc4-96fc-def81c0a0a41",
-  "activeVersionId": "5d10b5a5-715f-4bc4-96fc-def81c0a0a41",
+  "versionId": "66e9bcfd-d554-4875-a90e-f7054adc80d2",
+  "activeVersionId": "66e9bcfd-d554-4875-a90e-f7054adc80d2",
   "triggerCount": 1,
   "shared": [
     {
@@ -2426,9 +2426,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-07-17T13:54:12.065Z",
-    "createdAt": "2026-07-17T13:54:09.658Z",
-    "versionId": "5d10b5a5-715f-4bc4-96fc-def81c0a0a41",
+    "updatedAt": "2026-07-22T18:34:03.054Z",
+    "createdAt": "2026-07-22T18:33:47.188Z",
+    "versionId": "66e9bcfd-d554-4875-a90e-f7054adc80d2",
     "workflowId": "brjePGniRxpG5Pze",
     "nodes": [
       {
@@ -4404,7 +4404,7 @@
                 "leftValue": "={{ $('Pipedrive Trigger').item.json.data.deal_id }}",
                 "rightValue": "",
                 "operator": {
-                  "type": "string",
+                  "type": "number",
                   "operation": "exists",
                   "singleValue": true
                 }
@@ -4775,7 +4775,7 @@
       }
     },
     "authors": "Letícia Piazzetta",
-    "name": "Version 5d10b5a5",
+    "name": "Version 66e9bcfd",
     "description": "",
     "autosaved": false
   },
