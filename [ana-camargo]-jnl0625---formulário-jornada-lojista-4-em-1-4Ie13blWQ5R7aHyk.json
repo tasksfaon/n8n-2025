@@ -286,6 +286,7 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
+  "nodeGroups": [],
   "pinData": {
     "Google Sheets Trigger": [
       {
