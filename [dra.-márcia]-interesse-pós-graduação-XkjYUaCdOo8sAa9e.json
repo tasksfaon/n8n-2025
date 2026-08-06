@@ -29,6 +29,7 @@
   },
   "staticData": null,
   "meta": null,
+  "nodeGroups": [],
   "pinData": {},
   "versionId": "093661cc-eff5-4498-bac9-d46c91e0f2b1",
   "activeVersionId": "093661cc-eff5-4498-bac9-d46c91e0f2b1",
@@ -66,6 +67,7 @@
       }
     ],
     "connections": {},
+    "nodeGroups": [],
     "authors": "Letícia Piazzetta",
     "name": null,
     "description": null,
