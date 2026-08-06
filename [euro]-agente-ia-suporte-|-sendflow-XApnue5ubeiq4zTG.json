@@ -162,6 +162,7 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
+  "nodeGroups": [],
   "pinData": {},
   "versionId": "289e3455-2328-4ba9-af5f-6aec39e42752",
   "activeVersionId": "289e3455-2328-4ba9-af5f-6aec39e42752",
@@ -330,6 +331,7 @@
         ]
       }
     },
+    "nodeGroups": [],
     "authors": "system migration",
     "name": null,
     "description": null,
