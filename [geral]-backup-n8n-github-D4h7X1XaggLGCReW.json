@@ -497,12 +497,18 @@
   },
   "staticData": {
     "node:Schedule Trigger": {
-      "recurrenceRules": []
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
+  "nodeGroups": [],
   "pinData": {},
   "versionId": "270003bd-2afa-46cb-b1b8-5e5fd6d0507d",
   "activeVersionId": "270003bd-2afa-46cb-b1b8-5e5fd6d0507d",
@@ -1005,6 +1011,7 @@
         ]
       }
     },
+    "nodeGroups": [],
     "authors": "Letícia Piazzetta",
     "name": "Version 270003bd",
     "description": "",
