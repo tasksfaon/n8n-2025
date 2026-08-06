@@ -319,6 +319,7 @@
   },
   "staticData": null,
   "meta": null,
+  "nodeGroups": [],
   "pinData": {
     "Webhook": [
       {
@@ -942,6 +943,7 @@
         ]
       }
     },
+    "nodeGroups": [],
     "authors": "Letícia Piazzetta",
     "name": null,
     "description": null,
