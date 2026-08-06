@@ -28,6 +28,7 @@
   },
   "staticData": null,
   "meta": null,
+  "nodeGroups": [],
   "pinData": {},
   "versionId": "023418b4-ba5c-4068-b424-a8386e6ac4c4",
   "activeVersionId": "023418b4-ba5c-4068-b424-a8386e6ac4c4",
@@ -63,6 +64,7 @@
       }
     ],
     "connections": {},
+    "nodeGroups": [],
     "authors": "Letícia Piazzetta",
     "name": "Version 023418b4",
     "description": "",
