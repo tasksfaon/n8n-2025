@@ -252,6 +252,7 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
+  "nodeGroups": [],
   "pinData": {
     "Pipedrive Trigger": [
       {
@@ -564,6 +565,7 @@
         ]
       }
     },
+    "nodeGroups": [],
     "authors": "Letícia Piazzetta",
     "name": null,
     "description": null,
