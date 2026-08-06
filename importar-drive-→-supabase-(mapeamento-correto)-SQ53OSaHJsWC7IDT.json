@@ -863,6 +863,7 @@
     "aiBuilderAssisted": true,
     "builderVariant": "mcp"
   },
+  "nodeGroups": [],
   "pinData": null,
   "versionId": "38f123f9-c99d-4c26-8a23-6dc9680e3627",
   "activeVersionId": null,
