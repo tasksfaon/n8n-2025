@@ -746,6 +746,7 @@
   },
   "staticData": null,
   "meta": null,
+  "nodeGroups": [],
   "pinData": {
     "Webhook": [
       {
