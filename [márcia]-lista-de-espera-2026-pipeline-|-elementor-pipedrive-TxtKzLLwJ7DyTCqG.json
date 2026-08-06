@@ -532,6 +532,7 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
+  "nodeGroups": [],
   "pinData": {},
   "versionId": "1e36d695-9244-47a7-869c-ef6f457c2ac0",
   "activeVersionId": "1e36d695-9244-47a7-869c-ef6f457c2ac0",
@@ -1070,6 +1071,7 @@
         ]
       }
     },
+    "nodeGroups": [],
     "authors": "Letícia Piazzetta",
     "name": null,
     "description": null,
