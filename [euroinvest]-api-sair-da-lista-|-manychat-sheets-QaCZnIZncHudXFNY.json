@@ -245,6 +245,7 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
+  "nodeGroups": [],
   "pinData": {
     "Webhook": [
       {
@@ -541,6 +542,7 @@
         ]
       }
     },
+    "nodeGroups": [],
     "authors": "Letícia Piazzetta",
     "name": "Version 3156e390",
     "description": "",
