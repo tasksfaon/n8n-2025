@@ -192,6 +192,7 @@
   },
   "staticData": null,
   "meta": null,
+  "nodeGroups": [],
   "pinData": {},
   "versionId": "eeef728c-002c-4a94-8533-4f45ff66f526",
   "activeVersionId": "eeef728c-002c-4a94-8533-4f45ff66f526",
@@ -392,6 +393,7 @@
         ]
       }
     },
+    "nodeGroups": [],
     "authors": "system migration",
     "name": null,
     "description": null,
