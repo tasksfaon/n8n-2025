@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-17T17:14:18.754Z",
+  "updatedAt": "2026-08-05T11:49:10.497Z",
   "createdAt": "2025-11-25T16:46:19.126Z",
   "id": "Pjxn65VFV06I238M",
   "name": "[Márcia] Lista de Espera 2026 Pipedrive Sheets",
@@ -155,7 +155,7 @@
               "display": true,
               "type": "string",
               "canBeUsedToMatch": true,
-              "removed": false
+              "removed": true
             },
             {
               "id": "Profissão",
@@ -175,7 +175,7 @@
               "display": true,
               "type": "string",
               "canBeUsedToMatch": true,
-              "removed": false
+              "removed": true
             },
             {
               "id": "Outro curso de interesse",
@@ -185,7 +185,7 @@
               "display": true,
               "type": "string",
               "canBeUsedToMatch": true,
-              "removed": false
+              "removed": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -517,14 +517,21 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "binaryMode": "separate"
   },
   "staticData": {
     "node:Schedule Trigger": {
-      "recurrenceRules": []
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
     }
   },
   "meta": null,
+  "nodeGroups": [],
   "pinData": {
     "Schedule Trigger": [
       {
@@ -544,8 +551,8 @@
       }
     ]
   },
-  "versionId": "b3d6c7f9-0a95-43fe-a1ef-bfbc87122c2e",
-  "activeVersionId": "b3d6c7f9-0a95-43fe-a1ef-bfbc87122c2e",
+  "versionId": "850fd22d-02ad-45c6-8717-9678f1cb2700",
+  "activeVersionId": "850fd22d-02ad-45c6-8717-9678f1cb2700",
   "triggerCount": 1,
   "shared": [
     {
@@ -557,9 +564,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-13T21:11:57.343Z",
-    "createdAt": "2026-01-13T21:11:57.343Z",
-    "versionId": "b3d6c7f9-0a95-43fe-a1ef-bfbc87122c2e",
+    "updatedAt": "2026-08-05T11:49:12.021Z",
+    "createdAt": "2026-08-05T11:49:10.499Z",
+    "versionId": "850fd22d-02ad-45c6-8717-9678f1cb2700",
     "workflowId": "Pjxn65VFV06I238M",
     "nodes": [
       {
@@ -711,7 +718,7 @@
                 "display": true,
                 "type": "string",
                 "canBeUsedToMatch": true,
-                "removed": false
+                "removed": true
               },
               {
                 "id": "Profissão",
@@ -731,7 +738,7 @@
                 "display": true,
                 "type": "string",
                 "canBeUsedToMatch": true,
-                "removed": false
+                "removed": true
               },
               {
                 "id": "Outro curso de interesse",
@@ -741,7 +748,7 @@
                 "display": true,
                 "type": "string",
                 "canBeUsedToMatch": true,
-                "removed": false
+                "removed": true
               }
             ],
             "attemptToConvertTypes": false,
@@ -1072,10 +1079,11 @@
         ]
       }
     },
+    "nodeGroups": [],
     "authors": "Letícia Piazzetta",
-    "name": null,
-    "description": null,
-    "autosaved": false
+    "name": "Version 850fd22d",
+    "description": "",
+    "autosaved": true
   },
   "tags": []
 }
