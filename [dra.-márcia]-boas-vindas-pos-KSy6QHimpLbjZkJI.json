@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-06-10T14:31:00.166Z",
+  "updatedAt": "2026-08-31T11:47:41.224Z",
   "createdAt": "2025-03-21T20:13:43.668Z",
   "id": "KSy6QHimpLbjZkJI",
   "name": "[Dra. Márcia] Boas vindas pos",
@@ -11,7 +11,7 @@
       "type": "n8n-nodes-base.pipedriveTrigger",
       "typeVersion": 1,
       "position": [
-        -440,
+        -448,
         0
       ],
       "id": "8454c243-e772-4704-8b61-a7eb39df7eab",
@@ -94,7 +94,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -200,
+        -208,
         0
       ],
       "id": "fb1434b2-1a4e-40c8-95c9-d60f0f71908e",
@@ -112,7 +112,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1100,
+        1104,
         0
       ],
       "id": "310b669a-23cd-47c1-8dbf-a27e7dbfd9cc",
@@ -172,8 +172,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        220,
-        -20
+        224,
+        -16
       ],
       "id": "87a2f1dc-2351-4d39-aa0e-5c0b7fed138e",
       "name": "If1"
@@ -183,8 +183,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1140,
-        520
+        1152,
+        528
       ],
       "id": "28be6033-3a82-45cf-ad09-cacd8d1c275a",
       "name": "No Operation, do nothing"
@@ -273,8 +273,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        1240,
-        120
+        1248,
+        128
       ],
       "id": "eeb8c713-c926-4d28-8815-b76cbef4f454",
       "name": "Google Sheets",
@@ -382,11 +382,12 @@
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
-    "errorWorkflow": "C0JGoY8oqU3Vhsgx"
+    "errorWorkflow": "C0JGoY8oqU3Vhsgx",
+    "binaryMode": "separate"
   },
   "staticData": {
     "node:Pipedrive Trigger": {
-      "webhookId": 1854422
+      "webhookId": 1901764
     }
   },
   "meta": {
@@ -398,9 +399,9 @@
       {
         "json": {
           "data": {
-            "add_time": "2025-06-10T14:29:41Z",
+            "add_time": "2026-08-30T03:09:21Z",
             "channel": 23364,
-            "channel_id": "Vendas Google Interesse Especialização em Acupuntura GOOGLE",
+            "channel_id": "Solicitar contato - site YSAO YAMAMURA",
             "close_time": null,
             "creator_user_id": 3559832,
             "currency": "BRL",
@@ -409,21 +410,21 @@
             },
             "expected_close_date": null,
             "first_won_time": null,
-            "id": 64070,
+            "id": 68669,
             "label_ids": [],
             "lost_reason": null,
             "lost_time": null,
             "org_id": null,
             "origin": "WebForms",
-            "origin_id": "fa4bf570-2b77-11f0-baa4-ab4a858805b8",
+            "origin_id": "db93bc50-3ee4-11eb-a127-b18ec1357b50",
             "owner_id": 3559832,
-            "person_id": 71174,
+            "person_id": 74591,
             "pipeline_id": 183,
             "probability": null,
             "stage_change_time": null,
-            "stage_id": 1325,
+            "stage_id": 1230,
             "status": "open",
-            "title": "[Neg Turma 56 2025 Google] Letícia Piazzetta",
+            "title": "[Neg Turma 56 2025 pag YY] Frederico",
             "update_time": null,
             "value": 0,
             "visible_to": "3",
@@ -435,18 +436,22 @@
           "meta": {
             "action": "create",
             "company_id": "2396659",
-            "correlation_id": "1c586fba-8122-4046-a061-0029bbce9908",
-            "entity_id": "64070",
+            "correlation_id": "d94a25e8-cd06-450a-a698-fdeea606d4a9",
+            "entity_id": "68669",
             "entity": "deal",
-            "id": "baa9d8b4-f587-4219-b61a-382f7f5a6c89",
+            "id": "f9bbc98a-b461-43bb-99c8-3f4b25048a92",
             "is_bulk_edit": false,
-            "timestamp": "2025-06-10T14:29:41.759Z",
+            "timestamp": "2026-08-30T03:09:21.807Z",
             "type": "general",
             "user_id": "3559832",
             "version": "2.0",
-            "webhook_id": "1880073",
+            "webhook_id": "1854422",
             "webhook_owner_id": "3559832",
-            "change_source": "app",
+            "change_source": "api",
+            "permitted_user_ids": [
+              "3559832",
+              "3559867"
+            ],
             "attempt": 1,
             "host": "center-ao.pipedrive.com"
           }
@@ -454,8 +459,8 @@
       }
     ]
   },
-  "versionId": "fddd2d8e-9c87-41d1-ac73-7389cbe58237",
-  "activeVersionId": "fddd2d8e-9c87-41d1-ac73-7389cbe58237",
+  "versionId": "c78476a8-ff44-4615-a10f-16db60a13c0c",
+  "activeVersionId": "c78476a8-ff44-4615-a10f-16db60a13c0c",
   "triggerCount": 1,
   "shared": [
     {
@@ -467,9 +472,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2025-11-25T16:33:10.313Z",
-    "createdAt": "2025-11-25T16:33:10.313Z",
-    "versionId": "fddd2d8e-9c87-41d1-ac73-7389cbe58237",
+    "updatedAt": "2026-08-31T11:47:52.982Z",
+    "createdAt": "2026-08-31T11:47:40.010Z",
+    "versionId": "c78476a8-ff44-4615-a10f-16db60a13c0c",
     "workflowId": "KSy6QHimpLbjZkJI",
     "nodes": [
       {
@@ -477,7 +482,7 @@
         "type": "n8n-nodes-base.pipedriveTrigger",
         "typeVersion": 1,
         "position": [
-          -440,
+          -448,
           0
         ],
         "id": "8454c243-e772-4704-8b61-a7eb39df7eab",
@@ -560,7 +565,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          -200,
+          -208,
           0
         ],
         "id": "fb1434b2-1a4e-40c8-95c9-d60f0f71908e",
@@ -578,7 +583,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          1100,
+          1104,
           0
         ],
         "id": "310b669a-23cd-47c1-8dbf-a27e7dbfd9cc",
@@ -638,8 +643,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          220,
-          -20
+          224,
+          -16
         ],
         "id": "87a2f1dc-2351-4d39-aa0e-5c0b7fed138e",
         "name": "If1"
@@ -649,8 +654,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          1140,
-          520
+          1152,
+          528
         ],
         "id": "28be6033-3a82-45cf-ad09-cacd8d1c275a",
         "name": "No Operation, do nothing"
@@ -739,8 +744,8 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5,
         "position": [
-          1240,
-          120
+          1248,
+          128
         ],
         "id": "eeb8c713-c926-4d28-8815-b76cbef4f454",
         "name": "Google Sheets",
@@ -846,10 +851,10 @@
       }
     },
     "nodeGroups": [],
-    "authors": "system migration",
-    "name": null,
-    "description": null,
-    "autosaved": false
+    "authors": "Letícia Piazzetta",
+    "name": "Version c78476a8",
+    "description": "",
+    "autosaved": true
   },
   "tags": []
 }
