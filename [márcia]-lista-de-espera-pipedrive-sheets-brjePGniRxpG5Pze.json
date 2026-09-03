@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-22T18:34:23.936Z",
+  "updatedAt": "2026-09-02T11:51:54.832Z",
   "createdAt": "2025-07-29T14:18:46.499Z",
   "id": "brjePGniRxpG5Pze",
   "name": "[Márcia] Lista de Espera Pipedrive Sheets",
@@ -2370,39 +2370,39 @@
     "Pipedrive Trigger": [
       {
         "json": {
-          "data": {
-            "id": 6395,
+          "data": null,
+          "previous": {
+            "id": 6484,
             "user_id": 3559832,
-            "deal_id": 68555,
-            "person_id": 74533,
+            "deal_id": 62893,
+            "person_id": 36543,
             "org_id": null,
             "lead_id": null,
             "project_id": null,
             "task_id": null,
-            "active_flag": true,
-            "content": "<p><b>WhatsApp chat:</b></p><p><br><i>Center AO (12:11, 07/20/2026):</i><br>Imagina, é só aguardar.</p><p><br><i>Kaique Alvim G. (12:08, 07/20/2026):</i><br>Tudo ótimo e com você? Meu nome é Kaique Amancio Alvim Gouvêa, e-mail <a href=\"mailto:kaiquegouvea@ymail.com\">kaiquegouvea@ymail.com</a> (yahoo) Muito obrgado pelo retorno, fico aguardando</p><p><br><i>Center AO (12:05, 07/20/2026):</i><br>Vou te encaminha para falar com a Danielle, ela é responsável pela apresentação dos cursos.</p><p><br><i>Center AO (12:04, 07/20/2026):</i><br>Antes poderia me enviar seu nome completo e email para registrar aqui?</p><p><br><i>Center AO (12:04, 07/20/2026):</i><br>Olá, bom dia Dr, tudo bem? Me chamo Francyelle, sou secretária do Center Ao. Claro, ja vou te passar todas as informações.</p><p><br><i>Kaique Alvim G. (11:40, 07/20/2026):</i><br>Bom dia! Tudo bem? Sou médico e gostaria de informações sobre o curso de pós-graduação em acupuntura. Há previsão de turmas apra quando? Quais os valores e cronograma das práticas?</p>",
-            "add_time": "2026-07-20T15:11:57Z",
-            "update_time": "2026-07-20T15:11:57Z",
+            "active_flag": false,
+            "content": "<p><b>WhatsApp chat:</b></p><p><br><i>Center AO (09:23, 09/01/2026):</i><br>Imagina</p><p><br><i>Lais😌 (09:22, 09/01/2026):</i><br>Quando percebi, salvei os demais arquivos em outra pasta</p><p><br><i>Lais😌 (09:22, 09/01/2026):</i><br>Desculpe me por salvar aqui.</p><p><br><i>Center AO (09:19, 09/01/2026):</i><br>Ah sim, tudo bem Lais, obrigada por informar</p><p><br><i>Lais😌 (09:16, 09/01/2026):</i><br>Obrigada</p><p><br><i>Lais😌 (09:16, 09/01/2026):</i><br>Mas na sexta feira, vou mostrar todas que pediu a Dra Assunta.</p><p><br><i>Lais😌 (09:16, 09/01/2026):</i><br>A Dra Assunta me pediu pra ver como estava a Diabetes, colesterol....e outros, baixei este ontem e salvei aqui</p><p><br><i>Lais😌 (09:15, 09/01/2026):</i><br>(media/attachment)</p><p><br><i>Lais😌 (09:15, 09/01/2026):</i><br>(media/attachment)</p><p><br><i>Lais😌 (09:15, 09/01/2026):</i><br>Não</p><p><br><i>Center AO (08:53, 09/01/2026):</i><br>Bom dia Sra Lais, tudo bem? Esse exame é para eu enviar para Dra Marcia?</p><p><br><i>Lais😌 (01:22, 09/01/2026):</i><br>(media/attachment) 2534519343-LAIS_RUBIA_FERREIRA.pdf</p><p><br><i>Center AO (13:31, 08/21/2026):</i><br>protocolo Catgut</p><p><br><i>Center AO (13:30, 08/21/2026):</i><br>(media/attachment)</p><p><br><i>Lais😌 (10:50, 08/21/2026):</i><br>Gratidão</p><p><br><i>Lais😌 (10:50, 08/21/2026):</i><br>Meu horário é 15:00 hs</p><p><br><i>Lais😌 (10:50, 08/21/2026):</i><br>Na última sessão que eu fui , era a única pessoa agendada</p><p><br><i>Lais😌 (10:49, 08/21/2026):</i><br>Pode avisar a Dra, por favor?</p><p><br><i>Lais😌 (10:49, 08/21/2026):</i><br>Hoje , tenho sessão de acupuntura estética com Dra Assunta, mas tenho no mesmo horário ultrassom...,em outra localidade</p><p><br><i>Lais😌 (10:48, 08/21/2026):</i><br>Por favor, pode auxiliar?</p><p><br><i>Lais😌 (10:47, 08/21/2026):</i><br>Boa tarde, Fran.. Tudo bem?</p><p><br><i>Lais😌 (15:11, 07/16/2026):</i><br>Grata</p><p><br><i>Lais😌 (15:11, 07/16/2026):</i><br>Ok</p><p><br><i>Center AO (14:59, 07/16/2026):</i><br>é amanha desculpe</p><p><br><i>Lais😌 (14:26, 07/16/2026):</i><br>A consulta é sexta né?</p><p><br><i>Center AO (09:51, 07/16/2026):</i><br>Obrigada pelos dado.</p><p><br><i>Lais😌 (09:51, 07/16/2026):</i><br>BEGIN:VCARD VERSION:3.0 N:;M_helena🌻☀️;;; FN:M_helena🌻☀️ item1.TEL;waid=5511953322597:+55 11 95332-2597 item1.X-ABLabel:Celular END:VCARD</p><p><br><i>Lais😌 (09:48, 07/16/2026):</i><br>(media/attachment)</p><p><br><i>Lais😌 (09:47, 07/16/2026):</i><br>21/02)2008</p><p><br><i>Lais😌 (09:47, 07/16/2026):</i><br>Maria Helena Ferreira Alves</p><p><br><i>Center AO (09:46, 07/16/2026):</i><br>Me passa o nome dela completo por gentileza?</p><p><br><i>Center AO (09:46, 07/16/2026):</i><br>Posso deixar ela agendada sim. Será ás 15h</p><p><br><i>Lais😌 (09:45, 07/16/2026):</i><br>Dor de cabeça e muscular</p><p><br><i>Lais😌 (09:45, 07/16/2026):</i><br>Sim</p><p><br><i>Center AO (08:53, 07/16/2026):</i><br>Bom dia Lais, tudo bem? Amanha com os alunos será atendimentos para tratar dor. Sua filha esta tendo algum quadro de dor?</p><p><br><i>Lais😌 (07:27, 07/16/2026):</i><br>(media/attachment)</p><p><br><i>Lais😌 (07:27, 07/16/2026):</i><br>(media/attachment)</p><p><br><i>Lais😌 (07:27, 07/16/2026):</i><br>Sempre Grata, Lais Rúbia</p><p><br><i>Lais😌 (07:26, 07/16/2026):</i><br>Aguardo sua orientação</p><p><br><i>Lais😌 (07:26, 07/16/2026):</i><br>Já esteve no atendimento no ambulatório</p><p><br><i>Lais😌 (07:26, 07/16/2026):</i><br>Ela tem 18 anos, chamasse Maria Helena Ferreira Alves, 21/02/2008</p><p><br><i>Lais😌 (07:26, 07/16/2026):</i><br>E gostaria de saber, se posso levar minha filha para atendimento de Acupuntura</p><p><br><i>Lais😌 (07:25, 07/16/2026):</i><br>Mas soube que terá atendimento com grupo de estudo</p><p><br><i>Lais😌 (07:25, 07/16/2026):</i><br>Amanhã estarei em consulta com Dra Assunta</p><p><br><i>Lais😌 (07:25, 07/16/2026):</i><br>Espero que esteja bem.</p><p><br><i>Lais😌 (07:24, 07/16/2026):</i><br>(media/attachment)</p><p><br><i>Lais😌 (07:24, 07/16/2026):</i><br>(media/attachment)</p><p><br><i>Lais😌 (14:39, 06/26/2026):</i><br>Obrigada</p><p><br><i>Center AO (14:35, 06/26/2026):</i><br>Certo, tudo bem. ; Eu aviso</p><p><br><i>Lais😌 (14:27, 06/26/2026):</i><br>Hoje não consigo ir, estava agendado</p><p><br><i>Lais😌 (14:27, 06/26/2026):</i><br>Com Dra Silvia e Mária Assunta</p>",
+            "add_time": "2026-09-01T18:01:07Z",
+            "update_time": "2026-09-01T18:01:25Z",
             "pinned_to_deal_flag": false,
             "pinned_to_person_flag": false,
             "pinned_to_organization_flag": false
           },
-          "previous": null,
           "meta": {
-            "action": "create",
+            "action": "delete",
             "company_id": "2396659",
-            "correlation_id": "5a273535-eaed-43d3-acd5-975c410479cb",
-            "entity_id": "6395",
+            "correlation_id": "0359ed47-cc37-4af6-9003-7ecb72750d54",
+            "entity_id": "6484",
             "entity": "note",
-            "id": "f4cf8b3a-0526-440a-9513-9e2b7411fd1d",
+            "id": "652d3cfd-72f3-4235-8dcc-3c5c8e5b1b79",
             "is_bulk_edit": false,
-            "timestamp": "2026-07-20T15:11:58.065Z",
+            "timestamp": "2026-09-01T18:01:25.404Z",
             "type": "general",
             "user_id": "3559832",
             "version": "2.0",
-            "webhook_id": "1886977",
+            "webhook_id": "1888442",
             "webhook_owner_id": "3559832",
-            "change_source": "api",
+            "change_source": "app",
             "permitted_user_ids": [
               "3559832",
               "3559867"
