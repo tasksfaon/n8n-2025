@@ -1,0 +1,500 @@
+{
+  "updatedAt": "2026-09-28T17:26:11.266Z",
+  "createdAt": "2026-09-28T17:25:38.812Z",
+  "id": "q5fJLPtt638zmRWV",
+  "name": "[Márcia] Lista de Espera Pós 2027 Pipedrive Active",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.pipedriveTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -512,
+        0
+      ],
+      "id": "5428b289-674e-4221-945f-df6074f76911",
+      "name": "Pipedrive Trigger",
+      "webhookId": "9c8289a3-240f-46fa-a699-b4186b32727d",
+      "credentials": {
+        "pipedriveApi": {
+          "id": "TLwmrhoVoFR3pFMt",
+          "name": "Pipedrive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9102be7e-be32-42fc-824b-91d26ac552ec",
+              "name": "Data",
+              "value": "={{    new Date().toLocaleString('pt-BR', {      timeZone: 'America/Sao_Paulo',     day: '2-digit',     month: '2-digit',     year: 'numeric',     hour: '2-digit',     minute: '2-digit'   }).replace(',', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "983193a9-7490-4f0c-a888-9e4edcb4db5c",
+              "name": "Primeiro Nome",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "84e3e1d4-75d9-441e-b3f0-cd2b54f86d4b",
+              "name": "Último Nome",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "88a92bcc-1aa6-4c54-94d4-eb3b894964ca",
+              "name": "Email",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data.email[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "31cdadf9-fa7c-4f7c-b988-92d0009182c6",
+              "name": "DDD",
+              "value": "={{ $json.ddd }}",
+              "type": "string"
+            },
+            {
+              "id": "113ec366-9218-49a6-b507-783dbaa950ac",
+              "name": "Telefone",
+              "value": "={{ $json.telefonePadronizado }}",
+              "type": "string"
+            },
+            {
+              "id": "3f0c133f-ff82-4cef-9951-4db0b6ac9391",
+              "name": "CRM",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data['487088fb302d80a85669079afe41a91a21fd45ff'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3b4d256b-68b2-4ab6-b109-e5864cd2b676",
+              "name": "Profissional",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data['334747750ddbc82c2010b5a75da2d82b3bf71783'] }}",
+              "type": "string"
+            },
+            {
+              "id": "67be04d4-9287-45ff-99f6-4efe20b56e52",
+              "name": "UF",
+              "value": "={{ $json.uf }}",
+              "type": "string"
+            },
+            {
+              "id": "b2c546fb-2e79-427f-94a0-6bc42963d4c8",
+              "name": "Mensagem",
+              "value": "={{ $('HTTP Pipedrive Person').item.json.data['53e2271622f39f32eecdb9e3c746fd69630e7366'] }}",
+              "type": "string"
+            },
+            {
+              "id": "02fb411b-69b9-4a00-9268-e9ca64b985cb",
+              "name": "Pipeline ID",
+              "value": "={{ $('Pipedrive Trigger').item.json.data.pipeline_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        0
+      ],
+      "id": "54bbb9d1-f46f-4faf-a7af-0db0d5f826be",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        32
+      ],
+      "id": "68c18906-b384-4be6-a5e2-d5e0380718a5",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b0c78a24-0d95-4ca0-9273-a155f7af9228",
+              "leftValue": "={{ $json['Pipeline ID'] }}",
+              "rightValue": "196",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        0
+      ],
+      "id": "ac9e79f4-3fd7-460a-8353-72b0bd972486",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.Email }}",
+        "updateIfExists": true,
+        "additionalFields": {
+          "fieldValues": {
+            "property": [
+              {
+                "field": "4",
+                "value": "={{ $json.DDD }}"
+              },
+              {
+                "field": "1",
+                "value": "={{ $json.Profissional }}"
+              },
+              {
+                "field": "2",
+                "value": "={{ $json.UF }}"
+              },
+              {
+                "field": "7",
+                "value": "={{ $json.Mensagem }}"
+              },
+              {
+                "field": "3",
+                "value": "={{ $json.CRM }}"
+              }
+            ]
+          },
+          "firstName": "={{ $json['Primeiro Nome'] }}",
+          "lastName": "={{ $json['Último Nome'] }}",
+          "phone": "={{ $json.Telefone }}"
+        }
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -96
+      ],
+      "id": "bb037ead-a3ad-4747-bb2b-50fc026f14b8",
+      "name": "ActiveCampaign",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactTag",
+        "tagId": "13",
+        "contactId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        -96
+      ],
+      "id": "571057d4-85a2-4c5b-9b17-0e9f7c5d8b0d",
+      "name": "ActiveCampaign1",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "listId": 7,
+        "contactId": "={{ $json.contact }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        -96
+      ],
+      "id": "f681d396-93da-4d86-9dac-a680d09b059f",
+      "name": "ActiveCampaign2",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/vV9VebSZg7w023jcvfDS",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"37e290c1-7110-4353-8f4f-b74f5057e915\",\n  \"phoneNumber\": \"{{ $json.Telefone }}\",\n  \"name\": \"{{ $json['Primeiro Nome'] }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        -320
+      ],
+      "id": "e3c9c103-5165-4458-81ea-7fc9c2a3dbf6",
+      "name": "HTTP Sendflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ================================\n// 1. Captura do payload\n// ================================\nconst payload = $input.first().json;\n\n// ================================\n// 2. Detecta tipo da entrada\n// ================================\nconst pessoa =\n  payload.data?.[0] ||     // retorno de person\n  payload.data ||          // webhook de deal\n  {};\n\n// ================================\n// 3. Captura telefone\n// ================================\nconst telefoneOriginal =\n  pessoa.phone?.[0]?.value ||\n  '';\n\n// ================================\n// 4. Remove tudo que não for número\n// ================================\nlet telefone = telefoneOriginal.replace(/\\D/g, '');\n\n// ================================\n// 5. Remove código do país (55)\n// ================================\nif (telefone.startsWith('55')) {\n  telefone = telefone.substring(2);\n}\n\n// ================================\n// 6. Extrai DDD e número\n// ================================\nconst ddd = telefone.substring(0, 2);\nlet numero = telefone.substring(2);\n\n// ================================\n// 7. Garante o 9º dígito\n// ================================\nif (numero.length === 8) {\n  numero = '9' + numero;\n}\n\n// ================================\n// 8. Monta telefone padronizado\n// ================================\nconst telefonePadronizado =\n  telefone\n    ? `55${ddd}${numero}`\n    : '';\n\n// ================================\n// 9. Captura código da UF\n// ================================\nconst codigoUF =\n  pessoa['f77f5009ce48d7b62427c2d0961522f1830eb66e'];\n\n// ================================\n// 10. Mapa código → UF\n// ================================\nconst mapaUF = {\n  6050: \"AC\",\n  6051: \"AL\",\n  6052: \"AP\",\n  6053: \"AM\",\n  6054: \"BA\",\n  6055: \"CE\",\n  6056: \"DF\",\n  6057: \"ES\",\n  6058: \"GO\",\n  6059: \"MA\",\n  6060: \"MT\",\n  6061: \"MS\",\n  6062: \"MG\",\n  6063: \"PA\",\n  6064: \"PB\",\n  6065: \"PR\",\n  6066: \"PE\",\n  6067: \"PI\",\n  6068: \"RJ\",\n  6069: \"RN\",\n  6070: \"RS\",\n  6071: \"RO\",\n  6072: \"RR\",\n  6073: \"SC\",\n  6074: \"SP\",\n  6075: \"SE\",\n  6076: \"TO\"\n};\n\n// ================================\n// 11. Resolve UF\n// ================================\nconst uf = mapaUF[codigoUF] || \"\";\n\n// ================================\n// 12. Dados extras do deal\n// ================================\nconst dealId = pessoa.id || null;\nconst personId = pessoa.person_id || null;\nconst titulo = pessoa.title || \"\";\n\n// ================================\n// 13. Retorno\n// ================================\nreturn {\n  ddd,\n  telefonePadronizado,\n  uf,\n  dealId,\n  personId,\n  titulo\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "2aee32ad-db97-44cb-8373-1a97fbb51f8c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.pipedrive.com/v1/persons/{{ $json.data.person_id }}?api_token=0d41365876c960f504fbf6f8ca965564a77d2b04 ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -288,
+        0
+      ],
+      "id": "6046bf19-35fa-44a6-86b6-441d67827745",
+      "name": "HTTP Pipedrive Person"
+    }
+  ],
+  "connections": {
+    "Pipedrive Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Pipedrive Person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Sendflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign1": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Sendflow": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Pipedrive Person": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Pipedrive Trigger": {
+      "webhookId": 1873178
+    },
+    "node:Pipedrive Trigger1": {}
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {
+    "Pipedrive Trigger": [
+      {
+        "json": {
+          "data": {
+            "add_time": "2026-08-31T13:20:01Z",
+            "channel": 23364,
+            "channel_id": "Interesse Especialização em Acupuntura pag Pos Grad Center AO",
+            "close_time": null,
+            "creator_user_id": 3559832,
+            "currency": "BRL",
+            "custom_fields": {
+              "31ae0f90cc1b3ee3da765f9c9decf2321022a7cf": null
+            },
+            "expected_close_date": null,
+            "first_won_time": null,
+            "id": 68671,
+            "label_ids": [],
+            "lost_reason": null,
+            "lost_time": null,
+            "org_id": null,
+            "origin": "WebForms",
+            "origin_id": "c4dbbd40-a302-11ec-87df-752d86e171e5",
+            "owner_id": 3559832,
+            "person_id": 74593,
+            "pipeline_id": 196,
+            "probability": null,
+            "stage_change_time": null,
+            "stage_id": 1360,
+            "status": "open",
+            "title": "[Neg Turma 57 2026 pag CAO] Ana Caroline de Moura Rocha",
+            "update_time": "2026-09-03T15:05:50Z",
+            "value": 0,
+            "visible_to": "3",
+            "won_time": null,
+            "is_archived": false,
+            "archive_time": null
+          },
+          "previous": {
+            "title": "[Neg Turma 57 2026 pag CAO] ANA CAROLINE DE MOURA ROCHA"
+          },
+          "meta": {
+            "action": "change",
+            "company_id": "2396659",
+            "correlation_id": "eb3612fe-6d07-43dd-975f-506e4493a521",
+            "entity_id": "68671",
+            "entity": "deal",
+            "id": "b1d3d815-a76f-4b14-a870-194f29c6321d",
+            "is_bulk_edit": false,
+            "timestamp": "2026-09-03T15:05:50.959Z",
+            "type": "general",
+            "user_id": "3559832",
+            "version": "2.0",
+            "webhook_id": "1873178",
+            "webhook_owner_id": "3559832",
+            "change_source": "app",
+            "permitted_user_ids": [
+              "3559832",
+              "3559867"
+            ],
+            "attempt": 1,
+            "host": "center-ao.pipedrive.com"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "f1f74b29-efbf-481c-bc51-f6d18b1a00b4",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-09-28T17:25:38.812Z",
+      "createdAt": "2026-09-28T17:25:38.812Z",
+      "role": "workflow:owner",
+      "workflowId": "q5fJLPtt638zmRWV",
+      "projectId": "lrLYIwetv42aAH7x"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
