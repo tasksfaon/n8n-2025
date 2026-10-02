@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-30T17:25:29.475Z",
+  "updatedAt": "2026-10-01T17:04:08.977Z",
   "createdAt": "2026-09-28T17:27:10.493Z",
   "id": "ChZLyld0Ej10EFfU",
   "name": "[Márcia] Lista de Espera 2027 Pipeline | Elementor Pipedrive",
@@ -119,8 +119,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1152,
-        0
+        1376,
+        -48
       ],
       "id": "34551f4e-80e3-40ba-ba43-a3d989e25d75",
       "name": "No Operation, do nothing"
@@ -450,6 +450,115 @@
       ],
       "id": "24652ea3-e4de-430c-a503-90bdb8c2a977",
       "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.Email }}",
+        "updateIfExists": true,
+        "additionalFields": {
+          "fieldValues": {
+            "property": [
+              {
+                "field": "4",
+                "value": "={{ $json.DDD }}"
+              },
+              {
+                "field": "1",
+                "value": "={{ $json.Profissional }}"
+              },
+              {
+                "field": "2",
+                "value": "={{ $json.UF }}"
+              },
+              {
+                "field": "7",
+                "value": "={{ $json.Mensagem }}"
+              },
+              {
+                "field": "3",
+                "value": "={{ $json.CRM }}"
+              }
+            ]
+          },
+          "firstName": "={{ $json.Nome.split(' ')[0] }}",
+          "lastName": "={{ $json.Nome.split(' ').slice(1).join(' ') }}",
+          "phone": "={{ $json.Telefone }}"
+        }
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        656,
+        -288
+      ],
+      "id": "c5805960-5573-4ff7-ad17-5fee40839c87",
+      "name": "ActiveCampaign",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactTag",
+        "tagId": "31",
+        "contactId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -288
+      ],
+      "id": "85fea925-35b5-472e-afcb-0be3b065b886",
+      "name": "ActiveCampaign1",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "listId": 4,
+        "contactId": "={{ $json.contact }}"
+      },
+      "type": "n8n-nodes-base.activeCampaign",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        -288
+      ],
+      "id": "26b2499d-680e-4faf-95f4-5ba839a36a08",
+      "name": "ActiveCampaign2",
+      "credentials": {
+        "activeCampaignApi": {
+          "id": "OhdCxnL5hg2HPyeD",
+          "name": "Active dra. Márcia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sendflow.pro/a/vV9VebSZg7w023jcvfDS",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"609d53d3-3c6e-4e97-b4f1-7ad4ff0aa852\",\n  \"phoneNumber\": \"{{ $json.Telefone }}\",\n  \"name\": \"{{ $json.Nome.split(' ')[0] }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        784,
+        -512
+      ],
+      "id": "75a078c0-ca19-40af-9f9e-2833a505a216",
+      "name": "HTTP Sendflow"
     }
   ],
   "connections": {
@@ -474,6 +583,16 @@
           },
           {
             "node": "HTTP Pipedrive Criar Person",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ActiveCampaign",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Sendflow",
             "type": "main",
             "index": 0
           }
@@ -523,6 +642,50 @@
           }
         ]
       ]
+    },
+    "ActiveCampaign": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign1": {
+      "main": [
+        [
+          {
+            "node": "ActiveCampaign2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActiveCampaign2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Sendflow": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -535,9 +698,52 @@
     "templateCredsSetupCompleted": true
   },
   "nodeGroups": [],
-  "pinData": {},
-  "versionId": "328bb1d9-14b5-49e8-acf7-5620653b3478",
-  "activeVersionId": "328bb1d9-14b5-49e8-acf7-5620653b3478",
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook2025.faondigital.com.br",
+            "user-agent": "WordPress/6.9.9; https://institutoacupuntura.com.br",
+            "content-length": "370",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip, br",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-forwarded-for": "107.150.167.192",
+            "x-forwarded-host": "webhook2025.faondigital.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "252d6c58ebda",
+            "x-real-ip": "107.150.167.192"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Nome completo": "Letícia Piazzetta",
+            "E-mail": "leticia@faondigital.com.br",
+            "Telefone": "54991635474",
+            "Profissional": "Sou Médico",
+            "CRM": "1234",
+            "UF do CRM": "Acre",
+            "Mensagem (opcional)": "",
+            "No Label field_fa88c18": "",
+            "utm_source": "email",
+            "utm_campaign": "",
+            "utm_content": "",
+            "utm_medium": "",
+            "utm_term": "",
+            "data": "30/09/2026",
+            "form_id": "5ca8a43",
+            "form_name": "Lista de espera - Turma 2026 - Pós acupuntura médica"
+          },
+          "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/3c90e3a0-2f80-4ef4-b696-7d6041f97a7212",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "082333d8-0188-48bf-8dd0-f5c6312fd4d4",
+  "activeVersionId": "082333d8-0188-48bf-8dd0-f5c6312fd4d4",
   "triggerCount": 1,
   "shared": [
     {
@@ -549,9 +755,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-09-30T17:25:31.003Z",
-    "createdAt": "2026-09-30T17:25:29.476Z",
-    "versionId": "328bb1d9-14b5-49e8-acf7-5620653b3478",
+    "updatedAt": "2026-10-01T17:04:12.267Z",
+    "createdAt": "2026-10-01T17:04:08.979Z",
+    "versionId": "082333d8-0188-48bf-8dd0-f5c6312fd4d4",
     "workflowId": "ChZLyld0Ej10EFfU",
     "nodes": [
       {
@@ -667,8 +873,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          1152,
-          0
+          1376,
+          -48
         ],
         "id": "34551f4e-80e3-40ba-ba43-a3d989e25d75",
         "name": "No Operation, do nothing"
@@ -998,6 +1204,115 @@
         ],
         "id": "24652ea3-e4de-430c-a503-90bdb8c2a977",
         "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "email": "={{ $json.Email }}",
+          "updateIfExists": true,
+          "additionalFields": {
+            "fieldValues": {
+              "property": [
+                {
+                  "field": "4",
+                  "value": "={{ $json.DDD }}"
+                },
+                {
+                  "field": "1",
+                  "value": "={{ $json.Profissional }}"
+                },
+                {
+                  "field": "2",
+                  "value": "={{ $json.UF }}"
+                },
+                {
+                  "field": "7",
+                  "value": "={{ $json.Mensagem }}"
+                },
+                {
+                  "field": "3",
+                  "value": "={{ $json.CRM }}"
+                }
+              ]
+            },
+            "firstName": "={{ $json.Nome.split(' ')[0] }}",
+            "lastName": "={{ $json.Nome.split(' ').slice(1).join(' ') }}",
+            "phone": "={{ $json.Telefone }}"
+          }
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          656,
+          -288
+        ],
+        "id": "c5805960-5573-4ff7-ad17-5fee40839c87",
+        "name": "ActiveCampaign",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "contactTag",
+          "tagId": "31",
+          "contactId": "={{ $json.id }}"
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          880,
+          -288
+        ],
+        "id": "85fea925-35b5-472e-afcb-0be3b065b886",
+        "name": "ActiveCampaign1",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "contactList",
+          "listId": 4,
+          "contactId": "={{ $json.contact }}"
+        },
+        "type": "n8n-nodes-base.activeCampaign",
+        "typeVersion": 1,
+        "position": [
+          1056,
+          -288
+        ],
+        "id": "26b2499d-680e-4faf-95f4-5ba839a36a08",
+        "name": "ActiveCampaign2",
+        "credentials": {
+          "activeCampaignApi": {
+            "id": "OhdCxnL5hg2HPyeD",
+            "name": "Active dra. Márcia"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://sendflow.pro/a/vV9VebSZg7w023jcvfDS",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"apiKey\": \"609d53d3-3c6e-4e97-b4f1-7ad4ff0aa852\",\n  \"phoneNumber\": \"{{ $json.Telefone }}\",\n  \"name\": \"{{ $json.Nome.split(' ')[0] }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          784,
+          -512
+        ],
+        "id": "75a078c0-ca19-40af-9f9e-2833a505a216",
+        "name": "HTTP Sendflow"
       }
     ],
     "connections": {
@@ -1022,6 +1337,16 @@
             },
             {
               "node": "HTTP Pipedrive Criar Person",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "ActiveCampaign",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTTP Sendflow",
               "type": "main",
               "index": 0
             }
@@ -1071,11 +1396,55 @@
             }
           ]
         ]
+      },
+      "ActiveCampaign": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign1": {
+        "main": [
+          [
+            {
+              "node": "ActiveCampaign2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ActiveCampaign2": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Sendflow": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "nodeGroups": [],
     "authors": "Letícia Piazzetta",
-    "name": "Version 328bb1d9",
+    "name": "Version 082333d8",
     "description": "",
     "autosaved": true
   },
