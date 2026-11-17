@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-11T11:38:21.064Z",
+  "updatedAt": "2026-11-16T22:11:10.742Z",
   "createdAt": "2026-09-28T17:27:10.493Z",
   "id": "ChZLyld0Ej10EFfU",
   "name": "[Márcia] Lista de Espera 2027 Pipeline | Elementor Pipedrive",
@@ -8,7 +8,7 @@
   "nodes": [
     {
       "parameters": {
-        "jsCode": "\nconst input = $input.first().json;\nconst body = input.body || {};\n\n// ===============================\n// 1) TELEFONE\n// ===============================\nconst rawPhone = String(body.Telefone || '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length !== 13 || !cleaned.startsWith('55')) {\n  cleaned = '';\n}\n\n// ===============================\n// 2) UF\n// ===============================\nconst estadoParaUF = {\n  'ACRE': 'AC',\n  'ALAGOAS': 'AL',\n  'AMAPA': 'AP',\n  'AMAZONAS': 'AM',\n  'BAHIA': 'BA',\n  'CEARA': 'CE',\n  'DISTRITO FEDERAL': 'DF',\n  'ESPIRITO SANTO': 'ES',\n  'GOIAS': 'GO',\n  'MARANHAO': 'MA',\n  'MATO GROSSO': 'MT',\n  'MATO GROSSO DO SUL': 'MS',\n  'MINAS GERAIS': 'MG',\n  'PARA': 'PA',\n  'PARAIBA': 'PB',\n  'PARANA': 'PR',\n  'PERNAMBUCO': 'PE',\n  'PIAUI': 'PI',\n  'RIO DE JANEIRO': 'RJ',\n  'RIO GRANDE DO NORTE': 'RN',\n  'RIO GRANDE DO SUL': 'RS',\n  'RONDONIA': 'RO',\n  'RORAIMA': 'RR',\n  'SANTA CATARINA': 'SC',\n  'SAO PAULO': 'SP',\n  'SERGIPE': 'SE',\n  'TOCANTINS': 'TO'\n};\n\nconst ufMap = {\n  AC: 6050, AL: 6051, AP: 6052, AM: 6053,\n  BA: 6054, CE: 6055, DF: 6056, ES: 6057,\n  GO: 6058, MA: 6059, MT: 6060, MS: 6061,\n  MG: 6062, PA: 6063, PB: 6064, PR: 6065,\n  PE: 6066, PI: 6067, RJ: 6068, RN: 6069,\n  RS: 6070, RO: 6071, RR: 6072, SC: 6073,\n  SP: 6074, SE: 6075, TO: 6076\n};\n\nconst ufBruto = String(body['UF do CRM'] || '').trim();\n\nconst ufSemAcento = ufBruto\n  .normalize('NFD')\n  .replace(/[\\u0300-\\u036f]/g, '')\n  .toUpperCase();\n\nconst ufSigla = ufSemAcento.length === 2\n  ? ufSemAcento\n  : (estadoParaUF[ufSemAcento] || '');\n\nconst UF_ID = ufMap[ufSigla] ?? null;\n\n// ===============================\n// 3) PROFISSÃO\n// ===============================\nconst profissionalMap = {\n  medico: 2,\n  fisioterapeuta: 3,\n  enfermeiro: 4,\n  nutricionista: 5,\n  outro: 6\n};\n\nconst profBruto = String(body.Profissional || '').trim();\nconst mensagem = String(body['Mensagem (opcional)'] || '').trim();\n\nlet textoProfissao = profBruto\n  .normalize('NFD')\n  .replace(/[\\u0300-\\u036f]/g, '')\n  .toLowerCase();\n\nif (textoProfissao.includes('medic')) {\n  textoProfissao = 'medico';\n} else if (textoProfissao.includes('fisio')) {\n  textoProfissao = 'fisioterapeuta';\n} else if (textoProfissao.includes('enferm')) {\n  textoProfissao = 'enfermeiro';\n} else if (textoProfissao.includes('nutri')) {\n  textoProfissao = 'nutricionista';\n} else if (\n  textoProfissao.includes('nao sou medico') ||\n  textoProfissao === ''\n) {\n  const msgNorm = mensagem\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n\n  if (msgNorm.includes('nutri')) {\n    textoProfissao = 'nutricionista';\n  } else if (msgNorm.includes('fisio')) {\n    textoProfissao = 'fisioterapeuta';\n  } else if (msgNorm.includes('enferm')) {\n    textoProfissao = 'enfermeiro';\n  } else {\n    textoProfissao = 'outro';\n  }\n}\n\nconst Profissional_ID = profissionalMap[textoProfissao] ?? null;\n\n// ===============================\n// 4) RETORNO\n// ===============================\nreturn [{\n  json: {\n    Nome: String(body['Nome completo'] || '').trim(),\n    Email: String(body['E-mail'] || '').trim(),\n    telefoneFormatado: cleaned,\n    ufTextoRecebido: ufBruto,\n    ufSigla,\n    UF_ID,\n    profissaoTextoRecebido: profBruto,\n    profNorm: textoProfissao,\n    Profissional_ID,\n    CRM: String(body.CRM || '').trim(),\n    Mensagem: mensagem,\n    DataFormulario: String(body.data || ''),\n    Formulario: String(body.form_name || '')\n  }\n}];\n"
+        "jsCode": "const input = $input.first().json;\nconst body = input.body || {};\n\n// ===============================\n// HELPERS\n// ===============================\nconst norm = (v) => String(v ?? '')\n  .normalize('NFD')\n  .replace(/[̀-ͯ]/g, '')\n  .trim()\n  .toLowerCase();\n\n// Busca o valor por vários nomes possíveis de campo (o form muda de label às vezes)\nconst pick = (...keys) => {\n  for (const k of keys) {\n    const v = body[k];\n    if (v !== undefined && v !== null && String(v).trim() !== '') {\n      return String(v).trim();\n    }\n  }\n  return '';\n};\n\n// Descarta valores de UTM que vieram com placeholder não substituído, ex: \"{{ad.name}\"\nconst cleanUtm = (v) => {\n  const s = String(v ?? '').trim();\n  return s.includes('{{') || s.includes('}}') ? '' : s;\n};\n\n// ===============================\n// 1) TELEFONE\n// ===============================\nconst rawPhone = pick('Telefone', 'telefone', 'WhatsApp', 'Whatsapp', 'Celular');\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\nif (cleaned.startsWith('0')) cleaned = cleaned.replace(/^0+/, ''); // ex: 065...\n\nif (cleaned.length === 10 || cleaned.length === 11) {\n  cleaned = '55' + cleaned;                       // DDD + número\n} else if ((cleaned.length === 12 || cleaned.length === 13) && cleaned.startsWith('55')) {\n  // já está com DDI\n} else {\n  cleaned = '';\n}\n\nconst ddd = cleaned ? cleaned.substring(2, 4) : '';\n\n// ===============================\n// 2) UF\n// ===============================\nconst estadoParaUF = {\n  'ACRE': 'AC', 'ALAGOAS': 'AL', 'AMAPA': 'AP', 'AMAZONAS': 'AM',\n  'BAHIA': 'BA', 'CEARA': 'CE', 'DISTRITO FEDERAL': 'DF', 'ESPIRITO SANTO': 'ES',\n  'GOIAS': 'GO', 'MARANHAO': 'MA', 'MATO GROSSO': 'MT', 'MATO GROSSO DO SUL': 'MS',\n  'MINAS GERAIS': 'MG', 'PARA': 'PA', 'PARAIBA': 'PB', 'PARANA': 'PR',\n  'PERNAMBUCO': 'PE', 'PIAUI': 'PI', 'RIO DE JANEIRO': 'RJ', 'RIO GRANDE DO NORTE': 'RN',\n  'RIO GRANDE DO SUL': 'RS', 'RONDONIA': 'RO', 'RORAIMA': 'RR', 'SANTA CATARINA': 'SC',\n  'SAO PAULO': 'SP', 'SERGIPE': 'SE', 'TOCANTINS': 'TO'\n};\n\nconst ufMap = {\n  AC: 6050, AL: 6051, AP: 6052, AM: 6053,\n  BA: 6054, CE: 6055, DF: 6056, ES: 6057,\n  GO: 6058, MA: 6059, MT: 6060, MS: 6061,\n  MG: 6062, PA: 6063, PB: 6064, PR: 6065,\n  PE: 6066, PI: 6067, RJ: 6068, RN: 6069,\n  RS: 6070, RO: 6071, RR: 6072, SC: 6073,\n  SP: 6074, SE: 6075, TO: 6076\n};\n\n// DDD -> UF (usado quando o formulário não envia a UF)\nconst dddParaUF = {\n  '11':'SP','12':'SP','13':'SP','14':'SP','15':'SP','16':'SP','17':'SP','18':'SP','19':'SP',\n  '21':'RJ','22':'RJ','24':'RJ','27':'ES','28':'ES',\n  '31':'MG','32':'MG','33':'MG','34':'MG','35':'MG','37':'MG','38':'MG',\n  '41':'PR','42':'PR','43':'PR','44':'PR','45':'PR','46':'PR',\n  '47':'SC','48':'SC','49':'SC',\n  '51':'RS','53':'RS','54':'RS','55':'RS',\n  '61':'DF','62':'GO','64':'GO','63':'TO',\n  '65':'MT','66':'MT','67':'MS','68':'AC','69':'RO',\n  '71':'BA','73':'BA','74':'BA','75':'BA','77':'BA',\n  '79':'SE','81':'PE','87':'PE','82':'AL','83':'PB','84':'RN',\n  '85':'CE','88':'CE','86':'PI','89':'PI',\n  '91':'PA','93':'PA','94':'PA','92':'AM','97':'AM',\n  '95':'RR','96':'AP','98':'MA','99':'MA'\n};\n\nconst ufBruto = pick('UF do CRM', 'UF', 'Estado', 'uf');\nconst ufSemAcento = ufBruto\n  .normalize('NFD')\n  .replace(/[̀-ͯ]/g, '')\n  .toUpperCase();\n\nlet ufSigla = ufSemAcento.length === 2\n  ? ufSemAcento\n  : (estadoParaUF[ufSemAcento] || '');\n\nlet ufOrigem = ufSigla ? 'formulario' : '';\n\nif (!ufMap[ufSigla] && ddd && dddParaUF[ddd]) {\n  ufSigla = dddParaUF[ddd];\n  ufOrigem = 'ddd';\n}\nif (!ufMap[ufSigla]) {\n  ufSigla = '';\n  ufOrigem = '';\n}\n\nconst UF_ID = ufMap[ufSigla] ?? null;\n\n// ===============================\n// 3) PROFISSÃO\n// ===============================\nconst profissionalMap = {\n  medico: 2,\n  fisioterapeuta: 3,\n  enfermeiro: 4,\n  nutricionista: 5,\n  outro: 6\n};\n\nconst profBruto = pick('Profissional', 'Profissão', 'Profissao');\nconst mensagem = pick('Mensagem (opcional)', 'Mensagem', 'mensagem');\n\nconst profNormBruto = norm(profBruto);\nconst msgNorm = norm(mensagem);\n\nconst detectar = (txt) => {\n  if (txt.includes('fisio')) return 'fisioterapeuta';\n  if (txt.includes('enferm')) return 'enfermeiro';\n  if (txt.includes('nutri')) return 'nutricionista';\n  return '';\n};\n\nlet textoProfissao;\n\n// \"Não sou médico\" precisa ser testado ANTES de \"medic\", senão cai como médico\nif (/\\bnao\\b/.test(profNormBruto) || profNormBruto === '') {\n  textoProfissao = detectar(profNormBruto) || detectar(msgNorm) || 'outro';\n} else if (profNormBruto.includes('medic')) {\n  textoProfissao = 'medico';\n} else {\n  textoProfissao = detectar(profNormBruto) || 'outro';\n}\n\nconst Profissional_ID = profissionalMap[textoProfissao] ?? null;\n\n// ===============================\n// 4) RETORNO\n// ===============================\nreturn [{\n  json: {\n    Nome: pick('Nome completo', 'Nome', 'nome'),\n    telefoneFormatado: cleaned,\n    ddd,\n    ufTextoRecebido: ufBruto,\n    ufSigla,\n    ufOrigem,                 // 'formulario' | 'ddd' | ''\n    UF_ID,\n    profissaoTextoRecebido: profBruto,\n    profNorm: textoProfissao,\n    Profissional_ID,\n    CRM: pick('CRM', 'crm').replace(/\\D/g, ''),\n    Mensagem: mensagem,\n    DataFormulario: pick('data', 'Data'),\n    Formulario: pick('form_name'),\n    FormID: pick('form_id'),\n    utm_source: cleanUtm(body.utm_source),\n    utm_medium: cleanUtm(body.utm_medium),\n    utm_campaign: cleanUtm(body.utm_campaign),\n    utm_term: cleanUtm(body.utm_term),\n    utm_content: cleanUtm(body.utm_content),\n    origemSite: String(input.headers?.['user-agent'] || '').split('; ')[1] || ''\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -124,189 +124,6 @@
       ],
       "id": "34551f4e-80e3-40ba-ba43-a3d989e25d75",
       "name": "No Operation, do nothing"
-    },
-    {
-      "parameters": {
-        "operation": "appendOrUpdate",
-        "documentId": {
-          "__rl": true,
-          "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=1764680190#gid=1764680190",
-          "mode": "url"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": 2027659463,
-          "mode": "list",
-          "cachedResultName": "[Filtro] Pipeline ESPECIALIZAÇÃO 2026",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=2027659463"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Email": "={{ $json.Email }}",
-            "Data": "={{ $json.Data }}",
-            "Nome": "={{ $json.Nome }}",
-            "Telefone ": "={{ $json.Telefone }}",
-            "Crm": "={{ $json.CRM }}",
-            "UF": "={{ $json.UF }}",
-            "Profissão": "={{ $json['Profissão'] }}",
-            "Mensagem": "={{ $json.Mensagem }}",
-            "utm source": "={{ $json['utm source'] }}",
-            "utm medium": "={{ $json['utm medium'] }}",
-            "utm campaign": "={{ $json['utm campaign'] }}",
-            "utm content": "={{ $json['utm content'] }}",
-            "utm term": "={{ $json['utm term'] }}"
-          },
-          "matchingColumns": [
-            "Email"
-          ],
-          "schema": [
-            {
-              "id": "Data",
-              "displayName": "Data",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Nome",
-              "displayName": "Nome",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Telefone ",
-              "displayName": "Telefone ",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Email",
-              "displayName": "Email",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "Crm",
-              "displayName": "Crm",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "UF",
-              "displayName": "UF",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "Profissão",
-              "displayName": "Profissão",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "Mensagem",
-              "displayName": "Mensagem",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "utm source",
-              "displayName": "utm source",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "utm medium",
-              "displayName": "utm medium",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "utm campaign",
-              "displayName": "utm campaign",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "utm content",
-              "displayName": "utm content",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "utm term",
-              "displayName": "utm term",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        752,
-        -80
-      ],
-      "id": "f00831e6-5a91-4c22-9cd7-aeb0d1102ba3",
-      "name": "Append or update row in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "W0R4Ys7oQXFuzbM4",
-          "name": "Google Sheets account"
-        }
-      }
     },
     {
       "parameters": {
@@ -488,7 +305,7 @@
       "type": "n8n-nodes-base.activeCampaign",
       "typeVersion": 1,
       "position": [
-        656,
+        688,
         -288
       ],
       "id": "c5805960-5573-4ff7-ad17-5fee40839c87",
@@ -498,7 +315,8 @@
           "id": "OhdCxnL5hg2HPyeD",
           "name": "Active dra. Márcia"
         }
-      }
+      },
+      "disabled": true
     },
     {
       "parameters": {
@@ -519,7 +337,8 @@
           "id": "OhdCxnL5hg2HPyeD",
           "name": "Active dra. Márcia"
         }
-      }
+      },
+      "disabled": true
     },
     {
       "parameters": {
@@ -540,7 +359,8 @@
           "id": "OhdCxnL5hg2HPyeD",
           "name": "Active dra. Márcia"
         }
-      }
+      },
+      "disabled": true
     },
     {
       "parameters": {
@@ -559,6 +379,190 @@
       ],
       "id": "75a078c0-ca19-40af-9f9e-2833a505a216",
       "name": "HTTP Sendflow"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "=https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=1764680190#gid=1764680190",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2027659463,
+          "mode": "list",
+          "cachedResultName": "[Filtro] Pipeline ESPECIALIZAÇÃO 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=2027659463"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Data": "={{ $json.Data }}",
+            "Nome": "={{ $json.Nome }}",
+            "Telefone ": "={{ $json.Telefone }}",
+            "Crm": "={{ $json.CRM }}",
+            "UF": "={{ $json.UF }}",
+            "Profissão": "={{ $json['Profissão'] }}",
+            "Mensagem": "={{ $json.Mensagem }}",
+            "utm source": "={{ $json['utm source'] }}",
+            "utm medium": "={{ $json['utm medium'] }}",
+            "utm campaign": "={{ $json['utm campaign'] }}",
+            "utm content": "={{ $json['utm content'] }}",
+            "utm term": "={{ $json['utm term'] }}"
+          },
+          "matchingColumns": [
+            "Telefone "
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone ",
+              "displayName": "Telefone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Crm",
+              "displayName": "Crm",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UF",
+              "displayName": "UF",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Profissão",
+              "displayName": "Profissão",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mensagem",
+              "displayName": "Mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm source",
+              "displayName": "utm source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm medium",
+              "displayName": "utm medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm campaign",
+              "displayName": "utm campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm content",
+              "displayName": "utm content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "utm term",
+              "displayName": "utm term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        752,
+        -80
+      ],
+      "id": "f00831e6-5a91-4c22-9cd7-aeb0d1102ba3",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W0R4Ys7oQXFuzbM4",
+          "name": "Google Sheets account"
+        }
+      }
     }
   ],
   "connections": {
@@ -577,11 +581,6 @@
       "main": [
         [
           {
-            "node": "Append or update row in sheet",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "HTTP Pipedrive Criar Person",
             "type": "main",
             "index": 0
@@ -595,15 +594,9 @@
             "node": "HTTP Sendflow",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Append or update row in sheet": {
-      "main": [
-        [
+          },
           {
-            "node": "No Operation, do nothing",
+            "node": "Append or update row in sheet",
             "type": "main",
             "index": 0
           }
@@ -686,6 +679,17 @@
           }
         ]
       ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -705,7 +709,7 @@
           "headers": {
             "host": "webhook2025.faondigital.com.br",
             "user-agent": "WordPress/6.9.11; https://institutoacupuntura.com.br",
-            "content-length": "225",
+            "content-length": "315",
             "accept": "*/*",
             "accept-encoding": "deflate, gzip, br",
             "content-type": "application/x-www-form-urlencoded",
@@ -719,14 +723,20 @@
           "params": {},
           "query": {},
           "body": {
-            "CRM": "34593",
-            "E-mail": "bibiovida@gmail.com",
+            "Nome completo": "Letícia Piazzetta",
+            "Telefone": "54991635474",
             "Profissional": "Sou Médico",
+            "CRM": "12113",
             "Mensagem (opcional)": "",
             "No Label field_fa88c18": "",
-            "data": "11/11/2026",
+            "data": "16/11/2026",
+            "utm_source": "",
+            "utm_medium": "",
+            "utm_campaign": "",
+            "utm_term": "",
+            "utm_content": "",
             "form_id": "5ca8a43",
-            "form_name": "Lista de espera - Turma 2026 - Pós acupuntura médica"
+            "form_name": "Lista de espera - Turma 2027 - Pós acupuntura médica"
           },
           "webhookUrl": "https://webhook2025.faondigital.com.br/webhook/3c90e3a0-2f80-4ef4-b696-7d6041f97a7212",
           "executionMode": "production"
@@ -734,8 +744,8 @@
       }
     ]
   },
-  "versionId": "b5a05e33-a57c-4d2c-81cc-15aa5678c214",
-  "activeVersionId": "b5a05e33-a57c-4d2c-81cc-15aa5678c214",
+  "versionId": "3a9caa8f-6ff4-453a-8c2f-74f4717a7ed4",
+  "activeVersionId": "3a9caa8f-6ff4-453a-8c2f-74f4717a7ed4",
   "triggerCount": 1,
   "shared": [
     {
@@ -747,14 +757,14 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-11-14T17:46:04.978Z",
-    "createdAt": "2026-11-10T19:16:58.733Z",
-    "versionId": "b5a05e33-a57c-4d2c-81cc-15aa5678c214",
+    "updatedAt": "2026-11-16T22:11:32.749Z",
+    "createdAt": "2026-11-16T22:11:10.744Z",
+    "versionId": "3a9caa8f-6ff4-453a-8c2f-74f4717a7ed4",
     "workflowId": "ChZLyld0Ej10EFfU",
     "nodes": [
       {
         "parameters": {
-          "jsCode": "\nconst input = $input.first().json;\nconst body = input.body || {};\n\n// ===============================\n// 1) TELEFONE\n// ===============================\nconst rawPhone = String(body.Telefone || '');\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\nif (cleaned.length === 11) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length === 12 && !cleaned.startsWith('55')) {\n  cleaned = '55' + cleaned;\n} else if (cleaned.length !== 13 || !cleaned.startsWith('55')) {\n  cleaned = '';\n}\n\n// ===============================\n// 2) UF\n// ===============================\nconst estadoParaUF = {\n  'ACRE': 'AC',\n  'ALAGOAS': 'AL',\n  'AMAPA': 'AP',\n  'AMAZONAS': 'AM',\n  'BAHIA': 'BA',\n  'CEARA': 'CE',\n  'DISTRITO FEDERAL': 'DF',\n  'ESPIRITO SANTO': 'ES',\n  'GOIAS': 'GO',\n  'MARANHAO': 'MA',\n  'MATO GROSSO': 'MT',\n  'MATO GROSSO DO SUL': 'MS',\n  'MINAS GERAIS': 'MG',\n  'PARA': 'PA',\n  'PARAIBA': 'PB',\n  'PARANA': 'PR',\n  'PERNAMBUCO': 'PE',\n  'PIAUI': 'PI',\n  'RIO DE JANEIRO': 'RJ',\n  'RIO GRANDE DO NORTE': 'RN',\n  'RIO GRANDE DO SUL': 'RS',\n  'RONDONIA': 'RO',\n  'RORAIMA': 'RR',\n  'SANTA CATARINA': 'SC',\n  'SAO PAULO': 'SP',\n  'SERGIPE': 'SE',\n  'TOCANTINS': 'TO'\n};\n\nconst ufMap = {\n  AC: 6050, AL: 6051, AP: 6052, AM: 6053,\n  BA: 6054, CE: 6055, DF: 6056, ES: 6057,\n  GO: 6058, MA: 6059, MT: 6060, MS: 6061,\n  MG: 6062, PA: 6063, PB: 6064, PR: 6065,\n  PE: 6066, PI: 6067, RJ: 6068, RN: 6069,\n  RS: 6070, RO: 6071, RR: 6072, SC: 6073,\n  SP: 6074, SE: 6075, TO: 6076\n};\n\nconst ufBruto = String(body['UF do CRM'] || '').trim();\n\nconst ufSemAcento = ufBruto\n  .normalize('NFD')\n  .replace(/[\\u0300-\\u036f]/g, '')\n  .toUpperCase();\n\nconst ufSigla = ufSemAcento.length === 2\n  ? ufSemAcento\n  : (estadoParaUF[ufSemAcento] || '');\n\nconst UF_ID = ufMap[ufSigla] ?? null;\n\n// ===============================\n// 3) PROFISSÃO\n// ===============================\nconst profissionalMap = {\n  medico: 2,\n  fisioterapeuta: 3,\n  enfermeiro: 4,\n  nutricionista: 5,\n  outro: 6\n};\n\nconst profBruto = String(body.Profissional || '').trim();\nconst mensagem = String(body['Mensagem (opcional)'] || '').trim();\n\nlet textoProfissao = profBruto\n  .normalize('NFD')\n  .replace(/[\\u0300-\\u036f]/g, '')\n  .toLowerCase();\n\nif (textoProfissao.includes('medic')) {\n  textoProfissao = 'medico';\n} else if (textoProfissao.includes('fisio')) {\n  textoProfissao = 'fisioterapeuta';\n} else if (textoProfissao.includes('enferm')) {\n  textoProfissao = 'enfermeiro';\n} else if (textoProfissao.includes('nutri')) {\n  textoProfissao = 'nutricionista';\n} else if (\n  textoProfissao.includes('nao sou medico') ||\n  textoProfissao === ''\n) {\n  const msgNorm = mensagem\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n\n  if (msgNorm.includes('nutri')) {\n    textoProfissao = 'nutricionista';\n  } else if (msgNorm.includes('fisio')) {\n    textoProfissao = 'fisioterapeuta';\n  } else if (msgNorm.includes('enferm')) {\n    textoProfissao = 'enfermeiro';\n  } else {\n    textoProfissao = 'outro';\n  }\n}\n\nconst Profissional_ID = profissionalMap[textoProfissao] ?? null;\n\n// ===============================\n// 4) RETORNO\n// ===============================\nreturn [{\n  json: {\n    Nome: String(body['Nome completo'] || '').trim(),\n    Email: String(body['E-mail'] || '').trim(),\n    telefoneFormatado: cleaned,\n    ufTextoRecebido: ufBruto,\n    ufSigla,\n    UF_ID,\n    profissaoTextoRecebido: profBruto,\n    profNorm: textoProfissao,\n    Profissional_ID,\n    CRM: String(body.CRM || '').trim(),\n    Mensagem: mensagem,\n    DataFormulario: String(body.data || ''),\n    Formulario: String(body.form_name || '')\n  }\n}];\n"
+          "jsCode": "const input = $input.first().json;\nconst body = input.body || {};\n\n// ===============================\n// HELPERS\n// ===============================\nconst norm = (v) => String(v ?? '')\n  .normalize('NFD')\n  .replace(/[̀-ͯ]/g, '')\n  .trim()\n  .toLowerCase();\n\n// Busca o valor por vários nomes possíveis de campo (o form muda de label às vezes)\nconst pick = (...keys) => {\n  for (const k of keys) {\n    const v = body[k];\n    if (v !== undefined && v !== null && String(v).trim() !== '') {\n      return String(v).trim();\n    }\n  }\n  return '';\n};\n\n// Descarta valores de UTM que vieram com placeholder não substituído, ex: \"{{ad.name}\"\nconst cleanUtm = (v) => {\n  const s = String(v ?? '').trim();\n  return s.includes('{{') || s.includes('}}') ? '' : s;\n};\n\n// ===============================\n// 1) TELEFONE\n// ===============================\nconst rawPhone = pick('Telefone', 'telefone', 'WhatsApp', 'Whatsapp', 'Celular');\nlet cleaned = rawPhone.replace(/\\D/g, '');\n\nif (cleaned.startsWith('0')) cleaned = cleaned.replace(/^0+/, ''); // ex: 065...\n\nif (cleaned.length === 10 || cleaned.length === 11) {\n  cleaned = '55' + cleaned;                       // DDD + número\n} else if ((cleaned.length === 12 || cleaned.length === 13) && cleaned.startsWith('55')) {\n  // já está com DDI\n} else {\n  cleaned = '';\n}\n\nconst ddd = cleaned ? cleaned.substring(2, 4) : '';\n\n// ===============================\n// 2) UF\n// ===============================\nconst estadoParaUF = {\n  'ACRE': 'AC', 'ALAGOAS': 'AL', 'AMAPA': 'AP', 'AMAZONAS': 'AM',\n  'BAHIA': 'BA', 'CEARA': 'CE', 'DISTRITO FEDERAL': 'DF', 'ESPIRITO SANTO': 'ES',\n  'GOIAS': 'GO', 'MARANHAO': 'MA', 'MATO GROSSO': 'MT', 'MATO GROSSO DO SUL': 'MS',\n  'MINAS GERAIS': 'MG', 'PARA': 'PA', 'PARAIBA': 'PB', 'PARANA': 'PR',\n  'PERNAMBUCO': 'PE', 'PIAUI': 'PI', 'RIO DE JANEIRO': 'RJ', 'RIO GRANDE DO NORTE': 'RN',\n  'RIO GRANDE DO SUL': 'RS', 'RONDONIA': 'RO', 'RORAIMA': 'RR', 'SANTA CATARINA': 'SC',\n  'SAO PAULO': 'SP', 'SERGIPE': 'SE', 'TOCANTINS': 'TO'\n};\n\nconst ufMap = {\n  AC: 6050, AL: 6051, AP: 6052, AM: 6053,\n  BA: 6054, CE: 6055, DF: 6056, ES: 6057,\n  GO: 6058, MA: 6059, MT: 6060, MS: 6061,\n  MG: 6062, PA: 6063, PB: 6064, PR: 6065,\n  PE: 6066, PI: 6067, RJ: 6068, RN: 6069,\n  RS: 6070, RO: 6071, RR: 6072, SC: 6073,\n  SP: 6074, SE: 6075, TO: 6076\n};\n\n// DDD -> UF (usado quando o formulário não envia a UF)\nconst dddParaUF = {\n  '11':'SP','12':'SP','13':'SP','14':'SP','15':'SP','16':'SP','17':'SP','18':'SP','19':'SP',\n  '21':'RJ','22':'RJ','24':'RJ','27':'ES','28':'ES',\n  '31':'MG','32':'MG','33':'MG','34':'MG','35':'MG','37':'MG','38':'MG',\n  '41':'PR','42':'PR','43':'PR','44':'PR','45':'PR','46':'PR',\n  '47':'SC','48':'SC','49':'SC',\n  '51':'RS','53':'RS','54':'RS','55':'RS',\n  '61':'DF','62':'GO','64':'GO','63':'TO',\n  '65':'MT','66':'MT','67':'MS','68':'AC','69':'RO',\n  '71':'BA','73':'BA','74':'BA','75':'BA','77':'BA',\n  '79':'SE','81':'PE','87':'PE','82':'AL','83':'PB','84':'RN',\n  '85':'CE','88':'CE','86':'PI','89':'PI',\n  '91':'PA','93':'PA','94':'PA','92':'AM','97':'AM',\n  '95':'RR','96':'AP','98':'MA','99':'MA'\n};\n\nconst ufBruto = pick('UF do CRM', 'UF', 'Estado', 'uf');\nconst ufSemAcento = ufBruto\n  .normalize('NFD')\n  .replace(/[̀-ͯ]/g, '')\n  .toUpperCase();\n\nlet ufSigla = ufSemAcento.length === 2\n  ? ufSemAcento\n  : (estadoParaUF[ufSemAcento] || '');\n\nlet ufOrigem = ufSigla ? 'formulario' : '';\n\nif (!ufMap[ufSigla] && ddd && dddParaUF[ddd]) {\n  ufSigla = dddParaUF[ddd];\n  ufOrigem = 'ddd';\n}\nif (!ufMap[ufSigla]) {\n  ufSigla = '';\n  ufOrigem = '';\n}\n\nconst UF_ID = ufMap[ufSigla] ?? null;\n\n// ===============================\n// 3) PROFISSÃO\n// ===============================\nconst profissionalMap = {\n  medico: 2,\n  fisioterapeuta: 3,\n  enfermeiro: 4,\n  nutricionista: 5,\n  outro: 6\n};\n\nconst profBruto = pick('Profissional', 'Profissão', 'Profissao');\nconst mensagem = pick('Mensagem (opcional)', 'Mensagem', 'mensagem');\n\nconst profNormBruto = norm(profBruto);\nconst msgNorm = norm(mensagem);\n\nconst detectar = (txt) => {\n  if (txt.includes('fisio')) return 'fisioterapeuta';\n  if (txt.includes('enferm')) return 'enfermeiro';\n  if (txt.includes('nutri')) return 'nutricionista';\n  return '';\n};\n\nlet textoProfissao;\n\n// \"Não sou médico\" precisa ser testado ANTES de \"medic\", senão cai como médico\nif (/\\bnao\\b/.test(profNormBruto) || profNormBruto === '') {\n  textoProfissao = detectar(profNormBruto) || detectar(msgNorm) || 'outro';\n} else if (profNormBruto.includes('medic')) {\n  textoProfissao = 'medico';\n} else {\n  textoProfissao = detectar(profNormBruto) || 'outro';\n}\n\nconst Profissional_ID = profissionalMap[textoProfissao] ?? null;\n\n// ===============================\n// 4) RETORNO\n// ===============================\nreturn [{\n  json: {\n    Nome: pick('Nome completo', 'Nome', 'nome'),\n    telefoneFormatado: cleaned,\n    ddd,\n    ufTextoRecebido: ufBruto,\n    ufSigla,\n    ufOrigem,                 // 'formulario' | 'ddd' | ''\n    UF_ID,\n    profissaoTextoRecebido: profBruto,\n    profNorm: textoProfissao,\n    Profissional_ID,\n    CRM: pick('CRM', 'crm').replace(/\\D/g, ''),\n    Mensagem: mensagem,\n    DataFormulario: pick('data', 'Data'),\n    Formulario: pick('form_name'),\n    FormID: pick('form_id'),\n    utm_source: cleanUtm(body.utm_source),\n    utm_medium: cleanUtm(body.utm_medium),\n    utm_campaign: cleanUtm(body.utm_campaign),\n    utm_term: cleanUtm(body.utm_term),\n    utm_content: cleanUtm(body.utm_content),\n    origemSite: String(input.headers?.['user-agent'] || '').split('; ')[1] || ''\n  }\n}];"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -870,189 +880,6 @@
         ],
         "id": "34551f4e-80e3-40ba-ba43-a3d989e25d75",
         "name": "No Operation, do nothing"
-      },
-      {
-        "parameters": {
-          "operation": "appendOrUpdate",
-          "documentId": {
-            "__rl": true,
-            "value": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=1764680190#gid=1764680190",
-            "mode": "url"
-          },
-          "sheetName": {
-            "__rl": true,
-            "value": 2027659463,
-            "mode": "list",
-            "cachedResultName": "[Filtro] Pipeline ESPECIALIZAÇÃO 2026",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=2027659463"
-          },
-          "columns": {
-            "mappingMode": "defineBelow",
-            "value": {
-              "Email": "={{ $json.Email }}",
-              "Data": "={{ $json.Data }}",
-              "Nome": "={{ $json.Nome }}",
-              "Telefone ": "={{ $json.Telefone }}",
-              "Crm": "={{ $json.CRM }}",
-              "UF": "={{ $json.UF }}",
-              "Profissão": "={{ $json['Profissão'] }}",
-              "Mensagem": "={{ $json.Mensagem }}",
-              "utm source": "={{ $json['utm source'] }}",
-              "utm medium": "={{ $json['utm medium'] }}",
-              "utm campaign": "={{ $json['utm campaign'] }}",
-              "utm content": "={{ $json['utm content'] }}",
-              "utm term": "={{ $json['utm term'] }}"
-            },
-            "matchingColumns": [
-              "Email"
-            ],
-            "schema": [
-              {
-                "id": "Data",
-                "displayName": "Data",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true
-              },
-              {
-                "id": "Nome",
-                "displayName": "Nome",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true
-              },
-              {
-                "id": "Telefone ",
-                "displayName": "Telefone ",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true
-              },
-              {
-                "id": "Email",
-                "displayName": "Email",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true,
-                "removed": false
-              },
-              {
-                "id": "Crm",
-                "displayName": "Crm",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true
-              },
-              {
-                "id": "UF",
-                "displayName": "UF",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true,
-                "removed": false
-              },
-              {
-                "id": "Profissão",
-                "displayName": "Profissão",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true,
-                "removed": false
-              },
-              {
-                "id": "Mensagem",
-                "displayName": "Mensagem",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true,
-                "removed": false
-              },
-              {
-                "id": "utm source",
-                "displayName": "utm source",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true,
-                "removed": false
-              },
-              {
-                "id": "utm medium",
-                "displayName": "utm medium",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true,
-                "removed": false
-              },
-              {
-                "id": "utm campaign",
-                "displayName": "utm campaign",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true,
-                "removed": false
-              },
-              {
-                "id": "utm content",
-                "displayName": "utm content",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true,
-                "removed": false
-              },
-              {
-                "id": "utm term",
-                "displayName": "utm term",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true,
-                "removed": false
-              }
-            ],
-            "attemptToConvertTypes": false,
-            "convertFieldsToString": false
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.googleSheets",
-        "typeVersion": 4.7,
-        "position": [
-          752,
-          -80
-        ],
-        "id": "f00831e6-5a91-4c22-9cd7-aeb0d1102ba3",
-        "name": "Append or update row in sheet",
-        "credentials": {
-          "googleSheetsOAuth2Api": {
-            "id": "W0R4Ys7oQXFuzbM4",
-            "name": "Google Sheets account"
-          }
-        }
       },
       {
         "parameters": {
@@ -1234,7 +1061,7 @@
         "type": "n8n-nodes-base.activeCampaign",
         "typeVersion": 1,
         "position": [
-          656,
+          688,
           -288
         ],
         "id": "c5805960-5573-4ff7-ad17-5fee40839c87",
@@ -1244,7 +1071,8 @@
             "id": "OhdCxnL5hg2HPyeD",
             "name": "Active dra. Márcia"
           }
-        }
+        },
+        "disabled": true
       },
       {
         "parameters": {
@@ -1265,7 +1093,8 @@
             "id": "OhdCxnL5hg2HPyeD",
             "name": "Active dra. Márcia"
           }
-        }
+        },
+        "disabled": true
       },
       {
         "parameters": {
@@ -1286,7 +1115,8 @@
             "id": "OhdCxnL5hg2HPyeD",
             "name": "Active dra. Márcia"
           }
-        }
+        },
+        "disabled": true
       },
       {
         "parameters": {
@@ -1305,6 +1135,190 @@
         ],
         "id": "75a078c0-ca19-40af-9f9e-2833a505a216",
         "name": "HTTP Sendflow"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "=https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit?gid=1764680190#gid=1764680190",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 2027659463,
+            "mode": "list",
+            "cachedResultName": "[Filtro] Pipeline ESPECIALIZAÇÃO 2026",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1K6QY5TQMT-V86GEm2BgmUx3qK5TiFepQDjmRGbJJP-E/edit#gid=2027659463"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $json.Email }}",
+              "Data": "={{ $json.Data }}",
+              "Nome": "={{ $json.Nome }}",
+              "Telefone ": "={{ $json.Telefone }}",
+              "Crm": "={{ $json.CRM }}",
+              "UF": "={{ $json.UF }}",
+              "Profissão": "={{ $json['Profissão'] }}",
+              "Mensagem": "={{ $json.Mensagem }}",
+              "utm source": "={{ $json['utm source'] }}",
+              "utm medium": "={{ $json['utm medium'] }}",
+              "utm campaign": "={{ $json['utm campaign'] }}",
+              "utm content": "={{ $json['utm content'] }}",
+              "utm term": "={{ $json['utm term'] }}"
+            },
+            "matchingColumns": [
+              "Telefone "
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Telefone ",
+                "displayName": "Telefone ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Crm",
+                "displayName": "Crm",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "UF",
+                "displayName": "UF",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Profissão",
+                "displayName": "Profissão",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Mensagem",
+                "displayName": "Mensagem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm source",
+                "displayName": "utm source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm medium",
+                "displayName": "utm medium",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm campaign",
+                "displayName": "utm campaign",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm content",
+                "displayName": "utm content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "utm term",
+                "displayName": "utm term",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          752,
+          -80
+        ],
+        "id": "f00831e6-5a91-4c22-9cd7-aeb0d1102ba3",
+        "name": "Append or update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "W0R4Ys7oQXFuzbM4",
+            "name": "Google Sheets account"
+          }
+        }
       }
     ],
     "connections": {
@@ -1323,11 +1337,6 @@
         "main": [
           [
             {
-              "node": "Append or update row in sheet",
-              "type": "main",
-              "index": 0
-            },
-            {
               "node": "HTTP Pipedrive Criar Person",
               "type": "main",
               "index": 0
@@ -1341,15 +1350,9 @@
               "node": "HTTP Sendflow",
               "type": "main",
               "index": 0
-            }
-          ]
-        ]
-      },
-      "Append or update row in sheet": {
-        "main": [
-          [
+            },
             {
-              "node": "No Operation, do nothing",
+              "node": "Append or update row in sheet",
               "type": "main",
               "index": 0
             }
@@ -1432,13 +1435,24 @@
             }
           ]
         ]
+      },
+      "Append or update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "nodeGroups": [],
     "authors": "Letícia Piazzetta",
-    "name": "Version b5a05e33",
+    "name": "Version 3a9caa8f",
     "description": "",
-    "autosaved": true
+    "autosaved": false
   },
   "tags": []
 }
