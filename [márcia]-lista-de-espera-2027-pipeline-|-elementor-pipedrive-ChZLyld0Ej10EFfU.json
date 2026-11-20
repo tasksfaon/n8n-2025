@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-16T22:11:10.742Z",
+  "updatedAt": "2026-11-19T14:40:04.459Z",
   "createdAt": "2026-09-28T17:27:10.493Z",
   "id": "ChZLyld0Ej10EFfU",
   "name": "[Márcia] Lista de Espera 2027 Pipeline | Elementor Pipedrive",
@@ -32,7 +32,7 @@
             {
               "id": "daab8f75-4c69-4fd9-a513-b3c08f95c108",
               "name": "Email",
-              "value": "={{ $('Webhook').item.json.body['E-mail'] }}",
+              "value": "={{ $('Webhook').item.json.body.Email }}",
               "type": "string"
             },
             {
@@ -315,8 +315,7 @@
           "id": "OhdCxnL5hg2HPyeD",
           "name": "Active dra. Márcia"
         }
-      },
-      "disabled": true
+      }
     },
     {
       "parameters": {
@@ -337,8 +336,7 @@
           "id": "OhdCxnL5hg2HPyeD",
           "name": "Active dra. Márcia"
         }
-      },
-      "disabled": true
+      }
     },
     {
       "parameters": {
@@ -359,8 +357,7 @@
           "id": "OhdCxnL5hg2HPyeD",
           "name": "Active dra. Márcia"
         }
-      },
-      "disabled": true
+      }
     },
     {
       "parameters": {
@@ -708,8 +705,8 @@
         "json": {
           "headers": {
             "host": "webhook2025.faondigital.com.br",
-            "user-agent": "WordPress/6.9.11; https://institutoacupuntura.com.br",
-            "content-length": "315",
+            "user-agent": "WordPress/6.9.12; https://institutoacupuntura.com.br",
+            "content-length": "349",
             "accept": "*/*",
             "accept-encoding": "deflate, gzip, br",
             "content-type": "application/x-www-form-urlencoded",
@@ -725,11 +722,12 @@
           "body": {
             "Nome completo": "Letícia Piazzetta",
             "Telefone": "54991635474",
+            "Email": "leticia@faondigital.com.br",
             "Profissional": "Sou Médico",
-            "CRM": "12113",
+            "CRM": "1234",
             "Mensagem (opcional)": "",
             "No Label field_fa88c18": "",
-            "data": "16/11/2026",
+            "data": "19/11/2026",
             "utm_source": "",
             "utm_medium": "",
             "utm_campaign": "",
@@ -744,8 +742,8 @@
       }
     ]
   },
-  "versionId": "3a9caa8f-6ff4-453a-8c2f-74f4717a7ed4",
-  "activeVersionId": "3a9caa8f-6ff4-453a-8c2f-74f4717a7ed4",
+  "versionId": "889ae472-e1ab-437f-9bac-e9b116346534",
+  "activeVersionId": "889ae472-e1ab-437f-9bac-e9b116346534",
   "triggerCount": 1,
   "shared": [
     {
@@ -757,9 +755,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-11-16T22:11:32.749Z",
-    "createdAt": "2026-11-16T22:11:10.744Z",
-    "versionId": "3a9caa8f-6ff4-453a-8c2f-74f4717a7ed4",
+    "updatedAt": "2026-11-19T14:40:06.276Z",
+    "createdAt": "2026-11-19T14:40:04.461Z",
+    "versionId": "889ae472-e1ab-437f-9bac-e9b116346534",
     "workflowId": "ChZLyld0Ej10EFfU",
     "nodes": [
       {
@@ -788,7 +786,7 @@
               {
                 "id": "daab8f75-4c69-4fd9-a513-b3c08f95c108",
                 "name": "Email",
-                "value": "={{ $('Webhook').item.json.body['E-mail'] }}",
+                "value": "={{ $('Webhook').item.json.body.Email }}",
                 "type": "string"
               },
               {
@@ -1071,8 +1069,7 @@
             "id": "OhdCxnL5hg2HPyeD",
             "name": "Active dra. Márcia"
           }
-        },
-        "disabled": true
+        }
       },
       {
         "parameters": {
@@ -1093,8 +1090,7 @@
             "id": "OhdCxnL5hg2HPyeD",
             "name": "Active dra. Márcia"
           }
-        },
-        "disabled": true
+        }
       },
       {
         "parameters": {
@@ -1115,8 +1111,7 @@
             "id": "OhdCxnL5hg2HPyeD",
             "name": "Active dra. Márcia"
           }
-        },
-        "disabled": true
+        }
       },
       {
         "parameters": {
@@ -1450,7 +1445,7 @@
     },
     "nodeGroups": [],
     "authors": "Letícia Piazzetta",
-    "name": "Version 3a9caa8f",
+    "name": "Version 889ae472",
     "description": "",
     "autosaved": false
   },
